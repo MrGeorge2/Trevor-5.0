@@ -13,9 +13,10 @@ class ApiHandler(Client):
     def get_new_ApiHandler(cls) -> ApiHandler:
         return cls(cfg=Config())
 
-
-    def returnString(self):
-        print(self._config.API_KEY)
+    @staticmethod
+    def run():
+        result = ApiHandler.get_new_ApiHandler().get_historical_klines("BTCUSDT", Client.KLINE_INTERVAL_4HOUR, "1 DEC, 2010")
+        print(result)
 
     
 if __name__ == '__main__':

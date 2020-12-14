@@ -1,4 +1,5 @@
 import typing
+from .api_handler.api_handler import ApiHandler
 
 """
 Method for testing args
@@ -23,6 +24,7 @@ class MethodRegistrator:
     REGISTRED_FUNCTIONS: typing.Dict[str, typing.Callable[[typing.List[str]], None]]= {
         help.__name__: help,
         testFunction.__name__: testFunction,
+        ApiHandler.__name__: ApiHandler.run
     }
     APPEND_EXT_TEXT: str = "\n For getting all registred methods please use python3 main.py help"
 

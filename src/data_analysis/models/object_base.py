@@ -1,0 +1,4 @@
+
+
+class ObjectBase:
+    ID: int
