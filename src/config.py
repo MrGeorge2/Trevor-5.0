@@ -39,3 +39,9 @@ class Config:
     TIMEOUT = 20
 
     FILE_NUM = 1
+
+    """
+    #### MODEL ####
+    """
+    PATH_MODEL = "./nn_model/data/model.h5"
+    EPOCHS = 50
