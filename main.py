@@ -2,11 +2,13 @@ from src.method_registrator import MethodRegistrator
 from typing import List
 import sys
 
-
+# První musí zůstat prázdný!
+# Jméno registrované metody,
+# První parametr pro metodu
 DEBUG_SYS_ARGV: List[str] = [
-    " ",                # První musí zůstat prázdný!
-    "ApiHandler",     # Jméno registrované metody,
-                        # První parametr pro metodu
+    " ",                
+    "scrape",     
+    "BTCUSDT",
 ]
 
 DEBUG: bool = True

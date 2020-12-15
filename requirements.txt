@@ -1,0 +1,4 @@
+python-binance
+sqlalchemy
+tensorflow-gpu==2.3
+keras == 2.4.3

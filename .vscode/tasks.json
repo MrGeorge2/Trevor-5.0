@@ -26,6 +26,19 @@
                 "reveal": "always"
             },
             "group": "build"
+        },
+        {
+            "label": "Scrape (param symbol)",
+            "command": "${config:envPath} ${config:mainPath} scrape",
+            "type": "shell",
+            "args": [],
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "reveal": "always"
+            },
+            "group": "build"
         }
     ],
 }

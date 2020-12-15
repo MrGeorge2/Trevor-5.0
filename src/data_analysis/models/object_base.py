@@ -1,4 +1,10 @@
+from sqlalchemy import create_engine, Column, Integer
+from sqlalchemy.ext.declarative import declarative_base
 
+Base = declarative_base()
+engine = create_engine('sqlite:///trevor.db', echo=True)
+Base.prepare(engine, reflect=True)
+class ObjectBase(Base):
+    __tablename__ = 'TBase'
 
-class ObjectBase:
-    ID: int
+    id = Column(Integer, primary_key=True)
