@@ -7,13 +7,14 @@ import sys
 # První parametr pro metodu
 DEBUG_SYS_ARGV: List[str] = [
     " ",                
-    "scrape",     
+    "help",     
     "BTCUSDT",
 ]
 
 DEBUG: bool = True
 
 if __name__ =="__main__":
+    print("test Volume")
     args: List[str] = DEBUG_SYS_ARGV if DEBUG else sys.argv
     if DEBUG: 
         print("YOU ARE IN DEBUG ARGS MODE")

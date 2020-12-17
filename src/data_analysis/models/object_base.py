@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 engine = create_engine('sqlite:///trevor.db', echo=True)
-Base.prepare(engine, reflect=True)
+
 class ObjectBase(Base):
     __tablename__ = 'TBase'
 
