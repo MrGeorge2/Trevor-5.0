@@ -7,6 +7,7 @@ from typing import List
 from datetime import datetime
 from sqlalchemy import and_
 
+
 class Scraper:
     def __init__(self):
         pass
@@ -15,7 +16,7 @@ class Scraper:
     def scrape(symbol: str) -> None:
         print(f"SCRAPING {symbol}")
         global_i: DB = DB.get_globals()
-        db = global_i.SESSION
+        db = global_i.get_globals()
 
         api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
 
@@ -37,13 +38,13 @@ class Scraper:
             )
 
             if Config.CHECK_ROW_IN_DB:
-                if not global_i.SESSION.query(global_i.SESSION.query(CandleApi).filter(
+                if not db.SESSION.query(db.SESSION.query(CandleApi).filter(
                         and_(CandleApi.symbol == symbol, CandleApi.open_time == m_candle.open_time)).exists()).scalar():
-                    global_i.SESSION.add(m_candle)
+                    db.SESSION.add(m_candle)
             else:
-                global_i.SESSION.add(m_candle)
+                db.SESSION.add(m_candle)
 
-        global_i.SESSION.commit()
+        db.SESSION.commit()
         print(f"Sraping {symbol} done")
 
     @staticmethod

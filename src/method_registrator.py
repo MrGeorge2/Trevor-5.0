@@ -1,11 +1,19 @@
 import typing
 from .data_analysis.scraper import Scraper
+from .data_analysis.models.results import Results
+
+
+"""
+Scrape all symbols from config with result
+"""
+def scrape_w_res(*args):
+    Scraper.scrape_all()
+    Results.count_results()
+
 
 """
 Method for testing args
 """
-
-
 def testFunction(*args) -> None:
     print()
     print("Malý krok pro člověka, ale velký krok pro lidstvo!!")
@@ -17,8 +25,6 @@ def testFunction(*args) -> None:
 """
 Function for printing out registred methods
 """
-
-
 def help(*args) -> None:
     for registredMethod in MethodRegistrator.REGISTRED_FUNCTIONS:
         print(registredMethod)
@@ -29,7 +35,9 @@ class MethodRegistrator:
         help.__name__: help,
         testFunction.__name__: testFunction,
         Scraper.scrape.__name__: Scraper.scrape,
-        Scraper.scrape_all.__name__: Scraper.scrape_all
+        Scraper.scrape_all.__name__: Scraper.scrape_all,
+        Results.count_results.__name__: Results.count_results,
+        scrape_w_res.__name__: scrape_w_res,
 
     }
     APPEND_EXT_TEXT: str = "\n For getting all registred methods please use python3 main.py help"

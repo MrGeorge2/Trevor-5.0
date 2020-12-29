@@ -14,8 +14,9 @@ class Config:
     """
     SCRAPER
     """
-    CHECK_ROW_IN_DB = True
+    CHECK_ROW_IN_DB = False
     SYMBOLS_TO_SCRAPE = [
+        #  --- USDT ---
         "BTCUSDT",
         "ETHUSDT",
         "XRPUSDT",
@@ -45,6 +46,77 @@ class Config:
         "XEMUSDT",
         "ONTUSDT",
         "DOGEUSDT",
+
+        # --- BTC ---
+        "XRPBTC",
+        "ETHBTC",
+        "REEFBTC",
+        "ADABTC",
+        "DOTBTC",
+        "BNBBTC",
+        "LINKBTC",
+        "LTCBTC",
+        "BCHBTC",
+        "RENBTC",
+        "THETABTC",
+        "XMRBTC",
+        "YFIBTC",
+        "UNFIBTC",
+        "WAVESBTC",
+        "ATOMBTC",
+        "ALGOBTC",
+        "INJBTC",
+        "NEOBTC",
+        "KSMBTC",
+        "RUNEBTC",
+        "DASHBTC",
+        "LUNABTC",
+        "UNIBTC",
+        "ZENBTC",
+        "FILBTC",
+        "OCEANBTC",
+
+        # --- ETH ---
+        "XRPETH",
+        "BNBETH",
+        "VETETH",
+        "LTCETH",
+        "LINKETH",
+        "GRTETH",
+        "ZILETH",
+        "THETAETH",
+        "XEMETH",
+        "XLMETH",
+        "EOSETH",
+        "XMRETH",
+        "AAVEETH",
+        "HOTETH",
+        "ENJETH",
+        "DASHETH",
+        "EASYETH",
+        "OMGETH",
+        "NEOETH",
+        "LRCETH",
+        "NASETH",
+        "ZECETH",
+        "WANETH",
+
+        # --- BNB ---
+        "XRPBNB",
+        "ADABNB",
+        "DOTBNB",
+        "LTCBNB",
+        "EOSBNB",
+        "BCHBNB",
+        "MKRBNB",
+        "KP3RBNB",
+        "XMRBNB",
+        "YFIBNB",
+        "YFIIBNB",
+        "AAVEBNB",
+        "ZECBNB",
+        "KSMBNB",
+        "DASHBNB"
     ]
 
     """
