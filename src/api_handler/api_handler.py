@@ -1,5 +1,5 @@
 from binance.client import Client
-from ..config import Config
+from ..globals.config import Config
 from datetime import datetime
 
 
@@ -9,9 +9,10 @@ class ApiHandler(Client):
         self._config: Config = cfg
     
     @classmethod
-    def get_new_ApiHandler(cls) -> type("ApiHandler"):
+    def get_new_ApiHandler(cls):
         return cls(cfg=Config())
-    
+
+
 if __name__ == '__main__':
     cfg = Config()
     apiHandler = ApiHandler.get_new_ApiHandler()
