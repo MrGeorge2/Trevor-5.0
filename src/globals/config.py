@@ -14,7 +14,7 @@ class Config:
     """
     SCRAPER
     """
-    CHECK_ROW_IN_DB = False
+    CHECK_ROW_IN_DB = True
     SYMBOLS_TO_SCRAPE = [
         #  --- USDT ---
         "BTCUSDT",

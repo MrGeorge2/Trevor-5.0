@@ -1,5 +1,6 @@
-SELECT 
-	TCandleApi.id,
+CREATE VIEW IF NOT EXISTS  VJoined as
+SELECT
+    TCandleApi.id,
 	TCandleApi.symbol,
 	TCandleApi.open_time,
 	TCandleApi.open_price,
@@ -15,16 +16,9 @@ SELECT
 	TIndicators.sma21,
 	TIndicators.sma200,
 	TIndicators.ema21,
-	TIndicators.ema200,
-	TResults.up,
-	TResults.down
-
+	TIndicators.ema200
 
 FROM TCandleApi
-
-INNER JOIN TResults
-	ON TCandleApi.symbol=TResults.symbol
-	AND TCandleApi.open_time=TResults.open_time
 
 INNER JOIN TIndicators
 	ON TCandleApi.symbol=TIndicators.symbol
