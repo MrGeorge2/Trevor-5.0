@@ -1,6 +1,7 @@
 from ...globals.db import DB
 from sqlalchemy import Table, Column, Integer, String, DATETIME, DECIMAL, Boolean
 from typing import List
+import random
 
 
 db = DB.get_globals()

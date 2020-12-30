@@ -3,7 +3,7 @@ import os
 
 
 class Config:
-    TIMESTEPS = 200
+    TIMESTEPS = 100
 
     DEBUGING = True
     MARGIN_TRADING = False
@@ -141,6 +141,12 @@ class Config:
     API_KEY = "4ccjv0lPKB4CTJf4p4EGbs3N1zvbNpFs2f6GNHHxv4DggoJ2eF4lO4Ee6E6xmOxI"
     S_KEY = "RjV0u0Psrk5SPefQtWAEIcVUeXkoVWcpY5CgZEtyENRfMjPajK37t1Evq4fDwTd0"
     TIMEOUT = 20
+
+    """
+    ### SAMPLES ###
+    """
+    RANDOM_SYMBOLS_FOR_SAMPLE = 5
+    
 
     """
     #### MODEL ####

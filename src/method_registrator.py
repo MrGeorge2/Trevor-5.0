@@ -75,3 +75,4 @@ class MethodRegistrator:
     def run(self: str):
         self._check_function_registred()
         self.REGISTRED_FUNCTIONS[self.__function_name](*self.__arguments)
+
