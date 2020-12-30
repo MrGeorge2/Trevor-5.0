@@ -1,4 +1,17 @@
 import typing
+from .data_analysis.scraper import Scraper
+from .data_analysis.models.results import Results
+from .data_analysis.models.indicators import Indicators
+
+
+"""
+Scrape all symbols from config with result
+"""
+def full_fetch(*args):
+    Scraper.scrape_all()
+    Results.count_results()
+    Indicators.count_indicators()
+
 
 """
 Method for testing args
@@ -10,19 +23,25 @@ def testFunction(*args) -> None:
     for par in args:
         print(par)
 
+
 """
 Function for printing out registred methods
 """
-def help() -> None:
+def help(*args) -> None:
     for registredMethod in MethodRegistrator.REGISTRED_FUNCTIONS:
         print(registredMethod)
 
 
 class MethodRegistrator:
-
-    REGISTRED_FUNCTIONS: typing.Dict[str, typing.Callable[[typing.List[str]], None]]= {
+    REGISTRED_FUNCTIONS: typing.Dict[str, typing.Callable[[typing.List[str]], None]] = {
         help.__name__: help,
         testFunction.__name__: testFunction,
+        Scraper.scrape.__name__: Scraper.scrape,
+        Scraper.scrape_all.__name__: Scraper.scrape_all,
+        Results.count_results.__name__: Results.count_results,
+        Indicators.count_indicators.__name__: Indicators.count_indicators,
+        full_fetch.__name__: full_fetch,
+
     }
     APPEND_EXT_TEXT: str = "\n For getting all registred methods please use python3 main.py help"
 
@@ -42,18 +61,18 @@ class MethodRegistrator:
     """
     Testuje zda je metoda zaregistrovana
     """
+
     def _check_function_registred(self):
         if self.__function_name in self.REGISTRED_FUNCTIONS:
             return True
         else:
-            raise Exception(f"Function is not registred! You have entered: {self.__function_name}!" + self.APPEND_EXT_TEXT)
+            raise Exception(
+                f"Function is not registred! You have entered: {self.__function_name}!" + self.APPEND_EXT_TEXT)
 
     """
     Spustí metody z spolu s parametry spolu s parametry pro metodu
     """
+
     def run(self: str):
         self._check_function_registred()
         self.REGISTRED_FUNCTIONS[self.__function_name](*self.__arguments)
-
-            
-

@@ -2,8 +2,47 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run test",
-            "command": "${config:envPath} ${config:mainPath} testFunction",
+            "label": "Run docker it volumes",
+            "command": "docker run --rm -it -v ${config:mainPath}:/trevor/ trevor5:latest",
+            "type": "shell",
+            "args": [],
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "reveal": "always"
+            },
+            "group": "build"
+        },
+        {
+            "label": "Test method",
+            "command": "${config:envPath} ${config:mainPath}main.py testFunction",
+            "type": "shell",
+            "args": [],
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "reveal": "always"
+            },
+            "group": "build"
+        },
+        {
+            "label": "Registrated methods",
+            "command": "${config:envPath} ${config:mainPath}main.py help",
+            "type": "shell",
+            "args": [],
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "presentation": {
+                "reveal": "always"
+            },
+            "group": "build"
+        },
+        {
+            "label": "Scrape (param symbol)",
+            "command": "${config:envPath} ${config:mainPath}main.py scrape",
             "type": "shell",
             "args": [],
             "problemMatcher": [
@@ -14,5 +53,5 @@
             },
             "group": "build"
         }
-    ],
+    ]
 }

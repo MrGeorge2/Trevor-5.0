@@ -1,6 +1,6 @@
 {
-    "python.pythonPath": "C:\\Users\\hejdu\\Anaconda3\\envs\\gputest\\gputest\\python.exe",
-    "envPath": "C:/Users/hejdu/Anaconda3/envs/gputest/gputest/python.exe",
-    "mainPath": "e:/Projects/Trevor-5.0/main.py"
+    "python.pythonPath": "C:\\Users\\hejdu\\Anaconda3\\envs\\trevorVenv\\python.exe",
+    "envPath": "C:/Users/hejdu/Anaconda3/envs/trevorVenv/python.exe",
+    "mainPath": "/home/hejdusek/Documents/Trevor-5.0/"
     
 }
