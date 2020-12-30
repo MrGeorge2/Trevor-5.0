@@ -1,5 +1,6 @@
-SELECT 
-	TCandleApi.id,
+CREATE VIEW IF NOT EXISTS  VJoinedVRes as
+SELECT
+    TCandleApi.id,
 	TCandleApi.symbol,
 	TCandleApi.open_time,
 	TCandleApi.open_price,

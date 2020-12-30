@@ -41,7 +41,6 @@ class MethodRegistrator:
         Results.count_results.__name__: Results.count_results,
         Indicators.count_indicators.__name__: Indicators.count_indicators,
         full_fetch.__name__: full_fetch,
-
     }
     APPEND_EXT_TEXT: str = "\n For getting all registred methods please use python3 main.py help"
 
