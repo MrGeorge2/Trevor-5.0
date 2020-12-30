@@ -7,6 +7,7 @@ from sqlalchemy import Table, Column, Integer, String, DATETIME, DECIMAL, Boolea
 from typing import List
 import random
 import tensorflow as tf
+import numpy as np
 
 
 class Samples(ViewWithtRes):
@@ -18,28 +19,28 @@ class Samples(ViewWithtRes):
             print(f"Creating samples from symbol={symbol}")
 
             candles: List[ViewWithtRes] = db.SESSION.query(ViewWithtRes).filter(ViewWithtRes.symbol == symbol)
-            empty_variable = tf.zeros(shape=(1, 1, Config.NUMBER_OF_COLUMNS - 1))
+            tabulka_jedne_meny = tf.zeros(shape=(1, 1, Config.NUMBER_OF_COLUMNS - 1))
 
+            radek = np.zeros(shape=(1, 1, Config.NUMBER_OF_COLUMNS - 1))
             for i, candle in enumerate(candles):
-                pomocna = tf.zeros(shape=(1, 1, Config.NUMBER_OF_COLUMNS - 1))
-                
-                open_time = candle.open_time
-                open_price = candle.open_price
-                high_price = candle.high_price
-                low_price = candle.low_price
-                close_price = candle.close_price
-                volume = candle.volume
-                close_time = candle.close_price
-                quote_asset_volume = candle.quote_asset_volume
-                number_of_trades = candle.number_of_trades
-                taker_buy_base_asset_volume = candle.taker_buy_base_asset_volume
-                taker_buy_quote_asset_volume = candle.taker_buy_quote_asset_volume
-                sma21 = candle.sma21
-                sma200 = candle.sma200
-                ema21 = candle.ema21
-                ema200 = candle.ema200
-                up = candle.up
-                down = candle.down
+                radek[1, 1, 0] = candle.open_time
+                radek[1, 1, 1] = candle.open_price
+                radek[1, 1, 2] = candle.high_price
+                radek[1, 1, 3] = candle.low_price
+                radek[1, 1, 4] = candle.close_price
+                radek[1, 1, 5] = candle.volume
+                radek[1, 1, 6] = candle.close_price
+                radek[1, 1, 7] = candle.quote_asset_volume
+                radek[1, 1, 8] = candle.number_of_trades
+                radek[1, 1, 9] = candle.taker_buy_base_asset_volume
+                radek[1, 1, 10] = candle.taker_buy_quote_asset_volume
+                radek[1, 1, 11] = candle.sma21
+                radek[1, 1, 12] = candle.sma200
+                radek[1, 1, 13] = candle.ema21
+                radek[1, 1, 14] = candle.ema200
+                radek[1, 1, 15] = candle.up
+                radek[1, 1, 16] = candle.down
+                tabulka_jedne_meny = tf.concat([tabulka_jedne_meny, tf.Variable(radek)], axis=1)
+            tabulka_jedne_meny = tabulka_jedne_meny[1, 1:, :]
 
-
-                print(open_time)
+            print(" a ")
