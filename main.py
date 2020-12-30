@@ -7,8 +7,6 @@ import sys
 # První parametr pro metodu
 DEBUG_SYS_ARGV: List[str] = [
     " ",                
-    "testFunction",
-    "BTCUSDT",
     "create_samples",
 ]
 
