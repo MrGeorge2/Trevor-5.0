@@ -1,14 +1,16 @@
 import typing
 from .data_analysis.scraper import Scraper
 from .data_analysis.models.results import Results
+from .data_analysis.models.indicators import Indicators
 
 
 """
 Scrape all symbols from config with result
 """
-def scrape_w_res(*args):
+def full_fetch(*args):
     Scraper.scrape_all()
     Results.count_results()
+    Indicators.count_indicators()
 
 
 """
@@ -37,7 +39,8 @@ class MethodRegistrator:
         Scraper.scrape.__name__: Scraper.scrape,
         Scraper.scrape_all.__name__: Scraper.scrape_all,
         Results.count_results.__name__: Results.count_results,
-        scrape_w_res.__name__: scrape_w_res,
+        Indicators.count_indicators.__name__: Indicators.count_indicators,
+        full_fetch.__name__: full_fetch,
 
     }
     APPEND_EXT_TEXT: str = "\n For getting all registred methods please use python3 main.py help"

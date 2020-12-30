@@ -7,7 +7,7 @@ import sys
 # První parametr pro metodu
 DEBUG_SYS_ARGV: List[str] = [
     " ",                
-    "scrape_w_res",
+    "full_fetch",
     "BTCUSDT",
 ]
 
