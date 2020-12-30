@@ -146,7 +146,7 @@ class Config:
     ### SAMPLES ###
     """
     RANDOM_SYMBOLS_FOR_SAMPLE = 5
-    
+    NUMBER_OF_COLUMNS = 17
 
     """
     #### MODEL ####
