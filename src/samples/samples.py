@@ -1,16 +1,15 @@
 from ..globals.config import Config
-from ..data_analysis.models.views import ViewWithtRes
-import tensorflow as tf
-from ..data_analysis.models.candle_api import CandleApi
+from ..data_analysis.models.views import ViewWithtRes, ViewTypeWithRes
 from ..globals.db import DB
-from sqlalchemy import Table, Column, Integer, String, DATETIME, DECIMAL, Boolean
+from sqlalchemy import Table, Column, Integer, String, DATETIME, DECIMAL, Boolean, asc
 from typing import List
 import random
 import tensorflow as tf
 import numpy as np
 
 
-class Samples(ViewWithtRes):
+class Samples:
+
 
     @staticmethod
     def create_samples():
@@ -18,7 +17,9 @@ class Samples(ViewWithtRes):
         for symbol in random.sample(Config.SYMBOLS_TO_SCRAPE, Config.RANDOM_SYMBOLS_FOR_SAMPLE):
             print(f"Creating samples from symbol={symbol}")
 
-            candles: List[ViewWithtRes] = db.SESSION.query(ViewWithtRes).filter(ViewWithtRes.symbol == symbol)
+            candles: List[ViewTypeWithRes] = db.SESSION.query(ViewWithtRes).filter(ViewWithtRes.symbol == symbol).order_by(
+                asc(ViewWithtRes.open_time)).limit(100).all()
+
             tabulka_jedne_meny = tf.zeros(shape=(1, 1, Config.NUMBER_OF_COLUMNS - 1))
 
             radek = np.zeros(shape=(1, 1, Config.NUMBER_OF_COLUMNS - 1))
