@@ -21,7 +21,7 @@ class Samples:
             asc(ViewWithtRes.open_time)).all()  # pred .all() .limit(100)
 
     def create3d_samples(self, one_pair_array):
-        x = np.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS, Config.TIMESTEPS))
+        x = np.zeros(shape=(1, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
         y = np.zeros(shape=(1, 1))
 
         candle_counter = 0
@@ -33,7 +33,7 @@ class Samples:
 
         for i in range(first_range - 1):    # -1 kvuli timesteps
             print(i)
-            batch_array_1 = np.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS, Config.TIMESTEPS))
+            batch_array_1 = np.zeros(shape=(1, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
 
             if i == first_range - 2:
                 second_range += second_range_expansion
