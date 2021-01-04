@@ -6,6 +6,7 @@ from typing import List
 import random
 import tensorflow as tf
 import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 
 
 class Samples:
@@ -19,14 +20,48 @@ class Samples:
             ViewWithtRes.symbol == self.symbol).order_by(
             asc(ViewWithtRes.open_time)).all()  # pred .all() .limit(100)
 
-    def count2d_samples(self):
-        pass
+    def create3d_samples(self, one_pair_array):
+        samples_3d = tf.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS, Config.TIMESTEPS))
 
-    def count3d_samples(self):
-        pass
+        candle_counter = 0
 
-    def normalize(self):
-        pass
+        first_range = 10
+        second_range = 80
+
+        for i in range(first_range):
+            print(i)
+            for j in range(second_range):
+
+                sample_2d = self.create2d_sample(one_pair_array[candle_counter, :])
+                samples_3d = tf.concat((samples_3d, sample_2d), 0)
+
+            a = a[1:, :, :]
+            b = tf.concat((b, a), 0)
+            a = tf.zeros(shape=(1, 20, 100))
+
+            b = b[1:, :, :]
+            c = tf.concat((c, b), 0)
+            b = tf.zeros(shape=(1, 20, 100))
+
+            c = c[1:, :, :]
+
+    def create2d_sample(self, sample_2d):
+        sample_2d[:, 1:5] = self.normalize(sample_2d[:, 1:5])
+        sample_2d[:, 5] = self.normalize(sample_2d[:, 5])
+        sample_2d[:, 5] = self.normalize(sample_2d[:, 5])
+        sample_2d[:, 6] = self.normalize(sample_2d[:, 6])
+        sample_2d[:, 7] = self.normalize(sample_2d[:, 7])
+        sample_2d[:, 8] = self.normalize(sample_2d[:, 8])
+        sample_2d[:, 9] = self.normalize(sample_2d[:, 9])
+        sample_2d[:, 10:12] = self.normalize(sample_2d[:, 10:12])
+        sample_2d[:, 12:14] = self.normalize(sample_2d[:, 10:14])
+
+        return sample_2d
+
+    def normalize(self, array):
+        scaler = MinMaxScaler()
+        normalized_array = scaler.fit_transform(array)
+        return normalized_array
 
     def normalize_time(self, dt):
         """0-24 hod do rozsahu 0-1"""
@@ -35,30 +70,32 @@ class Samples:
 
     def create_samples_for_symbol(self):
         self.get_candles()
-        tabulka_jedne_meny = np.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS))
+        one_pair_array = np.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS))
 
         for i, candle in enumerate(self.candles):
-            radek = np.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS))
+            one_candle_array = np.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS))
 
-            radek[0, 0] = self.normalize_time(candle.open_time)
-            radek[0, 1] = candle.open_price
-            radek[0, 2] = candle.high_price
-            radek[0, 3] = candle.low_price
-            radek[0, 4] = candle.close_price
-            radek[0, 5] = candle.volume
-            radek[0, 6] = candle.quote_asset_volume
-            radek[0, 7] = candle.number_of_trades
-            radek[0, 8] = candle.taker_buy_base_asset_volume
-            radek[0, 9] = candle.taker_buy_quote_asset_volume
-            radek[0, 10] = candle.sma21
-            radek[0, 11] = candle.sma200
-            radek[0, 12] = candle.ema21
-            radek[0, 13] = candle.ema200
-            radek[0, 14] = candle.up
-            radek[0, 15] = candle.down
+            one_candle_array[0, 0] = self.normalize_time(candle.open_time)
+            one_candle_array[0, 1] = candle.open_price
+            one_candle_array[0, 2] = candle.high_price
+            one_candle_array[0, 3] = candle.low_price
+            one_candle_array[0, 4] = candle.close_price
+            one_candle_array[0, 5] = candle.volume
+            one_candle_array[0, 6] = candle.quote_asset_volume
+            one_candle_array[0, 7] = candle.number_of_trades
+            one_candle_array[0, 8] = candle.taker_buy_base_asset_volume
+            one_candle_array[0, 9] = candle.taker_buy_quote_asset_volume
+            one_candle_array[0, 10] = candle.sma21
+            one_candle_array[0, 11] = candle.sma200
+            one_candle_array[0, 12] = candle.ema21
+            one_candle_array[0, 13] = candle.ema200
+            one_candle_array[0, 14] = candle.up
+            one_candle_array[0, 15] = candle.down
 
-            tabulka_jedne_meny = np.concatenate((tabulka_jedne_meny, radek), axis=0)
-        tabulka_jedne_meny = tabulka_jedne_meny[1:, :]
+            one_pair_array = np.concatenate((one_pair_array, one_candle_array), axis=0)
+        one_pair_array = one_pair_array[1:, :]
+
+        self.create3d_samples(one_pair_array)
         x=10
 
 
