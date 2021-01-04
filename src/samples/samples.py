@@ -7,7 +7,7 @@ import random
 import tensorflow as tf
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
-
+import math
 
 class Samples:
     def __init__(self, symbol):
@@ -24,36 +24,30 @@ class Samples:
         samples_3d_x = tf.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS, Config.TIMESTEPS))
         samples_3d_y = tf.zeros(shape=(1, 1))
 
-        support_array_1 = tf.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS, Config.TIMESTEPS))
-
         candle_counter = 0
 
-        first_range = 100
-        second_range = 50
+        number_of_candles = np.shape(one_pair_array)[0]
+        second_range = Config.TIMESTEPS
+        first_range = math.floor(number_of_candles/second_range)
+        second_range_expansion = number_of_candles - (first_range*second_range)
 
-        for i in range(first_range):
+        for i in range(first_range - 1):    # -1 kvuli timesteps
             print(i)
-            support_array_1 = tf.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS, Config.TIMESTEPS))
+            batch_array_1 = tf.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS, Config.TIMESTEPS))
+            if i == first_range - 2:
+                second_range += second_range_expansion
             for j in range(second_range):
                 sample_2d, y = self.sample_preprocessing(one_pair_array[candle_counter:candle_counter+Config.TIMESTEPS, :])
                 samples_3d_y = tf.concat([samples_3d_y, y], 0)
-                support_array_1 = tf.concat([support_array_1, sample_2d], 0)
+                batch_array_1 = tf.concat([batch_array_1, sample_2d], 0)
                 candle_counter += 1
 
-            support_array_1 = support_array_1[1:, :, :]
-            samples_3d = tf.concat([samples_3d_x, support_array_1], 0)
-            samples_3d_x = samples_3d_x[1:, :, :]
-            samples_3d_y = samples_3d_y[1:, :]
+            batch_array_1 = batch_array_1[1:, :, :]
+            samples_3d = tf.concat([samples_3d_x, batch_array_1], 0)
 
-            a = a[1:, :, :]
-            b = tf.concat((b, a), 0)
-            a = tf.zeros(shape=(1, 20, 100))
+        samples_3d_x = samples_3d_x[1:, :, :]
+        samples_3d_y = samples_3d_y[1:, :]
 
-            b = b[1:, :, :]
-            c = tf.concat((c, b), 0)
-            b = tf.zeros(shape=(1, 20, 100))
-
-            c = c[1:, :, :]
 
     def sample_preprocessing(self, sample_2d):
         sample_2d[:, 1:5] = self.normalize(sample_2d[:, 1:5])
