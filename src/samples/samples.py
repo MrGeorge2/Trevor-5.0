@@ -8,8 +8,9 @@ import tensorflow as tf
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 import math
-
+import datetime
 from copy import deepcopy
+
 
 class Samples:
     def __init__(self, symbol):
@@ -41,9 +42,10 @@ class Samples:
             if i == first_range - 2:
                 second_range += second_range_expansion
             for j in range(second_range):
-                sample_3d, y_sample = self.sample_preprocessing(input_array[candle_counter:candle_counter+Config.TIMESTEPS, :])
+                normalized_array, y_sample = self.sample_preprocessing(input_array[candle_counter:candle_counter+Config.TIMESTEPS, :])
+                normalized_array = np.reshape(normalized_array, newshape=(1, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
                 y = np.concatenate((y, np.array([y_sample]).reshape(1, 1)), axis=0)
-                batch_array_1 = np.concatenate((batch_array_1, sample_3d), axis=0)
+                batch_array_1 = np.concatenate((batch_array_1, normalized_array), axis=0)
                 candle_counter += 1
 
             batch_array_1 = batch_array_1[1:, :, :]
@@ -68,9 +70,8 @@ class Samples:
 
         y = input_array[-1, 14]
         normalized_array = normalized_array[:, :-2]
-        sample_3d = np.reshape(normalized_array, newshape=(1, np.shape(sample_2d)[0], np.shape(sample_2d)[1]))
-
-        return sample_3d, y
+        # sample_3d = np.reshape(normalized_array, newshape=(1, np.shape(sample_2d)[0], np.shape(sample_2d)[1]))
+        return normalized_array, y
 
     def normalize(self, array_2d):
         """
@@ -113,11 +114,13 @@ class Samples:
 
             one_pair_array = np.concatenate((one_pair_array, one_candle_array), axis=0).astype(np.float32)
         one_pair_array = one_pair_array[1:, :]
+        o_p_a = deepcopy(one_pair_array)
 
-        x, y = self.create3d_samples(deepcopy(one_pair_array))
+        time1 = datetime.datetime.now()
+        x, y = self.create3d_samples(o_p_a)
+        time2 = datetime.datetime.now()
+        print(f"Cas : {time2-time1}")
         return x, y
-
-
 
     @classmethod
     def get_sample_cls(cls, symbol):
