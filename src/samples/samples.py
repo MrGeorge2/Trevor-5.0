@@ -9,6 +9,8 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 import math
 
+from copy import deepcopy
+
 class Samples:
     def __init__(self, symbol):
         self.symbol = symbol
@@ -21,6 +23,7 @@ class Samples:
             asc(ViewWithtRes.open_time)).all()  # pred .all() .limit(100)
 
     def create3d_samples(self, one_pair_array):
+        input_array = deepcopy(one_pair_array)
         x = np.zeros(shape=(1, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
         y = np.zeros(shape=(1, 1))
 
@@ -38,7 +41,7 @@ class Samples:
             if i == first_range - 2:
                 second_range += second_range_expansion
             for j in range(second_range):
-                sample_3d, y_sample = self.sample_preprocessing(one_pair_array[candle_counter:candle_counter+Config.TIMESTEPS, :])
+                sample_3d, y_sample = self.sample_preprocessing(input_array[candle_counter:candle_counter+Config.TIMESTEPS, :])
                 y = np.concatenate((y, np.array([y_sample]).reshape(1, 1)), axis=0)
                 batch_array_1 = np.concatenate((batch_array_1, sample_3d), axis=0)
                 candle_counter += 1
@@ -52,18 +55,20 @@ class Samples:
         return x, y
 
     def sample_preprocessing(self, sample_2d):
-        sample_2d[:, 1:5] = self.normalize(sample_2d[:, 1:5])
-        sample_2d[:, 5] = self.normalize(sample_2d[:, 5])     # rozsah 5:6 je furt jen sloupec 5, ale ma to 2d shape, ktery je potreba pro MinMaxScaler
-        sample_2d[:, 6] = self.normalize(sample_2d[:, 6])
-        sample_2d[:, 7] = self.normalize(sample_2d[:, 7])
-        sample_2d[:, 8] = self.normalize(sample_2d[:, 8])
-        sample_2d[:, 9] = self.normalize(sample_2d[:, 9])
-        sample_2d[:, 10:12] = self.normalize(sample_2d[:, 10:12])
-        sample_2d[:, 12:14] = self.normalize(sample_2d[:, 12:14])
+        input_array = deepcopy(sample_2d)
+        normalized_array = deepcopy(sample_2d)
+        normalized_array[:, 1:5] = self.normalize(input_array[:, 1:5])
+        normalized_array[:, 5] = self.normalize(input_array[:, 5])     # rozsah 5:6 je furt jen sloupec 5, ale ma to 2d shape, ktery je potreba pro MinMaxScaler
+        normalized_array[:, 6] = self.normalize(input_array[:, 6])
+        normalized_array[:, 7] = self.normalize(input_array[:, 7])
+        normalized_array[:, 8] = self.normalize(input_array[:, 8])
+        normalized_array[:, 9] = self.normalize(input_array[:, 9])
+        normalized_array[:, 10:12] = self.normalize(input_array[:, 10:12])
+        normalized_array[:, 12:14] = self.normalize(input_array[:, 12:14])
 
-        y = sample_2d[-1, 14]
-        sample_2d = sample_2d[:, :-2]
-        sample_3d = np.reshape(sample_2d, newshape=(1, np.shape(sample_2d)[0], np.shape(sample_2d)[1]))
+        y = input_array[-1, 14]
+        normalized_array = normalized_array[:, :-2]
+        sample_3d = np.reshape(normalized_array, newshape=(1, np.shape(sample_2d)[0], np.shape(sample_2d)[1]))
 
         return sample_3d, y
 
@@ -109,8 +114,8 @@ class Samples:
             one_pair_array = np.concatenate((one_pair_array, one_candle_array), axis=0).astype(np.float32)
         one_pair_array = one_pair_array[1:, :]
 
-        x, y = self.create3d_samples(one_pair_array)
-        return self.create3d_samples(one_pair_array)
+        x, y = self.create3d_samples(deepcopy(one_pair_array))
+        return x, y
 
 
 
