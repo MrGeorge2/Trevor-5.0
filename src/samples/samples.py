@@ -17,7 +17,7 @@ class Samples:
         db = DB.get_globals()
         self.candles = db.SESSION.query(ViewWithtRes).filter(
             ViewWithtRes.symbol == self.symbol).order_by(
-            asc(ViewWithtRes.open_time)).limit(100).all()
+            asc(ViewWithtRes.open_time)).all()  # pred .all() .limit(100)
 
     def count2d_samples(self):
         pass
@@ -28,30 +28,39 @@ class Samples:
     def normalize(self):
         pass
 
+    def normalize_time(self, dt):
+        """0-24 hod do rozsahu 0-1"""
+        normalized_time = float(dt.hour*3600+dt.minute*60+dt.second)/86400
+        return normalized_time
+
     def create_samples_for_symbol(self):
-        tabulka_jedne_meny = tf.zeros(shape=(1, 1, Config.NUMBER_OF_COLUMNS - 1))
-        radek = np.zeros(shape=(1, 1, Config.NUMBER_OF_COLUMNS - 1))
+        self.get_candles()
+        tabulka_jedne_meny = np.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS))
 
         for i, candle in enumerate(self.candles):
-            radek[1, 1, 0] = candle.open_time
-            radek[1, 1, 1] = candle.open_price
-            radek[1, 1, 2] = candle.high_price
-            radek[1, 1, 3] = candle.low_price
-            radek[1, 1, 4] = candle.close_price
-            radek[1, 1, 5] = candle.volume
-            radek[1, 1, 6] = candle.close_price
-            radek[1, 1, 7] = candle.quote_asset_volume
-            radek[1, 1, 8] = candle.number_of_trades
-            radek[1, 1, 9] = candle.taker_buy_base_asset_volume
-            radek[1, 1, 10] = candle.taker_buy_quote_asset_volume
-            radek[1, 1, 11] = candle.sma21
-            radek[1, 1, 12] = candle.sma200
-            radek[1, 1, 13] = candle.ema21
-            radek[1, 1, 14] = candle.ema200
-            radek[1, 1, 15] = candle.up
-            radek[1, 1, 16] = candle.down
-            tabulka_jedne_meny = tf.concat([tabulka_jedne_meny, tf.Variable(radek)], axis=1)
-        tabulka_jedne_meny = tabulka_jedne_meny[1, 1:, :]
+            radek = np.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS))
+
+            radek[0, 0] = self.normalize_time(candle.open_time)
+            radek[0, 1] = candle.open_price
+            radek[0, 2] = candle.high_price
+            radek[0, 3] = candle.low_price
+            radek[0, 4] = candle.close_price
+            radek[0, 5] = candle.volume
+            radek[0, 6] = candle.quote_asset_volume
+            radek[0, 7] = candle.number_of_trades
+            radek[0, 8] = candle.taker_buy_base_asset_volume
+            radek[0, 9] = candle.taker_buy_quote_asset_volume
+            radek[0, 10] = candle.sma21
+            radek[0, 11] = candle.sma200
+            radek[0, 12] = candle.ema21
+            radek[0, 13] = candle.ema200
+            radek[0, 14] = candle.up
+            radek[0, 15] = candle.down
+
+            tabulka_jedne_meny = np.concatenate((tabulka_jedne_meny, radek), axis=0)
+        tabulka_jedne_meny = tabulka_jedne_meny[1:, :]
+        x=10
+
 
     @classmethod
     def get_sample_cls(cls, symbol):
