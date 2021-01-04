@@ -68,8 +68,13 @@ class Samples:
         return sample_3d, y
 
     def normalize(self, array):
+        """
         scaler = MinMaxScaler()
         normalized_array = scaler.fit_transform(array)
+        """
+        min = array.min()
+        max = array.max()
+        normalized_array = (array - min) / (max - min)
         return normalized_array
 
     def normalize_time(self, dt):
@@ -101,7 +106,7 @@ class Samples:
             one_candle_array[0, 14] = candle.up
             one_candle_array[0, 15] = candle.down
 
-            one_pair_array = np.concatenate((one_pair_array, one_candle_array), axis=0)
+            one_pair_array = np.concatenate((one_pair_array, one_candle_array), axis=0).astype(np.float32)
         one_pair_array = one_pair_array[1:, :]
 
         x, y = self.create3d_samples(one_pair_array)
