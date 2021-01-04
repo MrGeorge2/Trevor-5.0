@@ -53,11 +53,11 @@ class Samples:
 
     def sample_preprocessing(self, sample_2d):
         sample_2d[:, 1:5] = self.normalize(sample_2d[:, 1:5])
-        sample_2d[:, 5:6] = self.normalize(sample_2d[:, 5:6])     # rozsah 5:6 je furt jen sloupec 5, ale ma to 2d shape, ktery je potreba pro MinMaxScaler
-        sample_2d[:, 6:7] = self.normalize(sample_2d[:, 6:7])
-        sample_2d[:, 7:8] = self.normalize(sample_2d[:, 7:8])
-        sample_2d[:, 8:9] = self.normalize(sample_2d[:, 8:9])
-        sample_2d[:, 9:10] = self.normalize(sample_2d[:, 9:10])
+        sample_2d[:, 5] = self.normalize(sample_2d[:, 5])     # rozsah 5:6 je furt jen sloupec 5, ale ma to 2d shape, ktery je potreba pro MinMaxScaler
+        sample_2d[:, 6] = self.normalize(sample_2d[:, 6])
+        sample_2d[:, 7] = self.normalize(sample_2d[:, 7])
+        sample_2d[:, 8] = self.normalize(sample_2d[:, 8])
+        sample_2d[:, 9] = self.normalize(sample_2d[:, 9])
         sample_2d[:, 10:12] = self.normalize(sample_2d[:, 10:12])
         sample_2d[:, 12:14] = self.normalize(sample_2d[:, 12:14])
 
@@ -67,14 +67,14 @@ class Samples:
 
         return sample_3d, y
 
-    def normalize(self, array):
+    def normalize(self, array_2d):
         """
         scaler = MinMaxScaler()
         normalized_array = scaler.fit_transform(array)
         """
-        min = array.min()
-        max = array.max()
-        normalized_array = (array - min) / (max - min)
+        minumum = array_2d.min()
+        maximum = array_2d.max()
+        normalized_array = (array_2d - minumum) / (maximum - minumum)
         return normalized_array
 
     def normalize_time(self, dt):
