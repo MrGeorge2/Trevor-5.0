@@ -21,8 +21,8 @@ class Samples:
             asc(ViewWithtRes.open_time)).all()  # pred .all() .limit(100)
 
     def create3d_samples(self, one_pair_array):
-        samples_3d_x = tf.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS, Config.TIMESTEPS))
-        samples_3d_y = tf.zeros(shape=(1, 1))
+        x = tf.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS, Config.TIMESTEPS))
+        y = tf.zeros(shape=(1, 1))
 
         candle_counter = 0
 
@@ -38,31 +38,31 @@ class Samples:
                 second_range += second_range_expansion
             for j in range(second_range):
                 sample_2d, y = self.sample_preprocessing(one_pair_array[candle_counter:candle_counter+Config.TIMESTEPS, :])
-                samples_3d_y = tf.concat([samples_3d_y, y], 0)
+                y = tf.concat([y, y], 0)
                 batch_array_1 = tf.concat([batch_array_1, sample_2d], 0)
                 candle_counter += 1
 
             batch_array_1 = batch_array_1[1:, :, :]
-            samples_3d = tf.concat([samples_3d_x, batch_array_1], 0)
+            samples_3d = tf.concat([x, batch_array_1], 0)
 
-        samples_3d_x = samples_3d_x[1:, :, :]
-        samples_3d_y = samples_3d_y[1:, :]
+        x = x[1:, :, :]
+        y = y[1:, :]
 
+        return x, y
 
     def sample_preprocessing(self, sample_2d):
         sample_2d[:, 1:5] = self.normalize(sample_2d[:, 1:5])
-        sample_2d[:, 5] = self.normalize(sample_2d[:, 5])
-        sample_2d[:, 5] = self.normalize(sample_2d[:, 5])
-        sample_2d[:, 6] = self.normalize(sample_2d[:, 6])
-        sample_2d[:, 7] = self.normalize(sample_2d[:, 7])
-        sample_2d[:, 8] = self.normalize(sample_2d[:, 8])
-        sample_2d[:, 9] = self.normalize(sample_2d[:, 9])
+        sample_2d[:, 5:6] = self.normalize(sample_2d[:, 5:6])     # rozsah 5:6 je furt jen sloupec 5, ale ma to 2d shape, ktery je potreba pro MinMaxScaler
+        sample_2d[:, 6:7] = self.normalize(sample_2d[:, 6:7])
+        sample_2d[:, 7:8] = self.normalize(sample_2d[:, 7:8])
+        sample_2d[:, 8:9] = self.normalize(sample_2d[:, 8:9])
+        sample_2d[:, 9:10] = self.normalize(sample_2d[:, 9:10])
         sample_2d[:, 10:12] = self.normalize(sample_2d[:, 10:12])
-        sample_2d[:, 12:14] = self.normalize(sample_2d[:, 10:14])
+        sample_2d[:, 12:14] = self.normalize(sample_2d[:, 12:14])
 
         y = tf.Variable(sample_2d[-1, 14])
-        sample_2d = sample_2d[:, :-2]
-        sample_3d = np.reshape(sample_2d, newshape=(1, np.shape(sample_2d)[0], np.shape(sample_2d)[1]))
+        sample_2d = sample_2d[:, :-2].astype(float)
+        sample_3d = np.reshape(sample_2d, newshape=(1, np.shape(sample_2d)[0], np.shape(sample_2d)[1])).astype(float)
 
         return tf.Variable(sample_3d), y
 
@@ -100,11 +100,14 @@ class Samples:
             one_candle_array[0, 14] = candle.up
             one_candle_array[0, 15] = candle.down
 
-            one_pair_array = np.concatenate((one_pair_array, one_candle_array), axis=0)
-        one_pair_array = one_pair_array[1:, :]
+            one_pair_array = np.concatenate((one_pair_array, one_candle_array), axis=0).astype(float)
+        one_pair_array = one_pair_array[1:, :].astype(float)
 
-        self.create3d_samples(one_pair_array)
-        x=10
+        x, y = self.create3d_samples(one_pair_array)
+        x = x.numpy()
+        y = y.numpy()
+        return self.create3d_samples(one_pair_array)
+
 
 
     @classmethod
