@@ -12,20 +12,23 @@ class ModelNN:
         self.x_test = x_test
         self.y_test = y_test
 
-        self.model = self.nacteni_modelu()
-        self.vypis_unique()
+        self.model = self.model_load()
+        self.print_unique()
 
-    def vypis_unique(self):
+    def print_unique(self):
         unique, counts = np.unique(self.y_train, return_counts=True)
         print(f"Četnosti kategorií v tréninkovém datasetu: {dict(zip(unique, counts))}")
 
-    def nacteni_modelu(self):
+    def model_load(self):
         if os.path.exists(Config.PATH_MODEL):
             model = load_model(Config.PATH_MODEL)
             return model
         else:
             self.create_model()
-            self.nacteni_modelu()
+            self.model_load()
+
+    def model_save(self):
+        self.model.save(Config.PATH_MODEL)
 
     def create_model(self):
         self.model = Sequential()
@@ -49,8 +52,8 @@ class ModelNN:
 
         self.model.add(Dense(units=2, activation='softmax'))
         self.model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=["accuracy"])
-        self.model.save(Config.PATH_MODEL)
+        self.model_save()
 
     def train_model(self):
         self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=64, validation_data=(self.x_test, self.y_test))
-        self.model.save(Config.PATH_MODEL)
+        self.model_save()
