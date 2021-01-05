@@ -41,10 +41,11 @@ class Samples:
             if i == first_range - 2:
                 second_range += second_range_expansion
             for j in range(second_range):
-                normalized_array, y_sample = self.sample_preprocessing(input_array[candle_counter:candle_counter+Config.TIMESTEPS, :])
-                normalized_array = np.reshape(normalized_array, newshape=(1, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
-                y = np.concatenate((y, np.array([y_sample]).reshape(1, 1)), axis=0)
-                batch_array_1 = np.concatenate((batch_array_1, normalized_array), axis=0)
+                normalized_array, y_sample, add_enable = self.sample_preprocessing(input_array[candle_counter:candle_counter+Config.TIMESTEPS, :])
+                if add_enable:
+                    normalized_array = np.reshape(normalized_array, newshape=(1, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
+                    y = np.concatenate((y, np.array([y_sample]).reshape(1, 1)), axis=0)
+                    batch_array_1 = np.concatenate((batch_array_1, normalized_array), axis=0)
                 candle_counter += 1
 
             batch_array_1 = batch_array_1[1:, :, :]
@@ -67,10 +68,14 @@ class Samples:
         normalized_array[:, 10:12] = self.normalize(input_array[:, 10:12])
         normalized_array[:, 12:14] = self.normalize(input_array[:, 12:14])
 
+        add_enable = True
+        if (input_array[-1, 14] == 0) and (input_array[-1, 15] == 0):
+            add_enable = False
+
         y = input_array[-1, 14]
         normalized_array = normalized_array[:, :-2]
         # sample_3d = np.reshape(normalized_array, newshape=(1, np.shape(sample_2d)[0], np.shape(sample_2d)[1]))
-        return normalized_array, y
+        return normalized_array, y, add_enable
 
     def normalize(self, array_2d):
         """
