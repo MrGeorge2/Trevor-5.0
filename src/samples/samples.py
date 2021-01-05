@@ -1,7 +1,7 @@
 from ..globals.config import Config
 from ..data_analysis.models.views import ViewWithtRes, ViewTypeWithRes
 from ..globals.db import DB
-from sqlalchemy import Table, Column, Integer, String, DATETIME, DECIMAL, Boolean, asc
+from sqlalchemy import Table, Column, Integer, String, DATETIME, DECIMAL, Boolean, asc, and_
 from typing import List
 import random
 import tensorflow as tf
@@ -12,15 +12,17 @@ from copy import deepcopy
 
 
 class Samples:
-    def __init__(self, symbol):
-        self.symbol = symbol
-        self.candles:  List[ViewTypeWithRes] = []
-
+    def __init__(self, candles: List[ViewTypeWithRes]):
+        self.candles: List[ViewTypeWithRes] = candles
+        # self.symbol = symbol
+        # self.candles:  List[ViewTypeWithRes] = []
+    """
     def get_candles(self):
         db = DB.get_globals()
         self.candles = db.SESSION.query(ViewWithtRes).filter(
             ViewWithtRes.symbol == self.symbol).order_by(
             asc(ViewWithtRes.open_time)).all()
+    """
 
     def create3d_samples(self, one_pair_array):
         input_array = deepcopy(one_pair_array)
@@ -95,7 +97,7 @@ class Samples:
         return normalized_time
 
     def create_samples_for_symbol(self):
-        self.get_candles()
+        # self.get_candles()
         one_pair_array = np.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS))
 
         for i, candle in enumerate(self.candles):
@@ -134,8 +136,20 @@ class Samples:
 
     @staticmethod
     def create_samples():
+        db = DB.get_globals()
         for symbol in random.sample(Config.SYMBOLS_TO_SCRAPE, Config.RANDOM_SYMBOLS_FOR_SAMPLE):
             print(f"Creating samples from symbol={symbol}")
 
-            samples = Samples.get_sample_cls(symbol)
-            result_samples = samples.create_samples_for_symbol()
+            test_candles = db.SESSION.query(ViewWithtRes).filter(
+                and_(ViewWithtRes.symbol == symbol, ViewWithtRes.train == False)).order_by(
+                asc(ViewWithtRes.open_time)).all()
+
+            samples = Samples.get_sample_cls(test_candles)
+            test_result = samples.create_samples_for_symbol()
+
+            train_candles = db.SESSION.query(ViewWithtRes).filter(
+                and_(ViewWithtRes.symbol == symbol, ViewWithtRes.train == True)).order_by(
+                asc(ViewWithtRes.open_time)).all()
+
+            samples = Samples.get_sample_cls(train_candles)
+            train_candles = samples.create_samples_for_symbol()

@@ -7,7 +7,7 @@ import sys
 # První parametr pro metodu
 DEBUG_SYS_ARGV: List[str] = [
     " ",                
-    "full_fetch",
+    "test_model_load",
 ]
 
 DEBUG: bool = True

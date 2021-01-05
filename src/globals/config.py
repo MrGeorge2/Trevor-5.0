@@ -14,7 +14,7 @@ class Config:
     """
     SCRAPER
     """
-    CHECK_ROW_IN_DB = True
+    CHECK_ROW_IN_DB = False
     SYMBOLS_TO_SCRAPE = [
         #  --- USDT ---
         "BTCUSDT",
@@ -153,4 +153,4 @@ class Config:
     #### MODEL ####
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
-    EPOCHS = 10
+    EPOCHS = 5

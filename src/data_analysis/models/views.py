@@ -37,6 +37,7 @@ class ViewWithoutRes(ViewTypeWithoutRes, db.DECLARATIVE_BASE):
 class ViewTypeWithRes(ViewTypeWithoutRes):
     up = None
     down = None
+    train = None
 
 
 class ViewWithtRes(ViewTypeWithRes, DB.DECLARATIVE_BASE):

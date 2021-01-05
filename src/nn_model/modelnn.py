@@ -1,9 +1,12 @@
 from ..globals.config import Config
 import os
+from sqlalchemy import asc, and_
 import numpy as np
 from keras.models import load_model, Sequential
 from keras.layers import Dense, LSTM, Dropout
 from ..samples.samples import Samples
+from ..data_analysis.models.views import ViewWithtRes
+from ..globals.db import DB
 import random
 
 
@@ -60,18 +63,31 @@ class ModelNN:
         self.model_save()
 
     def train_model(self):
-        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=10)#, validation_data=(self.x_test, self.y_test))
+        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=10, validation_data=(self.x_test, self.y_test))
         self.model_save()
 
 
 class TestNN:
     @staticmethod
     def test_model_load():
+        db = DB.get_globals()
         for symbol in random.sample(Config.SYMBOLS_TO_SCRAPE, Config.RANDOM_SYMBOLS_FOR_SAMPLE):
             print(f"Creating samples from symbol={symbol}")
 
-            samples = Samples.get_sample_cls(symbol)
-            result_samples = samples.create_samples_for_symbol()
-            model = ModelNN(result_samples[0], result_samples[1])
+            test_candles = db.SESSION.query(ViewWithtRes).filter(
+                and_(ViewWithtRes.symbol == symbol, ViewWithtRes.train == False)).order_by(
+                asc(ViewWithtRes.open_time)).all()
+
+            samples = Samples.get_sample_cls(test_candles)
+            test_result = samples.create_samples_for_symbol()
+
+            train_candles = db.SESSION.query(ViewWithtRes).filter(
+                and_(ViewWithtRes.symbol == symbol, ViewWithtRes.train == True)).order_by(
+                asc(ViewWithtRes.open_time)).all()
+
+            samples = Samples.get_sample_cls(train_candles)
+            train_candles = samples.create_samples_for_symbol()
+
+            model = ModelNN(train_candles[0], train_candles[1], test_result[0], test_result[1])
             model.model_load()
             model.train_model()
