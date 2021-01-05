@@ -3,6 +3,8 @@ import os
 import numpy as np
 from keras.models import load_model, Sequential
 from keras.layers import Dense, LSTM, Dropout
+from ..samples.samples import Samples
+import random
 
 
 class ModelNN:
@@ -58,12 +60,18 @@ class ModelNN:
         self.model_save()
 
     def train_model(self):
-        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=64, validation_data=(self.x_test, self.y_test))
+        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=64)#, validation_data=(self.x_test, self.y_test))
         self.model_save()
 
 
 class TestNN:
     @staticmethod
     def test_model_load():
-        model = ModelNN()
-        model.model_load()
+        for symbol in random.sample(Config.SYMBOLS_TO_SCRAPE, Config.RANDOM_SYMBOLS_FOR_SAMPLE):
+            print(f"Creating samples from symbol={symbol}")
+
+            samples = Samples.get_sample_cls(symbol)
+            result_samples = samples.create_samples_for_symbol()
+            model = ModelNN(result_samples[0], result_samples[1])
+            model.model_load()
+            model.train_model()
