@@ -152,5 +152,5 @@ class Config:
     """
     #### MODEL ####
     """
-    PATH_MODEL = "./data/model.h5"
+    PATH_MODEL = "./src/nn_model/data/model.h5"
     EPOCHS = 10

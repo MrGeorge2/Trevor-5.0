@@ -6,7 +6,6 @@ from typing import List
 import random
 import tensorflow as tf
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
 import math
 import datetime
 from copy import deepcopy
