@@ -18,7 +18,8 @@ SELECT
 	TIndicators.ema21,
 	TIndicators.ema200,
 	TResults.up,
-	TResults.down
+	TResults.down,
+	TResults.train
 
 
 FROM TCandleApi

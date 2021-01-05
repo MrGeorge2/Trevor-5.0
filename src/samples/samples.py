@@ -20,7 +20,7 @@ class Samples:
         db = DB.get_globals()
         self.candles = db.SESSION.query(ViewWithtRes).filter(
             ViewWithtRes.symbol == self.symbol).order_by(
-            asc(ViewWithtRes.open_time)).all()  # pred .all() .limit(100)
+            asc(ViewWithtRes.open_time)).all()
 
     def create3d_samples(self, one_pair_array):
         input_array = deepcopy(one_pair_array)
@@ -83,7 +83,9 @@ class Samples:
         return normalized_array
 
     def normalize_time(self, dt):
-        """0-24 hod do rozsahu 0-1"""
+        """
+        0-24 hod do rozsahu 0-1
+        """
         normalized_time = float(dt.hour*3600+dt.minute*60+dt.second)/86400
         return normalized_time
 

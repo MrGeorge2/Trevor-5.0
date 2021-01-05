@@ -5,12 +5,14 @@ from .data_analysis.models.indicators import Indicators
 from .samples.samples import Samples
 from .nn_model.modelnn import TestNN
 
+
 """
 Scrape all symbols from config with result
 """
 def full_fetch(*args):
     Scraper.scrape_all()
     Results.count_results()
+    Results.divide_train_test()
     Indicators.count_indicators()
 
 
@@ -43,6 +45,7 @@ class MethodRegistrator:
         Indicators.count_indicators.__name__: Indicators.count_indicators,
         full_fetch.__name__: full_fetch,
         Samples.create_samples.__name__: Samples.create_samples,
+        Results.divide_train_test.__name__: Results.divide_train_test,
         TestNN.test_model_load.__name__: TestNN.test_model_load,
     }
     APPEND_EXT_TEXT: str = "\n For getting all registred methods please use python3 main.py help"
