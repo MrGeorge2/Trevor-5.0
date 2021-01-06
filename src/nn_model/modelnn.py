@@ -70,24 +70,16 @@ class ModelNN:
 class TestNN:
     @staticmethod
     def test_model_load():
-        db = DB.get_globals()
-        for symbol in random.sample(Config.SYMBOLS_TO_SCRAPE, Config.RANDOM_SYMBOLS_FOR_SAMPLE):
-            print(f"Creating samples from symbol={symbol}")
+        test_candles = ViewWithtRes.get_test_candles()
+        test_samples = Samples.get_sample_cls(test_candles).create_samples_for_symbol()
 
-            test_candles = db.SESSION.query(ViewWithtRes).filter(
-                and_(ViewWithtRes.symbol == symbol, ViewWithtRes.train == False)).order_by(
-                asc(ViewWithtRes.open_time)).all()
+        # for symbol in random.sample(Config.SYMBOLS_TO_SCRAPE, Config.RANDOM_SYMBOLS_FOR_SAMPLE):
+        for symbols in Config.SYMBOL_GROUPS:
+            # print(f"Creating samples from symbol={symbol}")
 
-            samples = Samples.get_sample_cls(test_candles)
-            test_result = samples.create_samples_for_symbol()
+            train_candles = ViewWithtRes.get_train_candles(symbols)
+            train_samples = Samples.get_sample_cls(train_candles).create_samples_for_symbol()
 
-            train_candles = db.SESSION.query(ViewWithtRes).filter(
-                and_(ViewWithtRes.symbol == symbol, ViewWithtRes.train == True)).order_by(
-                asc(ViewWithtRes.open_time)).all()
-
-            samples = Samples.get_sample_cls(train_candles)
-            train_candles = samples.create_samples_for_symbol()
-
-            model = ModelNN(train_candles[0], train_candles[1], test_result[0], test_result[1])
+            model = ModelNN(train_samples[0], train_samples[1], test_samples[0], test_samples[1])
             model.model_load()
             model.train_model()

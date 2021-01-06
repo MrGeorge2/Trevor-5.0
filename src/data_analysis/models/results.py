@@ -26,8 +26,11 @@ class Results(DB.DECLARATIVE_BASE):
             candles: List[CandleApi] = db.SESSION.query(CandleApi).filter(CandleApi.symbol == symbol)
 
             for i, candle in enumerate(candles):
-                open_price = candle.open_price
-                close_price = candle.close_price
+                close_actual = candle.close_price
+                if i + 1 <= len(candle):
+                    close_next = candles[i + 1].close_price
+                else:
+                    break
 
                 if Config.CHECK_ROW_IN_DB:
 
@@ -35,19 +38,19 @@ class Results(DB.DECLARATIVE_BASE):
                             and_(Results.symbol == candle.symbol,
                                  Results.open_time == candle.open_time)).exists()).scalar():
 
-                        if open_price > close_price:
+                        if close_actual > close_next:
                             res = Results(up=False, down=True, open_time=candle.open_time, symbol=candle.symbol)
 
-                        elif open_price < close_price:
+                        elif close_actual < close_next:
                             res = Results(up=True, down=False, open_time=candle.open_time, symbol=candle.symbol)
                         else:
                             res = Results(up=False, down=False, open_time=candle.open_time, symbol=candle.symbol)
                         db.SESSION.add(res)
                 else:
-                    if open_price > close_price:
+                    if close_actual > close_next:
                         res = Results(up=False, down=True, open_time=candle.open_time, symbol=candle.symbol)
 
-                    elif open_price < close_price:
+                    elif close_actual < close_next:
                         res = Results(up=True, down=False, open_time=candle.open_time, symbol=candle.symbol)
                     else:
                         res = Results(up=False, down=False, open_time=candle.open_time, symbol=candle.symbol)

@@ -1,7 +1,6 @@
 from ...globals.db import DB
-from sqlalchemy import Table, Column, Integer, String, DATETIME, DECIMAL, Boolean
+from sqlalchemy import Table, Column, Integer, asc, and_
 from typing import List
-import random
 
 
 db = DB.get_globals()
@@ -45,6 +44,29 @@ class ViewWithtRes(ViewTypeWithRes, DB.DECLARATIVE_BASE):
                         Column("id", Integer, primary_key=True),
                         autoload=True, autoload_with=db.ENGINE,
                     )
+
+    @staticmethod
+    def get_test_candles() -> List[ViewTypeWithRes]:
+        db = DB.get_globals()
+        test_candles = db.SESSION.query(ViewWithtRes).filter(ViewWithtRes.train == False).order_by(asc(ViewWithtRes.open_time)).all()
+        return test_candles
+
+    @staticmethod
+    def get_train_candles_for_symbol(symbol) -> List[ViewTypeWithRes]:
+        db = DB.get_globals()
+        train_candles = db.SESSION.query(ViewWithtRes).filter(
+            and_(ViewWithtRes.symbol == symbol, ViewWithtRes.train == True)).order_by(
+            asc(ViewWithtRes.open_time)).all()
+        return train_candles
+
+    @classmethod
+    def get_train_candles(cls, symbols: List[str]):
+        filters = []
+        for symbol in symbols:
+            expression = (getattr(cls, "symbol") == symbol)
+            filters.append(expression)
+
+        return db.SESSION.query(ViewWithtRes).filter(and_(*filters)).order_by(asc(ViewWithtRes.open_time)).all()
 
     def __repr__(self):
         return f"symbol={self.symbol} open_time={self.open_time} up={self.up} down={self.down}"
