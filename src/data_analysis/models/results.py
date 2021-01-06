@@ -27,7 +27,7 @@ class Results(DB.DECLARATIVE_BASE):
 
             for i, candle in enumerate(candles):
                 close_actual = candle.close_price
-                if i + 1 <= len(candle):
+                if i + 1 <= len(candles):
                     close_next = candles[i + 1].close_price
                 else:
                     break
