@@ -23,11 +23,11 @@ class Results(DB.DECLARATIVE_BASE):
         db = DB.get_globals()
         for symbol in Config.SYMBOLS_TO_SCRAPE:
             print(f"Counting results for symbol={symbol}")
-            candles: List[CandleApi] = db.SESSION.query(CandleApi).filter(CandleApi.symbol == symbol)
+            candles: List[CandleApi] = db.SESSION.query(CandleApi).filter(CandleApi.symbol == symbol).all()
 
             for i, candle in enumerate(candles):
                 close_actual = candle.close_price
-                if i + 1 <= len(candles):
+                if i + 1 < len(candles):
                     close_next = candles[i + 1].close_price
                 else:
                     break
