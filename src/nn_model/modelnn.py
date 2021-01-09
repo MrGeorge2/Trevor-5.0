@@ -70,16 +70,17 @@ class ModelNN:
 class TestNN:
     @staticmethod
     def test_model_load():
+        print("Creating test samples")
         test_candles = ViewWithtRes.get_test_candles()
-        test_samples = Samples.get_sample_cls(test_candles).create_samples_for_symbol()
+        test_samples = Samples.create_samples(test_candles)
+        print("Test samples created")
 
-        # for symbol in random.sample(Config.SYMBOLS_TO_SCRAPE, Config.RANDOM_SYMBOLS_FOR_SAMPLE):
         for symbols in Config.SYMBOL_GROUPS:
-            # print(f"Creating samples from symbol={symbol}")
-
+            print(f"Creating samples for symbol group {symbols}")
             train_candles = ViewWithtRes.get_train_candles(symbols)
-            train_samples = Samples.get_sample_cls(train_candles).create_samples_for_symbol()
-
+            train_samples = Samples.create_samples(train_candles)
+            print(f"Created samples for symbol group")
+            
             model = ModelNN(train_samples[0], train_samples[1], test_samples[0], test_samples[1])
             model.model_load()
             model.train_model()

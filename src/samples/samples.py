@@ -135,7 +135,8 @@ class Samples:
         return Samples(symbol)
 
     @staticmethod
-    def create_samples():
+    def create_samples(candles):
+        """
         db = DB.get_globals()
         for symbol in random.sample(Config.SYMBOLS_TO_SCRAPE, Config.RANDOM_SYMBOLS_FOR_SAMPLE):
             print(f"Creating samples from symbol={symbol}")
@@ -153,3 +154,6 @@ class Samples:
 
             samples = Samples.get_sample_cls(train_candles)
             train_candles = samples.create_samples_for_symbol()
+        """
+        samples = Samples(candles)
+        return samples.create_samples_for_symbol()
