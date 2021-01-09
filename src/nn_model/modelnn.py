@@ -80,7 +80,7 @@ class TestNN:
             train_candles = ViewWithtRes.get_train_candles(symbols)
             train_samples = Samples.create_samples(train_candles)
             print(f"Created samples for symbol group")
-            
+
             model = ModelNN(train_samples[0], train_samples[1], test_samples[0], test_samples[1])
             model.model_load()
             model.train_model()

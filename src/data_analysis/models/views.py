@@ -1,5 +1,5 @@
 from ...globals.db import DB
-from sqlalchemy import Table, Column, Integer, asc, and_
+from sqlalchemy import Table, Column, Integer, asc, and_, or_
 from typing import List
 
 
@@ -61,12 +61,9 @@ class ViewWithtRes(ViewTypeWithRes, DB.DECLARATIVE_BASE):
 
     @classmethod
     def get_train_candles(cls, symbols: List[str]):
-        filters = [(getattr(cls, "train") == False)]
-        for symbol in symbols:
-            expression = (getattr(cls, "symbol") == symbol)
-            filters.append(expression)
-
-        return db.SESSION.query(ViewWithtRes).filter(and_(*filters)).order_by(asc(ViewWithtRes.open_time)).all()
+        train_expression = getattr(cls, "train") == True
+        return db.SESSION.query(ViewWithtRes).filter(and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(
+            asc(ViewWithtRes.open_time)).all()
 
     def __repr__(self):
         return f"symbol={self.symbol} open_time={self.open_time} up={self.up} down={self.down}"
