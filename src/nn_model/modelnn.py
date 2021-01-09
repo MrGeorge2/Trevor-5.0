@@ -2,23 +2,31 @@ from ..globals.config import Config
 import os
 from sqlalchemy import asc, and_
 import numpy as np
-from keras.models import load_model, Sequential
-from keras.layers import Dense, LSTM, Dropout
+from tensorflow.keras.models import load_model, Sequential
+from tensorflow.keras.layers import Dense, LSTM, Dropout
 from ..samples.samples import Samples
 from ..data_analysis.models.views import ViewWithtRes
-from ..globals.db import DB
+import asyncio
 import random
 
 
 class ModelNN:
-    def __init__(self, x_train=None, y_train=None, x_test=None, y_test=None):   # TODO: oddelat None - je to tam kvuli testu
-        self.x_train = x_train
-        self.y_train = y_train
-        self.x_test = x_test
-        self.y_test = y_test
+    def __init__(self):   # TODO: oddelat None - je to tam kvuli testu
+        self.x_train = []
+        self.y_train = []
+        self.x_test = []
+        self.y_test = []
 
         self.model = self.model_load()
         # self.print_unique()
+
+    def set_train_samples(self, train_samples):
+        self.x_train = train_samples[0]
+        self.y_train = train_samples[1]
+
+    def set_test_samples(self, test_samples):
+        self.x_test = test_samples[0]
+        self.y_test = test_samples[1]
 
     def print_unique(self):
         unique, counts = np.unique(self.y_train, return_counts=True)
@@ -67,20 +75,41 @@ class ModelNN:
         self.model_save()
 
 
-class TestNN:
-    @staticmethod
-    def test_model_load():
+class TrainNN:
+    @classmethod
+    async def train_async(cls):
         print("Creating test samples")
         test_candles = ViewWithtRes.get_test_candles()
         test_samples = Samples.create_samples(test_candles)
         print("Test samples created")
 
-        for symbols in Config.SYMBOL_GROUPS:
-            print(f"Creating samples for symbol group {symbols}")
-            train_candles = ViewWithtRes.get_train_candles(symbols)
-            train_samples = Samples.create_samples(train_candles)
-            print(f"Created samples for symbol group")
+        model = ModelNN()
+        model.model_load()
+        model.set_test_samples(test_samples)
 
-            model = ModelNN(train_samples[0], train_samples[1], test_samples[0], test_samples[1])
-            model.model_load()
-            model.train_model()
+        first = True
+        for i in range(Config.ITERATIONS_CANLED_GROUP):
+            for symbol_index, symbols in enumerate(Config.SYMBOL_GROUPS):
+                # Nacteni symbolu pred treninkem pouze poprve
+                if first:
+                    training_samples = cls.get_training_samples(Config.SYMBOL_GROUPS[0])
+                    first = False
+
+                # train_candles = ViewWithtRes.get_train_candles(symbols)
+                # train_samples = Samples.create_samples(train_candles)
+
+                model.set_train_samples(await training_samples)
+                training_samples = cls.get_training_samples(symbols)
+                model.train_model()
+
+    @classmethod
+    def train(cls):
+        asyncio.run(cls.train_async())
+
+    @staticmethod
+    async def get_training_samples(symbols):
+        print(f"Creating samples for symbol group {symbols}")
+        train_candles = ViewWithtRes.get_train_candles(symbols)
+        train_samples = Samples.create_samples(train_candles)
+        print(f"Created samples for symbol group")
+        return train_samples

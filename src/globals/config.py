@@ -257,4 +257,5 @@ class Config:
     #### MODEL ####
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
-    EPOCHS = 5
+    EPOCHS = 1
+    ITERATIONS_CANLED_GROUP = 10
