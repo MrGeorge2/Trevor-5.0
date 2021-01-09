@@ -61,7 +61,7 @@ class ViewWithtRes(ViewTypeWithRes, DB.DECLARATIVE_BASE):
 
     @classmethod
     def get_train_candles(cls, symbols: List[str]):
-        filters = []
+        filters = [(getattr(cls, "train") == False)]
         for symbol in symbols:
             expression = (getattr(cls, "symbol") == symbol)
             filters.append(expression)
