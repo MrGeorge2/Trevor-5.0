@@ -7,7 +7,8 @@ from tensorflow.keras.layers import Dense, LSTM, Dropout
 from ..samples.samples import Samples
 from ..data_analysis.models.views import ViewWithtRes
 import asyncio
-import random
+import nest_asyncio
+nest_asyncio.apply()
 
 
 class ModelNN:
@@ -92,24 +93,43 @@ class TrainNN:
             for symbol_index, symbols in enumerate(Config.SYMBOL_GROUPS):
                 # Nacteni symbolu pred treninkem pouze poprve
                 if first:
-                    training_samples = cls.get_training_samples(Config.SYMBOL_GROUPS[0])
+                    loop = asyncio.get_event_loop()
+                    tasks = (cls.get_training_samples(Config.SYMBOL_GROUPS[0]), )
+                    # done = loop.run_until_complete(asyncio.gather(*tasks))
+                    training_samples = loop.run_until_complete(asyncio.gather(*tasks))[0]
+                    # loop.close()
                     first = False
 
                 # train_candles = ViewWithtRes.get_train_candles(symbols)
                 # train_samples = Samples.create_samples(train_candles)
 
-                model.set_train_samples(await training_samples)
-                training_samples = cls.get_training_samples(symbols)
-                model.train_model()
+                model.set_train_samples(training_samples)
+                next_symbols = Config.SYMBOL_GROUPS[symbol_index] if symbol_index + 1 <= len(Config.SYMBOL_GROUPS) else Config.SYMBOL_GROUPS[0]
+                loop = asyncio.get_event_loop()
+                training_samples = cls.get_training_samples(next_symbols)
+                train_ = cls.train_model(model)
+                tasks = training_samples, train_
+                done = loop.run_until_complete(asyncio.gather(*tasks))
+                # loop.close()
+
+                training_samples = done[0]
+                #model.train_model()
 
     @classmethod
     def train(cls):
         asyncio.run(cls.train_async())
 
     @staticmethod
-    async def get_training_samples(symbols):
+    @asyncio.coroutine
+    def get_training_samples(symbols):
         print(f"Creating samples for symbol group {symbols}")
         train_candles = ViewWithtRes.get_train_candles(symbols)
         train_samples = Samples.create_samples(train_candles)
         print(f"Created samples for symbol group")
         return train_samples
+
+    @staticmethod
+    @asyncio.coroutine
+    def train_model(model):
+        model.train_model()
+        return 'trained'
