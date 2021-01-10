@@ -1,5 +1,5 @@
 from decimal import *
-import os
+from binance.client import Client
 
 
 class Config:
@@ -14,6 +14,7 @@ class Config:
     """
     SCRAPER
     """
+    CANDLE_INTERVAL = Client.KLINE_INTERVAL_1MINUTE
     CHECK_ROW_IN_DB = False
     SYMBOLS_TO_SCRAPE = [
         #  --- USDT ---
