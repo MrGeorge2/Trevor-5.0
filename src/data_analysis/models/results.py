@@ -66,7 +66,7 @@ class Results(DB.DECLARATIVE_BASE):
             results: List[Results] = db.SESSION.query(Results).filter(Results.symbol == symbol).all()
             print(f"Dividing train test for {symbol}")
 
-            train_samples = sample(results, int(len(results) * 0.8))
+            train_samples = sample(results, int(len(results) * 0.85))
             test_samples = [candle for candle in results if candle not in train_samples]
 
             for candle in train_samples:
