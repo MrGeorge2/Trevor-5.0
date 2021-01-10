@@ -46,7 +46,7 @@ class MethodRegistrator:
         full_fetch.__name__: full_fetch,
         Samples.create_samples.__name__: Samples.create_samples,
         Results.divide_train_test.__name__: Results.divide_train_test,
-        TrainNN.train().__name__: TrainNN.train(),
+        TrainNN.train.__name__: TrainNN.train,
     }
     APPEND_EXT_TEXT: str = "\n For getting all registred methods please use python3 main.py help"
 
