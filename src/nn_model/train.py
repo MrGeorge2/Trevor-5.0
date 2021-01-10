@@ -8,18 +8,12 @@ from ..utils.tread import ReturningThread
 class TrainNN:
     @classmethod
     def train(cls):
-        print("Creating test samples")
-        test_candles = ViewWithtRes.get_test_candles()
-        test_samples = Samples.create_samples(test_candles)
-        print("Test samples created")
-
         model = ModelNN()
         model.load()
-        model.set_test_samples(test_samples)
 
         first = True
         for i in range(Config.ITERATIONS_CANLED_GROUP):
-            for symbol_index, symbols in enumerate(Config.SYMBOL_GROUPS):
+            for symbol_index, symbols in enumerate(Config.SYMBOL_GROUPS_1H):
                 # Load samples before training only first time
                 if first:
                     sample_thread = ReturningThread(target=Samples.create_samples_for_symbols, args=(Config.SYMBOL_GROUPS[0], ))
@@ -31,3 +25,19 @@ class TrainNN:
                 sample_thread = ReturningThread(target=Samples.create_samples_for_symbols, args=(next_symbols,))
                 sample_thread.start()
                 model.train()
+
+            TrainNN.eval()
+
+    @staticmethod
+    def eval():
+        model = ModelNN()
+        model.load()
+
+        print("Evaluate")
+        for symbols in Config.SYMBOL_GROUPS_1H:
+            test_candles = ViewWithtRes.get_test_candles_for_symbols(symbols)
+            test_samples = Samples.create_samples(test_candles)
+
+            model.set_test_samples(test_samples)
+            model.eval()
+        print("Evaluate done")

@@ -65,5 +65,11 @@ class ModelNN:
         self.save()
 
     def train(self):
-        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=10, validation_data=(self.x_test, self.y_test))
+        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=10)# , validation_data=(self.x_test, self.y_test))
         self.save()
+
+    def eval(self):
+        score = self.model.evaluate(self.x_test, self.y_test, verbose=1)
+        print(f'Test loss: {score[0]} / Test accuracy: {score[1]}')
+        self.x_test = []
+        self.y_test = []
