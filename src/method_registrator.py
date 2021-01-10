@@ -3,7 +3,7 @@ from .data_analysis.scraper import Scraper
 from .data_analysis.models.results import Results
 from .data_analysis.models.indicators import Indicators
 from .samples.samples import Samples
-from .nn_model.modelnn import TrainNN
+from .nn_model.train import TrainNN
 
 
 """
