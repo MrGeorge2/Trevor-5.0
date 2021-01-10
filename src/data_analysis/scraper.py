@@ -49,7 +49,19 @@ class Scraper:
 
     @staticmethod
     def scrape_all(*args):
+        db = DB.get_globals()
         for symbol in Config.SYMBOLS_TO_SCRAPE:
-            Scraper.scrape(symbol)
+            error = True
+            while error:
+                try:
+                    Scraper.scrape(symbol)
+                    error = False
+                except Exception as e:
+                    print(e)
+                    query = db.SESSION.query(CandleApi).filter_by(symbol=symbol)
+                    db.SESSION.delete(query)
+                    db.SESSION.commit()
+
+
 
 
