@@ -16,7 +16,7 @@ class DB:
 
     @classmethod
     def __init_db(cls):
-        cls.ENGINE = create_engine('sqlite:///trevor.db', echo=False)
+        cls.ENGINE = create_engine('sqlite:///trevor.db', echo=False, connect_args={'check_same_thread': False})
         # cls.DECLARATIVE_BASE = declarative_base(bind=cls.ENGINE)
         cls.DECLARATIVE_BASE.metadata.create_all(cls.ENGINE)
 

@@ -3,7 +3,8 @@ from .data_analysis.scraper import Scraper
 from .data_analysis.models.results import Results
 from .data_analysis.models.indicators import Indicators
 from .samples.samples import Samples
-from .nn_model.modelnn import TestNN
+from .nn_model.train import TrainNN
+
 
 """
 Scrape all symbols from config with result
@@ -11,6 +12,7 @@ Scrape all symbols from config with result
 def full_fetch(*args):
     Scraper.scrape_all()
     Results.count_results()
+    Results.divide_train_test()
     Indicators.count_indicators()
 
 
@@ -43,7 +45,8 @@ class MethodRegistrator:
         Indicators.count_indicators.__name__: Indicators.count_indicators,
         full_fetch.__name__: full_fetch,
         Samples.create_samples.__name__: Samples.create_samples,
-        TestNN.test_model_load.__name__: TestNN.test_model_load,
+        Results.divide_train_test.__name__: Results.divide_train_test,
+        TrainNN.train().__name__: TrainNN.train(),
     }
     APPEND_EXT_TEXT: str = "\n For getting all registred methods please use python3 main.py help"
 

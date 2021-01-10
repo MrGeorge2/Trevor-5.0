@@ -14,7 +14,7 @@ class Config:
     """
     SCRAPER
     """
-    CHECK_ROW_IN_DB = True
+    CHECK_ROW_IN_DB = False
     SYMBOLS_TO_SCRAPE = [
         #  --- USDT ---
         "BTCUSDT",
@@ -43,7 +43,6 @@ class Config:
         "AAVEUSDT",
         "COMPUSDT",
         "BATUSDT",
-        "XEMUSDT",
         "ONTUSDT",
         "DOGEUSDT",
 
@@ -61,7 +60,6 @@ class Config:
         "THETABTC",
         "XMRBTC",
         "YFIBTC",
-        "UNFIBTC",
         "WAVESBTC",
         "ATOMBTC",
         "ALGOBTC",
@@ -119,6 +117,112 @@ class Config:
         "DASHBNB"
     ]
 
+    SYMBOL_GROUPS = [
+        [
+            "AAVEBNB",
+            "AAVEETH",
+            "AAVEUSDT",
+            "ADABNB",
+            "ADABTC",
+            "ADAUSDT",
+            "ALGOBTC",
+            "ATOMBTC",
+            "ATOMUSDT",
+            "BATUSDT",
+            "BCHBNB",
+            "BCHBTC",
+            "BCHUSDT",
+            "BNBBTC",
+            "BNBETH",
+        ],
+        [
+            "BNBUSDT",
+            "BTCUSDT",
+            "COMPUSDT",
+            "DASHBNB",
+            "DASHBTC",
+            "DASHETH",
+            "DASHUSDT",
+            "DOGEUSDT",
+            "DOTBNB",
+            "DOTBTC",
+            "DOTUSDT",
+            "EASYETH",
+            "ENJETH",
+        ],
+        [
+            "EOSBNB",
+            "EOSETH",
+            "EOSUSDT",
+            "ETCUSDT",
+            "ETHBTC",
+            "ETHUSDT",
+            "FILBTC",
+            "FILUSDT",
+            "HOTETH",
+            "INJBTC",
+            "KP3RBNB",
+            "KSMBNB",
+            "KSMBTC",
+            "LINKBTC",
+        ],
+        [
+            "LINKETH",
+            "LINKUSDT",
+            "LRCETH",
+            "LTCBNB",
+            "LTCBTC",
+            "LTCETH",
+            "LTCUSDT",
+            "LUNABTC",
+            "MKRBNB",
+            "NASETH",
+        ],
+        [
+            "NEOBTC",
+            "NEOETH",
+            "OCEANBTC",
+            "OMGETH",
+            "ONTUSDT",
+            "QTUMUSDT",
+            "RENBTC",
+            "RENUSDT",
+            "RUNEBTC",
+            "THETABTC",
+            "THETAETH",
+        ],
+        [
+            "TRXUSDT",
+            "UNIBTC",
+            "UNIUSDT",
+            "VETETH",
+            "VETUSDT",
+            "WANETH",
+            "WAVESBTC",
+            "XEMETH",
+            "XLMETH",
+            "XLMUSDT",
+            "XMRBNB",
+        ],
+        [
+            "XMRBTC",
+            "XMRETH",
+            "XMRUSDT",
+            "XRPBNB",
+            "XRPBTC",
+            "XRPETH",
+            "XRPUSDT",
+            "XTZUSDT",
+            "YFIBNB",
+            "YFIBTC",
+            "YFIIBNB",
+            "ZECBNB",
+            "ZECETH",
+            "ZENBTC",
+            "ZILETH",
+        ]
+    ]
+
     """
     #### ORDERS ####
     """
@@ -153,4 +257,5 @@ class Config:
     #### MODEL ####
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
-    EPOCHS = 10
+    EPOCHS = 1
+    ITERATIONS_CANLED_GROUP = 10

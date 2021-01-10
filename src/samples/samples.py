@@ -1,26 +1,14 @@
 from ..globals.config import Config
-from ..data_analysis.models.views import ViewWithtRes, ViewTypeWithRes
-from ..globals.db import DB
-from sqlalchemy import Table, Column, Integer, String, DATETIME, DECIMAL, Boolean, asc
+from ..data_analysis.models.views import ViewTypeWithRes, ViewWithtRes
 from typing import List
-import random
-import tensorflow as tf
 import numpy as np
 import math
-import datetime
 from copy import deepcopy
 
 
 class Samples:
-    def __init__(self, symbol):
-        self.symbol = symbol
-        self.candles:  List[ViewTypeWithRes] = []
-
-    def get_candles(self):
-        db = DB.get_globals()
-        self.candles = db.SESSION.query(ViewWithtRes).filter(
-            ViewWithtRes.symbol == self.symbol).order_by(
-            asc(ViewWithtRes.open_time)).all()  # pred .all() .limit(100)
+    def __init__(self, candles: List[ViewTypeWithRes]):
+        self.candles: List[ViewTypeWithRes] = candles
 
     def create3d_samples(self, one_pair_array):
         input_array = deepcopy(one_pair_array)
@@ -35,16 +23,16 @@ class Samples:
         second_range_expansion = number_of_candles - (first_range*second_range)
 
         for i in range(first_range - 1):    # -1 kvuli timesteps
-            print(i)
             batch_array_1 = np.zeros(shape=(1, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
 
             if i == first_range - 2:
                 second_range += second_range_expansion
             for j in range(second_range):
-                normalized_array, y_sample = self.sample_preprocessing(input_array[candle_counter:candle_counter+Config.TIMESTEPS, :])
-                normalized_array = np.reshape(normalized_array, newshape=(1, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
-                y = np.concatenate((y, np.array([y_sample]).reshape(1, 1)), axis=0)
-                batch_array_1 = np.concatenate((batch_array_1, normalized_array), axis=0)
+                normalized_array, y_sample, add_enable = self.sample_preprocessing(input_array[candle_counter:candle_counter+Config.TIMESTEPS, :])
+                if add_enable:
+                    normalized_array = np.reshape(normalized_array, newshape=(1, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
+                    y = np.concatenate((y, np.array([y_sample]).reshape(1, 1)), axis=0)
+                    batch_array_1 = np.concatenate((batch_array_1, normalized_array), axis=0)
                 candle_counter += 1
 
             batch_array_1 = batch_array_1[1:, :, :]
@@ -67,10 +55,14 @@ class Samples:
         normalized_array[:, 10:12] = self.normalize(input_array[:, 10:12])
         normalized_array[:, 12:14] = self.normalize(input_array[:, 12:14])
 
+        add_enable = True
+        if (input_array[-1, 14] == 0) and (input_array[-1, 15] == 0):
+            add_enable = False
+
         y = input_array[-1, 14]
         normalized_array = normalized_array[:, :-2]
         # sample_3d = np.reshape(normalized_array, newshape=(1, np.shape(sample_2d)[0], np.shape(sample_2d)[1]))
-        return normalized_array, y
+        return normalized_array, y, add_enable
 
     def normalize(self, array_2d):
         """
@@ -83,12 +75,14 @@ class Samples:
         return normalized_array
 
     def normalize_time(self, dt):
-        """0-24 hod do rozsahu 0-1"""
+        """
+        0-24 hod do rozsahu 0-1
+        """
         normalized_time = float(dt.hour*3600+dt.minute*60+dt.second)/86400
         return normalized_time
 
     def create_samples_for_symbol(self):
-        self.get_candles()
+        # self.get_candles()
         one_pair_array = np.zeros(shape=(1, Config.NUMBER_OF_SAMPLE_COLUMNS))
 
         for i, candle in enumerate(self.candles):
@@ -115,10 +109,7 @@ class Samples:
         one_pair_array = one_pair_array[1:, :]
         o_p_a = deepcopy(one_pair_array)
 
-        time1 = datetime.datetime.now()
         x, y = self.create3d_samples(o_p_a)
-        time2 = datetime.datetime.now()
-        print(f"Cas : {time2-time1}")
         return x, y
 
     @classmethod
@@ -126,9 +117,14 @@ class Samples:
         return Samples(symbol)
 
     @staticmethod
-    def create_samples():
-        for symbol in random.sample(Config.SYMBOLS_TO_SCRAPE, Config.RANDOM_SYMBOLS_FOR_SAMPLE):
-            print(f"Creating samples from symbol={symbol}")
+    def create_samples(candles):
+        samples = Samples(candles)
+        return samples.create_samples_for_symbol()
 
-            samples = Samples.get_sample_cls(symbol)
-            result_samples = samples.create_samples_for_symbol()
+    @staticmethod
+    def create_samples_for_symbols(symbols):
+        print(f"Creating samples for symbol group {symbols}")
+        train_candles = ViewWithtRes.get_train_candles(symbols)
+        train_samples = Samples.create_samples(train_candles)
+        print(f"Samples created")
+        return train_samples
