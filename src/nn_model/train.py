@@ -22,12 +22,12 @@ class TrainNN:
             for symbol_index, symbols in enumerate(Config.SYMBOL_GROUPS):
                 # Load samples before training only first time
                 if first:
-                    sample_thread = ReturningThread(target=Samples.get_training_samples, args=(Config.SYMBOL_GROUPS[0], ))
+                    sample_thread = ReturningThread(target=Samples.create_samples_for_symbols, args=(Config.SYMBOL_GROUPS[0], ))
                     sample_thread.start()
                     first = False
 
                 model.set_train_samples(sample_thread.join())
                 next_symbols = Config.SYMBOL_GROUPS[symbol_index] if symbol_index + 1 <= len(Config.SYMBOL_GROUPS) else Config.SYMBOL_GROUPS[0]
-                sample_thread = ReturningThread(target=Samples.get_training_samples, args=(next_symbols,))
+                sample_thread = ReturningThread(target=Samples.create_samples_for_symbols, args=(next_symbols,))
                 sample_thread.start()
                 model.train()

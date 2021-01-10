@@ -122,7 +122,7 @@ class Samples:
         return samples.create_samples_for_symbol()
 
     @staticmethod
-    def get_training_samples(symbols):
+    def create_samples_for_symbols(symbols):
         print(f"Creating samples for symbol group {symbols}")
         train_candles = ViewWithtRes.get_train_candles(symbols)
         train_samples = Samples.create_samples(train_candles)
