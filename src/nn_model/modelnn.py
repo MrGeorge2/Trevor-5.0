@@ -40,27 +40,22 @@ class ModelNN:
         print("Model saved.")
 
     def create(self):
-        self.model = Sequential()
-        self.model.add(LSTM(units=128, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
-        self.model.add(Dropout(0.1))
-        self.model.add(LSTM(units=64, return_sequences=True))
-        self.model.add(Dropout(0.1))
-        self.model.add(LSTM(units=64, return_sequences=True))
-        self.model.add(Dropout(0.1))
-        self.model.add(LSTM(units=64, return_sequences=False))
-        self.model.add(Dropout(0.1))
+        model = Sequential()
+        model.add(LSTM(units=32, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
 
-        self.model.add(Dense(units=64, activation="relu"))
-        self.model.add(Dropout(0.1))
-        self.model.add(Dense(units=32, activation="relu"))
-        self.model.add(Dropout(0.1))
-        self.model.add(Dense(units=16, activation="relu"))
-        self.model.add(Dropout(0.1))
-        self.model.add(Dense(units=8, activation="relu"))
-        self.model.add(Dropout(0.1))
+        model.add(LSTM(units=32, return_sequences=True))
 
-        self.model.add(Dense(units=1, activation='sigmoid'))
-        self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=["categorical_accuracy"])
+        model.add(LSTM(units=32, return_sequences=True))
+
+        model.add(LSTM(units=16, return_sequences=False))
+
+        model.add(Dense(units=16, activation="relu"))
+        model.add(Dense(units=16, activation="relu"))
+        model.add(Dense(units=8, activation="relu"))
+
+        model.add(Dense(units=2, activation='softmax'))
+        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["categorical_accuracy"])
+        self.model = model
         print("Model created.")
         self.save()
 
@@ -70,4 +65,5 @@ class ModelNN:
     
     def show_real_output(self):
         for i in range(100):
-            print(f"predicted: {self.model.predict(self.x_test[i:i+1, :, :])}, argmax: {np.argmax(self.model.predict(self.x_test[i:i+1, :, :]))},  real: {self.y_test[i, :]}")
+            sample = self.x_test[i:i+1, :, :]
+            print(f"predicted: {self.model.predict(sample)}, argmax: {np.argmax(self.model.predict(sample))},  real: {self.y_test[i, :]}")
