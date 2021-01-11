@@ -4,6 +4,7 @@ from .data_analysis.models.results import Results
 from .data_analysis.models.indicators import Indicators
 from .samples.samples import Samples
 from .nn_model.train import TrainNN
+from .nn_model.test_gpu import test_tf_gpu
 
 
 """
@@ -47,6 +48,7 @@ class MethodRegistrator:
         Samples.create_samples.__name__: Samples.create_samples,
         Results.divide_train_test.__name__: Results.divide_train_test,
         TrainNN.train.__name__: TrainNN.train,
+        test_tf_gpu.__name__: test_tf_gpu
     }
     APPEND_EXT_TEXT: str = "\n For getting all registred methods please use python3 main.py help"
 

@@ -2,6 +2,7 @@ from ..globals.config import Config
 from .modelnn import ModelNN
 from ..samples.samples import Samples
 from ..data_analysis.models.views import ViewWithtRes
+from ..data_analysis.models.train_log import TrainLog
 from ..utils.tread import ReturningThread
 
 
@@ -16,16 +17,16 @@ class TrainNN:
             for symbol_index, symbols in enumerate(Config.SYMBOL_GROUPS_1H):
                 # Load samples before training only first time
                 if first:
-                    sample_thread = ReturningThread(target=Samples.create_samples_for_symbols, args=(Config.SYMBOL_GROUPS[0], ))
+                    sample_thread = ReturningThread(target=Samples.create_samples_for_symbols, args=(Config.SYMBOL_GROUPS_1H[0], ))
                     sample_thread.start()
                     first = False
 
                 model.set_train_samples(sample_thread.join())
-                next_symbols = Config.SYMBOL_GROUPS[symbol_index] if symbol_index + 1 <= len(Config.SYMBOL_GROUPS) else Config.SYMBOL_GROUPS[0]
+                next_symbols = Config.SYMBOL_GROUPS_1H[symbol_index + 1] if symbol_index + 1 < len(
+                    Config.SYMBOL_GROUPS_1H) else Config.SYMBOL_GROUPS_1H[0]
                 sample_thread = ReturningThread(target=Samples.create_samples_for_symbols, args=(next_symbols,))
                 sample_thread.start()
                 model.train()
-
             TrainNN.eval()
 
     @staticmethod
@@ -39,5 +40,5 @@ class TrainNN:
             test_samples = Samples.create_samples(test_candles)
 
             model.set_test_samples(test_samples)
-            model.eval()
+            model.eval(' '.join(symbols), "")
         print("Evaluate done")
