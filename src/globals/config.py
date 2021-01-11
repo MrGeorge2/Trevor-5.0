@@ -14,7 +14,7 @@ class Config:
     """
     SCRAPER
     """
-    CANDLE_INTERVAL = Client.KLINE_INTERVAL_1MINUTE
+    CANDLE_INTERVAL = Client.KLINE_INTERVAL_4HOUR
     CHECK_ROW_IN_DB = False
     SYMBOLS_TO_SCRAPE = [
         #  --- USDT ---

@@ -27,7 +27,8 @@ class TrainNN:
                     first = False
 
                 model.set_train_samples(sample_thread.join())
-                next_symbols = Config.SYMBOL_GROUPS[symbol_index] if symbol_index + 1 <= len(Config.SYMBOL_GROUPS) else Config.SYMBOL_GROUPS[0]
+                next_symbols = Config.SYMBOL_GROUPS[symbol_index] if symbol_index + 1 < len(Config.SYMBOL_GROUPS) else Config.SYMBOL_GROUPS[0]
                 sample_thread = ReturningThread(target=Samples.create_samples_for_symbols, args=(next_symbols,))
                 sample_thread.start()
                 model.train()
+                model.show_real_output()

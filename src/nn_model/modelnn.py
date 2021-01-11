@@ -59,11 +59,15 @@ class ModelNN:
         self.model.add(Dense(units=8, activation="relu"))
         self.model.add(Dropout(0.1))
 
-        self.model.add(Dense(units=2, activation='softmax'))
-        self.model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=["accuracy"])
+        self.model.add(Dense(units=1, activation='sigmoid'))
+        self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=["categorical_accuracy"])
         print("Model created.")
         self.save()
 
     def train(self):
-        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=10, validation_data=(self.x_test, self.y_test))
+        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=32, validation_data=(self.x_test, self.y_test))
         self.save()
+    
+    def show_real_output(self):
+        for i in range(100):
+            print(f"predicted: {self.model.predict(self.x_test[i, :, :])},  real: {self.y_test[i, :]}")
