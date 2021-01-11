@@ -70,4 +70,4 @@ class ModelNN:
     
     def show_real_output(self):
         for i in range(100):
-            print(f"predicted: {self.model.predict(self.x_test[i, :, :])},  real: {self.y_test[i, :]}")
+            print(f"predicted: {self.model.predict(self.x_test[i:i+1, :, :])}, argmax: {np.argmax(self.model.predict(self.x_test[i:i+1, :, :]))},  real: {self.y_test[i, :]}")
