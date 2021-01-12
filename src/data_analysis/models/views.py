@@ -51,6 +51,13 @@ class ViewWithtRes(ViewTypeWithRes, DB.DECLARATIVE_BASE):
         test_candles = db.SESSION.query(ViewWithtRes).filter(ViewWithtRes.train == False).order_by(asc(ViewWithtRes.open_time)).all()
         return test_candles
 
+    @classmethod
+    def get_test_candles_for_symbols(cls, symbols) -> List[ViewTypeWithRes]:
+        train_expression = getattr(cls, "train") == False
+
+        return db.SESSION.query(ViewWithtRes).filter(and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(
+            asc(ViewWithtRes.open_time)).all()
+
     @staticmethod
     def get_train_candles_for_symbol(symbol) -> List[ViewTypeWithRes]:
         db = DB.get_globals()

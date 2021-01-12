@@ -2,9 +2,9 @@ from ..globals.config import Config
 import os
 import numpy as np
 from tensorflow.keras.models import load_model, Sequential
+from ..data_analysis.models.train_log import TrainLog
 from tensorflow.keras.layers import Dense, LSTM, Dropout, Flatten
 from tensorflow.keras.optimizers import Adam
-
 
 
 class ModelNN:
@@ -79,6 +79,18 @@ class ModelNN:
         self.save()
 
     def train(self):
+        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=64)
+        self.save()
+
+    def eval(self, symbol, note):
+        score = self.model.evaluate(self.x_test, self.y_test, verbose=1)
+        loss = score[0]
+        acc = score[1]
+
+        TrainLog.add_train_log(loss=loss, acc=acc, symbol=symbol, note=note)
+        print(f'Test loss: {score[0]} / Test accuracy: {score[1]}')
+        self.x_test = []
+        self.y_test = []
         self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=32, validation_data=(self.x_test, self.y_test))
         self.save()
     
@@ -89,6 +101,5 @@ class ModelNN:
         for i in range(50):
             train_sample = self.x_train[i:i+1, :, :]
             print(f"TRAIN: predicted: {self.model.predict(train_sample)},  real: {self.y_train[i, :]}")
-
 
 
