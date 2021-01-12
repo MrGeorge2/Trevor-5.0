@@ -14,7 +14,7 @@ class Config:
     """
     SCRAPER
     """
-    CANDLE_INTERVAL = Client.KLINE_INTERVAL_1MINUTE
+    CANDLE_INTERVAL = Client.KLINE_INTERVAL_4HOUR
     CHECK_ROW_IN_DB = False
     SYMBOLS_TO_SCRAPE = [
         #  --- USDT ---
@@ -258,5 +258,5 @@ class Config:
     #### MODEL ####
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
-    EPOCHS = 1
+    EPOCHS = 10
     ITERATIONS_CANLED_GROUP = 10
