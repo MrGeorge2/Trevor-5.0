@@ -2,7 +2,7 @@ from ..globals.config import Config
 import os
 import numpy as np
 from tensorflow.keras.models import load_model, Sequential
-from tensorflow.keras.layers import Dense, LSTM, Dropout
+from tensorflow.keras.layers import Dense, LSTM, Dropout, Flatten
 from tensorflow.keras.optimizers import Adam
 
 
@@ -43,19 +43,33 @@ class ModelNN:
 
     def create(self):
         model = Sequential()
-        model.add(LSTM(units=64, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
-
+        
+        model.add(LSTM(units=128, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
         model.add(LSTM(units=64, return_sequences=True))
-
+        model.add(LSTM(units=64, return_sequences=True))
         model.add(LSTM(units=32, return_sequences=True))
         model.add(LSTM(units=32, return_sequences=True))
-
         model.add(LSTM(units=32, return_sequences=False))
-
+        """
+        model.add(Flatten(input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
+        model.add(Dense(units=2048, activation="relu"))
+        model.add(Dense(units=2048, activation="relu"))
+        model.add(Dense(units=1024, activation="relu"))
+        model.add(Dense(units=1024, activation="relu"))
+        model.add(Dense(units=512, activation="relu"))
+        model.add(Dense(units=256, activation="relu"))
+        model.add(Dense(units=128, activation="relu"))
+        model.add(Dense(units=64, activation="relu"))
+        model.add(Dense(units=64, activation="relu"))
         model.add(Dense(units=32, activation="relu"))
         model.add(Dense(units=16, activation="relu"))
         model.add(Dense(units=8, activation="relu"))
+        """
 
+        model.add(Dense(units=32, activation="relu"))
+        model.add(Dense(units=32, activation="relu"))
+        model.add(Dense(units=16, activation="relu"))
+        model.add(Dense(units=8, activation="relu"))
         model.add(Dense(units=2, activation="relu"))
         model.add(Dense(units=1, activation='sigmoid'))
         opt = Adam(learning_rate=0.00005)
@@ -69,6 +83,12 @@ class ModelNN:
         self.save()
     
     def show_real_output(self):
-        for i in range(100):
-            sample = self.x_test[i:i+1, :, :]
-            print(f"predicted: {self.model.predict(sample)}, argmax: {np.argmax(self.model.predict(sample))},  real: {self.y_test[i, :]}")
+        for i in range(50):
+            test_sample = self.x_test[i:i+1, :, :]
+            print(f"TEST: predicted: {self.model.predict(test_sample)},  real: {self.y_test[i, :]}")
+        for i in range(50):
+            train_sample = self.x_train[i:i+1, :, :]
+            print(f"TRAIN: predicted: {self.model.predict(train_sample)},  real: {self.y_train[i, :]}")
+
+
+
