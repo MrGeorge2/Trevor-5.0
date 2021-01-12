@@ -28,6 +28,7 @@ class TrainNN:
                 sample_thread.start()
                 model.train()
             TrainNN.eval()
+            model.show_real_output()
 
     @staticmethod
     def eval():
@@ -42,3 +43,4 @@ class TrainNN:
             model.set_test_samples(test_samples)
             model.eval(' '.join(symbols), "")
         print("Evaluate done")
+
