@@ -3,6 +3,8 @@ import os
 import numpy as np
 from tensorflow.keras.models import load_model, Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout
+from tensorflow.keras.optimizers import Adam
+
 
 
 class ModelNN:
@@ -41,20 +43,23 @@ class ModelNN:
 
     def create(self):
         model = Sequential()
-        model.add(LSTM(units=32, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
+        model.add(LSTM(units=64, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
+
+        model.add(LSTM(units=64, return_sequences=True))
 
         model.add(LSTM(units=32, return_sequences=True))
-
         model.add(LSTM(units=32, return_sequences=True))
 
-        model.add(LSTM(units=16, return_sequences=False))
+        model.add(LSTM(units=32, return_sequences=False))
 
-        model.add(Dense(units=16, activation="relu"))
+        model.add(Dense(units=32, activation="relu"))
         model.add(Dense(units=16, activation="relu"))
         model.add(Dense(units=8, activation="relu"))
 
-        model.add(Dense(units=2, activation='softmax'))
-        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["categorical_accuracy"])
+        model.add(Dense(units=2, activation="relu"))
+        model.add(Dense(units=1, activation='sigmoid'))
+        opt = Adam(learning_rate=0.00005)
+        model.compile(optimizer=opt, loss='binary_crossentropy', metrics=["binary_accuracy"])
         self.model = model
         print("Model created.")
         self.save()

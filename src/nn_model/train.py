@@ -8,13 +8,14 @@ from ..utils.tread import ReturningThread
 class TrainNN:
     @classmethod
     def train(cls):
+        model = ModelNN()
+        model.load()
+
         print("Creating test samples")
         test_candles = ViewWithtRes.get_test_candles()
         test_samples = Samples.create_samples(test_candles)
         print("Test samples created")
 
-        model = ModelNN()
-        model.load()
         model.set_test_samples(test_samples)
 
         first = True
