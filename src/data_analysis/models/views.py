@@ -1,9 +1,9 @@
-from ...globals.db import DB
+from ...globals.DB import DB
 from sqlalchemy import Table, Column, Integer, asc, and_, or_
 from typing import List
 
 
-db = DB.get_globals()
+DB = DB.get_globals()
 
 
 class ViewTypeWithoutRes:
@@ -26,10 +26,10 @@ class ViewTypeWithoutRes:
     ema200 = None
 
 
-class ViewWithoutRes(ViewTypeWithoutRes, db.DECLARATIVE_BASE):
-    __table__ = Table("VJoined", db.DECLARATIVE_BASE.metadata,
+class ViewWithoutRes(ViewTypeWithoutRes, DB.DECLARATIVE_BASE):
+    __table__ = Table("VJoined", DB.DECLARATIVE_BASE.metadata,
                       Column("id", Integer, primary_key=True),
-                             autoload=True, autoload_with=db.ENGINE
+                             autoload=True, autoload_with=DB.ENGINE
                     )
 
 
@@ -42,26 +42,26 @@ class ViewTypeWithRes(ViewTypeWithoutRes):
 class ViewWithtRes(ViewTypeWithRes, DB.DECLARATIVE_BASE):
     __table__ = Table("VJoinedVRes", DB.DECLARATIVE_BASE.metadata,
                         Column("id", Integer, primary_key=True),
-                        autoload=True, autoload_with=db.ENGINE,
+                        autoload=True, autoload_with=DB.ENGINE,
                     )
 
     @staticmethod
     def get_test_candles() -> List[ViewTypeWithRes]:
-        db = DB.get_globals()
-        test_candles = db.SESSION.query(ViewWithtRes).filter(ViewWithtRes.train == False).order_by(asc(ViewWithtRes.open_time)).all()
+        DB = DB.get_globals()
+        test_candles = DB.SESSION.query(ViewWithtRes).filter(ViewWithtRes.train == False).order_by(asc(ViewWithtRes.open_time)).all()
         return test_candles
 
     @classmethod
     def get_test_candles_for_symbols(cls, symbols) -> List[ViewTypeWithRes]:
         train_expression = getattr(cls, "train") == False
 
-        return db.SESSION.query(ViewWithtRes).filter(and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(
+        return DB.SESSION.query(ViewWithtRes).filter(and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(
             asc(ViewWithtRes.open_time)).all()
 
     @staticmethod
     def get_train_candles_for_symbol(symbol) -> List[ViewTypeWithRes]:
-        db = DB.get_globals()
-        train_candles = db.SESSION.query(ViewWithtRes).filter(
+        DB = DB.get_globals()
+        train_candles = DB.SESSION.query(ViewWithtRes).filter(
             and_(ViewWithtRes.symbol == symbol, ViewWithtRes.train == True)).order_by(
             asc(ViewWithtRes.open_time)).all()
         return train_candles
@@ -69,7 +69,7 @@ class ViewWithtRes(ViewTypeWithRes, DB.DECLARATIVE_BASE):
     @classmethod
     def get_train_candles(cls, symbols: List[str]):
         train_expression = getattr(cls, "train") == True
-        return db.SESSION.query(ViewWithtRes).filter(and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(
+        return DB.SESSION.query(ViewWithtRes).filter(and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(
             asc(ViewWithtRes.open_time)).all()
 
     def __repr__(self):
@@ -79,7 +79,7 @@ class ViewWithtRes(ViewTypeWithRes, DB.DECLARATIVE_BASE):
 """
 Priklad pouziti.. dulezite je pridat typ List[ViewTypeWithRes] potom to bude radit typy
 def test(*args):
-    res: List[ViewTypeWithRes] = db.SESSION.query(ViewWithtRes)
+    res: List[ViewTypeWithRes] = DB.SESSION.query(ViewWithtRes)
     for r in res:
         print(r.symbol)
 """
