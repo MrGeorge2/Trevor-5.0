@@ -233,20 +233,14 @@ class Config:
             "AAVEUSDT",
             "ADABNB",
             "ADABTC",
-        ],
-        [
             "ADAUSDT",
             "ALGOBTC",
             "ATOMBTC",
-        ],
-        [
             "ATOMUSDT",
             "BATUSDT",
             "BCHBNB",
             "BCHBTC",
             "BCHUSDT",
-        ],
-        [
             "BNBBTC",
             "BNBETH",
         ],
@@ -254,18 +248,12 @@ class Config:
             "BNBUSDT",
             "BTCUSDT",
             "COMPUSDT",
-        ],
-        [
             "DAIUSDT",
             "DASHBNB",
             "DASHBTC",
-        ],
-        [
             "DASHETH",
             "DASHUSDT",
             "DOGEUSDT",
-        ],
-        [
             "DOTBNB",
             "DOTBTC",
             "DOTUSDT",
@@ -275,16 +263,10 @@ class Config:
         [
             "EOSBNB",
             "EOSETH",
-        ],
-        [
             "EOSUSDT",
             "ETCUSDT",
-        ],
-        [
             "ETHBTC",
             "ETHUSDT",
-        ],
-        [
             "FILBTC",
             "FILUSDT",
             "GRTETH",
@@ -298,16 +280,10 @@ class Config:
         [
             "LINKETH",
             "LINKUSDT",
-        ],
-        [
             "LRCETH",
             "LTCBNB",
-        ],
-        [
             "LTCBTC",
             "LTCETH",
-        ],
-        [
             "LTCUSDT",
             "LUNABTC",
             "MKRBNB",
@@ -317,18 +293,12 @@ class Config:
             "NEOBTC",
             "NEOETH",
             "OCEANBTC",
-        ],
-        [
             "OMGETH",
             "ONTUSDT",
-        ],
-        [
             "QTUMUSDT",
             "RENBTC",
             "RENUSDT",
             "RUNEBTC",
-        ],
-        [
             "THETABTC",
             "THETAETH",
             "TRXUSDT",
@@ -338,12 +308,8 @@ class Config:
             "UNIUSDT",
             "VETETH",
             "VETUSDT",
-        ],
-        [
             "WANETH",
             "WAVESBTC"
-        ],
-        [
             "XEMETH",
             "XLMETH"
         ],
@@ -351,13 +317,9 @@ class Config:
             "XLMUSDT",
             "XMRBNB",
             "XMRBTC",
-        ],
-        [
             "XMRETH",
             "XMRUSDT",
             "XRPBNB",
-        ],
-        [
             "XRPBTC",
             "XRPETH",
         ],
@@ -367,12 +329,8 @@ class Config:
             "YFIBNB",
             "YFIBTC",
             "YFIIBNB",
-        ],
-        [
             "ZECBNB",
             "ZECETH",
-        ],
-        [
             "ZENBTC",
             "ZILETH"
         ]
@@ -413,4 +371,4 @@ class Config:
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
     EPOCHS = 10
-    ITERATIONS_CANLED_GROUP = 100
+    ITERATIONS_CANLED_GROUP = 10
