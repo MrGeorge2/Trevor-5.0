@@ -130,6 +130,9 @@ class Indicators(DB.DECLARATIVE_BASE):
                 ],
                 axis='columns')
 
+            df['trend_psar_up'] = df['trend_psar_up'].fillna(0)
+            df['trend_psar_down'] = df['trend_psar_down'].fillna(0)
+
             for i, data in df.iterrows():
                 if Config.CHECK_ROW_IN_DB:
 
