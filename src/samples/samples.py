@@ -51,11 +51,11 @@ class Samples:
         add_enable = True
         normalized_array[:, 1:5] = self.normalize(input_array[:, 1:5])
 
-        if not np.isnan(input_array).any():
+        if np.isnan(input_array).any():
+            add_enable = False
+        else:
             for i in range(5, np.shape(input_array)[1] - 2):
                 normalized_array[:, i] = self.normalize(input_array[:, i])
-        else:
-            add_enable = False
         
         if (input_array[-1, 90] == 0) and (input_array[-1, 91] == 0):
             add_enable = False
