@@ -20,6 +20,8 @@ class Config:
     SYMBOLS_TO_SCRAPE = [
         #  --- USDT ---
         "BTCUSDT",
+        ]
+    """
         "ETHUSDT",
         "XRPUSDT",
         "LTCUSDT",
@@ -118,7 +120,7 @@ class Config:
         "KSMBNB",
         "DASHBNB"
     ]
-
+    """
     SYMBOL_GROUPS = [
         [
             "AAVEBNB",

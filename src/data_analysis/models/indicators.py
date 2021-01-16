@@ -3,10 +3,8 @@ from .candle_api import CandleApi
 from ...globals.config import Config
 from sqlalchemy import Column, DECIMAL, DATETIME, Integer, String, ForeignKey, and_, asc
 from typing import List
-from decimal import Decimal
 import pandas as pd
 from ta import add_all_ta_features
-from ta.utils import dropna
 
 
 class Indicators(DB.DECLARATIVE_BASE):
@@ -14,7 +12,7 @@ class Indicators(DB.DECLARATIVE_BASE):
     id = Column(Integer, primary_key=True)
     open_time = Column(DATETIME, ForeignKey(CandleApi.open_time))
     symbol = Column(String, ForeignKey(CandleApi.symbol))
-    
+
     volume_adi = Column(DECIMAL)
     volume_obv = Column(DECIMAL)
     volume_cmf = Column(DECIMAL)
@@ -120,61 +118,29 @@ class Indicators(DB.DECLARATIVE_BASE):
                 close="close_price",
                 volume="volume",
             )
-            cols = df.columns
-            for i in range(len(cols)):
-                print(cols[i])
-            input()
-            pass
-            """
-            print(f"Counting indentificators for {symbol}")
-            sum21 = 0
-            sum21count = 0
 
-            sum200 = 0
-            sum200count = 0
+            # remove cols that are not in TIndicators
+            df = df.drop(
+                [
+                    'open_price',
+                    'high_price',
+                    'low_price',
+                    'close_price',
+                    'volume',
+                ],
+                axis='columns')
 
-            candles: List[CandleApi] = db.SESSION.query(CandleApi).filter(
-                CandleApi.symbol == symbol).order_by(asc(CandleApi.open_time)).all()
+            for i, data in df.iterrows():
+                if Config.CHECK_ROW_IN_DB:
 
-            for i, candle in enumerate(candles):
-                sum21 += candle.close_price
-                sum21count += 1
-
-                sum200 += candle.close_price
-                sum200count += 1
-
-                if i > 200:
-                    if Config.CHECK_ROW_IN_DB:
-                        if not db.SESSION.query(db.SESSION.query(Indicators).filter(
-                                and_(Indicators.symbol == candle.symbol,
-                                     Indicators.open_time == candle.open_time)).exists()).scalar():
-                            ind = Indicators(
-                                    sma21=sum21/21,
-                                    sma200=sum200/200,
-                                    ema21=Indicators.count_ema(candle, Decimal(sum21/21), 21),
-                                    ema200=Indicators.count_ema(candle, Decimal(sum200/200), 200),
-                                    open_time=candle.open_time,
-                                    symbol=candle.symbol)
-                            db.SESSION.add(ind)
-                    else:
-                        ind = Indicators(
-                            sma21=sum21 / 21,
-                            sma200=sum200 / 200,
-                            ema21=Indicators.count_ema(candle, Decimal(sum21 / 21), 21),
-                            ema200=Indicators.count_ema(candle, Decimal(sum200 / 200), 200),
-                            open_time=candle.open_time,
-                            symbol=candle.symbol)
+                    if not db.SESSION.query(db.SESSION.query(Indicators).filter(
+                            and_(Indicators.symbol == symbol,
+                                 Indicators.open_time == data["open_time"])).exists()).scalar():
+                        ind = Indicators(**data)
                         db.SESSION.add(ind)
-
-                if sum21count >= 21:
-                    sum21count -= 1
-                    sum21 -= candles[i-20].close_price
-
-                if sum200count >= 200:
-                    sum200count -= 1
-                    sum200 -= candles[i-199].close_price
-
+                else:
+                    ind = Indicators(**data)
+                    ind.symbol = symbol
+                    db.SESSION.add(ind)
             db.SESSION.commit()
             print(f"Done")
-
-"""

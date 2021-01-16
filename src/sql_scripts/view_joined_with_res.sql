@@ -2,23 +2,16 @@ CREATE VIEW IF NOT EXISTS  VJoinedVRes as
 SELECT
     TCandleApi.id,
 	TCandleApi.symbol,
-
-	--- Prices
 	TCandleApi.open_time,
 	TCandleApi.open_price,
 	TCandleApi.high_price,
 	TCandleApi.low_price,
 	TCandleApi.close_price,
-
-	--- Binance indicators
-	TCandleApi.volume,
 	TCandleApi.close_time,
 	TCandleApi.quote_asset_volume,
 	TCandleApi.number_of_trades,
 	TCandleApi.taker_buy_base_asset_volume,
 	TCandleApi.taker_buy_quote_asset_volume,
-
-    --- Volumes
     TIndicators.volume_adi,
     TIndicators.volume_obv,
     TIndicators.volume_cmf,
@@ -29,8 +22,6 @@ SELECT
     TIndicators.volume_vpt,
     TIndicators.volume_nvi,
     TIndicators.volume_vwap,
-
-    --- Volatility
     TIndicators.volatility_atr,
     TIndicators.volatility_bbm,
     TIndicators.volatility_bbh,
@@ -52,8 +43,6 @@ SELECT
     TIndicators.volatility_dcw,
     TIndicators.volatility_dcp,
     TIndicators.volatility_ui,
-
-    --- Trend
     TIndicators.trend_macd,
     TIndicators.trend_macd_signal,
     TIndicators.trend_macd_diff,
@@ -88,8 +77,6 @@ SELECT
     TIndicators.trend_psar_up_indicator,
     TIndicators.trend_psar_down_indicator,
     TIndicators.trend_stc,
-
-    --- Momentum
     TIndicators.momentum_rsi,
     TIndicators.momentum_stoch_rsi,
     TIndicators.momentum_stoch_rsi_k,
@@ -108,8 +95,6 @@ SELECT
     TIndicators.others_dr,
     TIndicators.others_dlr,
     TIndicators.others_cr,
-
-    --- Results
 	TResults.up,
 	TResults.down,
 	TResults.train

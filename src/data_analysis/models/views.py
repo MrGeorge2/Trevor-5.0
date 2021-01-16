@@ -3,9 +3,6 @@ from sqlalchemy import Table, Column, Integer, asc, and_, or_
 from typing import List
 
 
-db = DB.get_globals()
-
-
 class ViewTypeWithoutRes:
     id = None
     symbol = None
@@ -116,6 +113,9 @@ class ViewTypeWithRes(ViewTypeWithoutRes):
     train = None
 
 
+db = DB.get_globals()
+
+
 class ViewWithtRes(ViewTypeWithRes, db.DECLARATIVE_BASE):
     __table__ = Table("VJoinedVRes", db.DECLARATIVE_BASE.metadata,
                         Column("id", Integer, primary_key=True),
@@ -124,27 +124,30 @@ class ViewWithtRes(ViewTypeWithRes, db.DECLARATIVE_BASE):
 
     @staticmethod
     def get_test_candles() -> List[ViewTypeWithRes]:
-        test_candles = db.SESSION.query(ViewWithtRes).filter(ViewWithtRes.train == False).order_by(asc(ViewWithtRes.open_time)).all()
+        dbb = DB.get_globals()
+        test_candles = dbb.SESSION.query(ViewWithtRes).filter(ViewWithtRes.train == False).order_by(asc(ViewWithtRes.open_time)).all()
         return test_candles
 
     @classmethod
     def get_test_candles_for_symbols(cls, symbols) -> List[ViewTypeWithRes]:
         train_expression = getattr(cls, "train") == False
-
-        return db.SESSION.query(ViewWithtRes).filter(and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(
+        dbb = DB.get_globals()
+        return dbb.SESSION.query(ViewWithtRes).filter(and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(
             asc(ViewWithtRes.open_time)).all()
 
     @staticmethod
     def get_train_candles_for_symbol(symbol) -> List[ViewTypeWithRes]:
-        train_candles = db.SESSION.query(ViewWithtRes).filter(
+        dbb = DB.get_globals()
+        train_candles = dbb.SESSION.query(ViewWithtRes).filter(
             and_(ViewWithtRes.symbol == symbol, ViewWithtRes.train == True)).order_by(
             asc(ViewWithtRes.open_time)).all()
         return train_candles
 
     @classmethod
     def get_train_candles(cls, symbols: List[str]):
+        dbb = DB.get_globals()
         train_expression = getattr(cls, "train") == True
-        return db.SESSION.query(ViewWithtRes).filter(and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(
+        return dbb.SESSION.query(ViewWithtRes).filter(and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(
             asc(ViewWithtRes.open_time)).all()
 
     def __repr__(self):
