@@ -12,21 +12,96 @@ from ta.utils import dropna
 class Indicators(DB.DECLARATIVE_BASE):
     __tablename__ = "TIndicators"
     id = Column(Integer, primary_key=True)
-    sma21 = Column(DECIMAL)
-    sma200 = Column(DECIMAL)
-    ema21 = Column(DECIMAL)
-    ema200 = Column(DECIMAL)
     open_time = Column(DATETIME, ForeignKey(CandleApi.open_time))
     symbol = Column(String, ForeignKey(CandleApi.symbol))
+    
+    volume_adi = Column(DECIMAL)
+    volume_obv = Column(DECIMAL)
+    volume_cmf = Column(DECIMAL)
+    volume_fi = Column(DECIMAL)
+    volume_mfi = Column(DECIMAL)
+    volume_em = Column(DECIMAL)
+    volume_sma_em = Column(DECIMAL)
+    volume_vpt = Column(DECIMAL)
+    volume_nvi = Column(DECIMAL)
+    volume_vwap = Column(DECIMAL)
 
-    def __repr__(self):
-        return f"sma21={self.sma21} sma200={self.sma200} ema21={self.ema21} ema200={self.ema200} " \
-               f"open_time={self.open_time} symbol={self.symbol}"
+    volatility_atr = Column(DECIMAL)
+    volatility_bbm = Column(DECIMAL)
+    volatility_bbh = Column(DECIMAL)
+    volatility_bbl = Column(DECIMAL)
+    volatility_bbw = Column(DECIMAL)
+    volatility_bbp = Column(DECIMAL)
+    volatility_bbhi = Column(DECIMAL)
+    volatility_bbli = Column(DECIMAL)
+    volatility_kcc = Column(DECIMAL)
+    volatility_kch = Column(DECIMAL)
+    volatility_kcl = Column(DECIMAL)
+    volatility_kcw = Column(DECIMAL)
+    volatility_kcp = Column(DECIMAL)
+    volatility_kchi = Column(DECIMAL)
+    volatility_kcli = Column(DECIMAL)
+    volatility_dcl = Column(DECIMAL)
+    volatility_dch = Column(DECIMAL)
+    volatility_dcm = Column(DECIMAL)
+    volatility_dcw = Column(DECIMAL)
+    volatility_dcp = Column(DECIMAL)
+    volatility_ui = Column(DECIMAL)
 
-    @staticmethod
-    def count_ema(candle_actual: CandleApi, sma: Decimal, n: int):
-        k = Decimal(2 / (n + 1))
-        return ((candle_actual.close_price - sma) * k) + sma
+    trend_macd = Column(DECIMAL)
+    trend_macd_signal = Column(DECIMAL)
+    trend_macd_diff = Column(DECIMAL)
+    trend_sma_fast = Column(DECIMAL)
+    trend_sma_slow = Column(DECIMAL)
+    trend_ema_fast = Column(DECIMAL)
+    trend_ema_slow = Column(DECIMAL)
+    trend_adx = Column(DECIMAL)
+    trend_adx_pos = Column(DECIMAL)
+    trend_adx_neg = Column(DECIMAL)
+    trend_vortex_ind_pos = Column(DECIMAL)
+    trend_vortex_ind_neg = Column(DECIMAL)
+    trend_vortex_ind_diff = Column(DECIMAL)
+    trend_trix = Column(DECIMAL)
+    trend_mass_index = Column(DECIMAL)
+    trend_cci = Column(DECIMAL)
+    trend_dpo = Column(DECIMAL)
+    trend_kst = Column(DECIMAL)
+    trend_kst_sig = Column(DECIMAL)
+    trend_kst_diff = Column(DECIMAL)
+    trend_ichimoku_conv = Column(DECIMAL)
+    trend_ichimoku_base = Column(DECIMAL)
+    trend_ichimoku_a = Column(DECIMAL)
+    trend_ichimoku_b = Column(DECIMAL)
+    trend_visual_ichimoku_a = Column(DECIMAL)
+    trend_visual_ichimoku_b = Column(DECIMAL)
+    trend_aroon_up = Column(DECIMAL)
+    trend_aroon_down = Column(DECIMAL)
+    trend_aroon_ind = Column(DECIMAL)
+    trend_psar_up = Column(DECIMAL)
+    trend_psar_down = Column(DECIMAL)
+    trend_psar_up_indicator = Column(DECIMAL)
+    trend_psar_down_indicator = Column(DECIMAL)
+    trend_stc = Column(DECIMAL)
+
+    momentum_rsi = Column(DECIMAL)
+    momentum_stoch_rsi = Column(DECIMAL)
+    momentum_stoch_rsi_k = Column(DECIMAL)
+    momentum_stoch_rsi_d = Column(DECIMAL)
+    momentum_tsi = Column(DECIMAL)
+    momentum_uo = Column(DECIMAL)
+    momentum_stoch = Column(DECIMAL)
+    momentum_stoch_signal = Column(DECIMAL)
+    momentum_wr = Column(DECIMAL)
+    momentum_ao = Column(DECIMAL)
+    momentum_kama = Column(DECIMAL)
+    momentum_roc = Column(DECIMAL)
+    momentum_ppo = Column(DECIMAL)
+    momentum_ppo_signal = Column(DECIMAL)
+    momentum_ppo_hist = Column(DECIMAL)
+
+    others_dr = Column(DECIMAL)
+    others_dlr = Column(DECIMAL)
+    others_cr = Column(DECIMAL)
 
     @staticmethod
     def count_indicators(*args):
@@ -45,6 +120,9 @@ class Indicators(DB.DECLARATIVE_BASE):
                 close="close_price",
                 volume="volume",
             )
+            cols = df.columns
+            for i in range(len(cols)):
+                print(cols[i])
             input()
             pass
             """
