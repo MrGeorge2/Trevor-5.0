@@ -44,22 +44,23 @@ class Samples:
         return x, y
 
     def sample_preprocessing(self, sample_2d):
+
         input_array = deepcopy(sample_2d)
         normalized_array = deepcopy(sample_2d)
-        normalized_array[:, 1:5] = self.normalize(input_array[:, 1:5])
-        normalized_array[:, 5] = self.normalize(input_array[:, 5])     # rozsah 5:6 je furt jen sloupec 5, ale ma to 2d shape, ktery je potreba pro MinMaxScaler
-        normalized_array[:, 6] = self.normalize(input_array[:, 6])
-        normalized_array[:, 7] = self.normalize(input_array[:, 7])
-        normalized_array[:, 8] = self.normalize(input_array[:, 8])
-        normalized_array[:, 9] = self.normalize(input_array[:, 9])
-        normalized_array[:, 10:12] = self.normalize(input_array[:, 10:12])
-        normalized_array[:, 12:14] = self.normalize(input_array[:, 12:14])
-
+        
         add_enable = True
-        if (input_array[-1, 14] == 0) and (input_array[-1, 15] == 0):
+        normalized_array[:, 1:5] = self.normalize(input_array[:, 1:5])
+
+        if not np.isnan(input_array).any():
+            for i in range(5, np.shape(input_array)[1] - 2):
+                normalized_array[:, i] = self.normalize(input_array[:, i])
+        else:
+            add_enable = False
+        
+        if (input_array[-1, 90] == 0) and (input_array[-1, 91] == 0):
             add_enable = False
 
-        y = input_array[-1, 14]
+        y = input_array[-1, 90]
         normalized_array = normalized_array[:, :-2]
         # sample_3d = np.reshape(normalized_array, newshape=(1, np.shape(sample_2d)[0], np.shape(sample_2d)[1]))
         return normalized_array, y, add_enable
