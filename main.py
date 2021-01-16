@@ -7,7 +7,7 @@ import sys
 # První parametr pro metodu
 DEBUG_SYS_ARGV: List[str] = [
     " ",                
-    "train",
+    "count_indicators",
 ]
 
 DEBUG: bool = True

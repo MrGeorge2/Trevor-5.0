@@ -1,5 +1,7 @@
 python-binance
 sqlalchemy
 numpy
-tensorflow-gpu==2.3.0
+tensorflow-gpu
 keras==2.4.3
+pandas
+ta

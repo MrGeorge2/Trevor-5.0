@@ -4,6 +4,9 @@ from ...globals.config import Config
 from sqlalchemy import Column, DECIMAL, DATETIME, Integer, String, ForeignKey, and_, asc
 from typing import List
 from decimal import Decimal
+import pandas as pd
+from ta import add_all_ta_features
+from ta.utils import dropna
 
 
 class Indicators(DB.DECLARATIVE_BASE):
@@ -30,6 +33,21 @@ class Indicators(DB.DECLARATIVE_BASE):
         db = DB.get_globals()
 
         for symbol in Config.SYMBOLS_TO_SCRAPE:
+            print(f"Counting indentificators for {symbol}")
+            candles: List[CandleApi] = db.SESSION.query(CandleApi).filter(
+                CandleApi.symbol == symbol).order_by(asc(CandleApi.open_time)).all()
+            df = pd.DataFrame([candle.prices_as_dict() for candle in candles])
+            df = add_all_ta_features(
+                df,
+                open="open_time",
+                high="high_price",
+                low="low_price",
+                close="close_price",
+                volume="volume",
+            )
+            input()
+            pass
+            """
             print(f"Counting indentificators for {symbol}")
             sum21 = 0
             sum21count = 0
@@ -81,3 +99,4 @@ class Indicators(DB.DECLARATIVE_BASE):
             db.SESSION.commit()
             print(f"Done")
 
+"""

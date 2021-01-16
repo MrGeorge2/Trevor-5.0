@@ -66,7 +66,6 @@ class DB:
         return os.path.join(src_path, script_name)
 
 
-
     @classmethod
     def get_globals(cls):
         return DB()
