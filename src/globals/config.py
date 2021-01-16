@@ -228,6 +228,9 @@ class Config:
     ]
     SYMBOL_GROUPS_1H = [
         [
+            "BTCUSDT",
+        ],
+        [
             "AAVEBNB",
             "AAVEETH",
             "AAVEUSDT",
@@ -363,7 +366,7 @@ class Config:
     ### SAMPLES ###
     """
     RANDOM_SYMBOLS_FOR_SAMPLE = 5
-    NUMBER_OF_SAMPLE_COLUMNS = 16
+    NUMBER_OF_SAMPLE_COLUMNS = 92
     FINAL_SAMPLE_COLUMNS = 14
 
     """
