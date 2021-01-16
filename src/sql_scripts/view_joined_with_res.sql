@@ -8,6 +8,7 @@ SELECT
 	TCandleApi.low_price,
 	TCandleApi.close_price,
 	TCandleApi.close_time,
+	TCandleApi.volume,
 	TCandleApi.quote_asset_volume,
 	TCandleApi.number_of_trades,
 	TCandleApi.taker_buy_base_asset_volume,
