@@ -5,6 +5,8 @@ from tensorflow.keras.models import load_model, Sequential
 from ..data_analysis.models.train_log import TrainLog
 from tensorflow.keras.layers import Dense, LSTM, Dropout, Flatten, BatchNormalization
 from tensorflow.keras.optimizers import Adam, SGD
+from tensorflow.keras.callbacks import TensorBoard
+from datetime import datetime
 
 
 class ModelNN:
@@ -13,6 +15,8 @@ class ModelNN:
         self.y_train = []
         self.x_test = []
         self.y_test = []
+        self.name = f"LSTM test {datetime.now()}"
+        self.tensorboard = TensorBoard(log_dir=f'logs./{self.name}')
 
         self.model = self.load()
 
@@ -76,7 +80,15 @@ class ModelNN:
         print(f'Test loss: {score[0]} / Test accuracy: {score[1]}')
         self.x_test = []
         self.y_test = []
-        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=32, validation_data=(self.x_test, self.y_test))
+        self.model.fit(
+            self.x_train,
+            self.y_train,
+            epochs=Config.EPOCHS,
+            batch_size=32,
+            callbacks=[self.tensorboard]
+        )
+            #validation_data=(self.x_test, self.y_test))
+
         self.save()
     
     def show_real_output(self):
