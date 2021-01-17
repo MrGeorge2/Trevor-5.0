@@ -43,22 +43,25 @@ class ModelNN:
 
     def create(self):
         model = Sequential()
-        model.add(LSTM(units=64, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
-
-        for _ in range(1):
-            model.add(LSTM(units=64, return_sequences=True))
+        model.add(LSTM(units=128, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
+        model.add(LSTM(units=128, return_sequences=True))
+        model.add(LSTM(units=64, return_sequences=True))
         model.add(LSTM(units=64, return_sequences=False))
+
+        model.add(Dense(units=64, activation="relu"))
+        model.add(Dense(units=32, activation="relu"))
+        model.add(Dense(units=16, activation="relu"))
         model.add(Dense(units=8, activation="relu"))
         model.add(Dense(units=4, activation="relu"))
         model.add(Dense(units=1, activation='sigmoid'))
-        opt = Adam(learning_rate=0.01, )
+        opt = Adam(learning_rate=0.001)
         model.compile(optimizer=opt, loss='binary_crossentropy', metrics=["binary_accuracy"])
         self.model = model
         print("Model created.")
         self.save()
 
     def train(self):
-        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=128)
+        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=32)
         self.save()
 
     def eval(self, symbol, note):
