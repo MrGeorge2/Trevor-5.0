@@ -228,45 +228,30 @@ class Config:
     ]
     SYMBOL_GROUPS_1H = [
         [
-            "AAVEBNB",
-            "AAVEETH",
-            "AAVEUSDT",
-            "ADABNB",
-            "ADABTC",
-            "ADAUSDT",
-            "ALGOBTC",
-            "ATOMBTC",
-            "ATOMUSDT",
-            "BATUSDT",
-            "BCHBNB",
-            "BCHBTC",
-            "BCHUSDT",
-            "BNBBTC",
-            "BNBETH",
-        ],
-        [
-            "BNBUSDT",
-            "BTCUSDT",
-            "COMPUSDT",
-            "DAIUSDT",
-            "DASHBNB",
-            "DASHBTC",
             "DASHETH",
             "DASHUSDT",
             "DOGEUSDT",
-            "DOTBNB",
-            "DOTBTC",
-            "DOTUSDT",
-            "EASYETH",
-            "ENJETH",
         ],
         [
-            "EOSBNB",
-            "EOSETH",
+            "DOTBNB"
+            "DOTBTC"
+            "DOTUSDT"
+            "EASYETH"
+            "ENJETH"
+        ],
+        [
+            "EOSBNB"
+            "EOSETH"
+        ],
+        [
             "EOSUSDT",
             "ETCUSDT",
+        ],
+        [
             "ETHBTC",
             "ETHUSDT",
+        ],
+        [
             "FILBTC",
             "FILUSDT",
             "GRTETH",
@@ -275,15 +260,21 @@ class Config:
             "KP3RBNB",
             "KSMBNB",
             "KSMBTC",
-            "LINKBTC",
         ],
         [
+            "LINKBTC",
             "LINKETH",
+        ],
+        [
             "LINKUSDT",
             "LRCETH",
             "LTCBNB",
+        ],
+        [
             "LTCBTC",
             "LTCETH",
+        ],
+        [
             "LTCUSDT",
             "LUNABTC",
             "MKRBNB",
@@ -293,46 +284,66 @@ class Config:
             "NEOBTC",
             "NEOETH",
             "OCEANBTC",
+        ],
+        [
             "OMGETH",
             "ONTUSDT",
+        ],
+        [
             "QTUMUSDT",
             "RENBTC",
+        ],
+        [
             "RENUSDT",
             "RUNEBTC",
             "THETABTC",
             "THETAETH",
-            "TRXUSDT",
         ],
         [
+            "TRXUSDT",
             "UNIBTC",
             "UNIUSDT",
             "VETETH",
+        ],
+        [
             "VETUSDT",
             "WANETH",
-            "WAVESBTC"
-            "XEMETH",
-            "XLMETH"
         ],
         [
-            "XLMUSDT",
+            "WAVESBTC",
+            "XEMETH",
+        ],
+        [
+            "XLMETH"
+            "XLMUSDT"
+        ],
+        [
             "XMRBNB",
             "XMRBTC",
-            "XMRETH",
-            "XMRUSDT",
-            "XRPBNB",
-            "XRPBTC",
-            "XRPETH",
         ],
         [
+            "XMRETH",
+            "XMRUSDT",
+        ],
+        [
+            "XRPBNB",
+            "XRPBTC",
+        ],
+        [
+            "XRPETH",
             "XRPUSDT",
+        ],
+        [
             "XTZUSDT",
             "YFIBNB",
             "YFIBTC",
             "YFIIBNB",
             "ZECBNB",
+        ],
+        [
             "ZECETH",
             "ZENBTC",
-            "ZILETH"
+            "ZILETH",
         ]
     ]
 
