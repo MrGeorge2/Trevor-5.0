@@ -48,15 +48,14 @@ class ModelNN:
     def create(self):
         model = Sequential()
         model.add(LSTM(units=128, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
-        model.add(BatchNormalization())
+        # model.add(BatchNormalization())
 
         for i in range(8):
             model.add(LSTM(units=64, return_sequences=True))
-            if i % 2 == 0:
-                model.add(BatchNormalization())
+            # model.add(BatchNormalization())
 
         model.add(LSTM(units=32, return_sequences=False))
-        model.add(BatchNormalization())
+        # model.add(BatchNormalization())
 
         model.add(Dense(units=8, activation="relu"))
         model.add(Dense(units=4, activation="relu"))
@@ -68,7 +67,14 @@ class ModelNN:
         self.save()
 
     def train(self):
-        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=32)
+        self.model.fit(
+            self.x_train,
+            self.y_train,
+            epochs=Config.EPOCHS,
+            batch_size=128,
+            validation_data=(self.x_test, self.y_test),
+            verbose=1
+        )
         self.save()
 
     def eval(self, symbol, note):
@@ -80,15 +86,6 @@ class ModelNN:
         print(f'Test loss: {score[0]} / Test accuracy: {score[1]}')
         self.x_test = []
         self.y_test = []
-        self.model.fit(
-            self.x_train,
-            self.y_train,
-            epochs=Config.EPOCHS,
-            batch_size=32,
-            callbacks=[self.tensorboard]
-        )
-            #validation_data=(self.x_test, self.y_test))
-
         self.save()
     
     def show_real_output(self):

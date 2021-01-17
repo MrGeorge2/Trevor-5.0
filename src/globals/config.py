@@ -228,6 +228,9 @@ class Config:
     ]
     SYMBOL_GROUPS_1H = [
         [
+            "BTCUSDT",
+        ],
+        [
             "DASHETH",
             "DASHUSDT",
             "DOGEUSDT",
@@ -381,7 +384,7 @@ class Config:
     #### MODEL ####
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
-    EPOCHS = 10
+    EPOCHS = 50
     ITERATIONS_CANLED_GROUP = 10
 
     """
