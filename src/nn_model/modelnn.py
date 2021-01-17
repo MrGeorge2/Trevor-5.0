@@ -68,7 +68,7 @@ class ModelNN:
         self.save()
 
     def train(self):
-        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=128)
+        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=32)
         self.save()
 
     def eval(self, symbol, note):

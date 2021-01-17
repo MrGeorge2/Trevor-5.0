@@ -30,6 +30,28 @@ class TrainNN:
             TrainNN.eval()
             model.show_real_output()
 
+    @classmethod
+    def train_on_few_samples(cls):
+        model = ModelNN()
+        model.load()
+
+        first = True
+        for i in range(Config.ITERATIONS_CANLED_GROUP):
+            for symbols in Config.SYMBOL_GROUPS_1H[0]:
+                # Load samples before training only first time
+                if first:
+                    sample_thread = ReturningThread(target=Samples.create_samples_for_symbols, args=(Config.SYMBOL_GROUPS_1H[0], ))
+                    sample_thread.start()
+                    first = False
+                model.set_train_samples(sample_thread.join())
+                
+                model.x_train = model.x_train[:Config.NUMBER_OF_SAMPLES_FOR_NN_TEST, :, :]
+                model.y_train = model.y_train[:Config.NUMBER_OF_SAMPLES_FOR_NN_TEST, :]
+                for i in range(10000):
+                    model.train()
+            TrainNN.eval()
+            model.show_real_output()
+
     @staticmethod
     def eval():
         model = ModelNN()

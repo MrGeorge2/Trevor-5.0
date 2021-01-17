@@ -49,6 +49,7 @@ class MethodRegistrator:
         Results.divide_train_test.__name__: Results.divide_train_test,
         Results.reverse_train_data.__name__: Results.reverse_train_data,
         TrainNN.train.__name__: TrainNN.train,
+        TrainNN.train_on_few_samples.__name__: TrainNN.train_on_few_samples,
         test_tf_gpu.__name__: test_tf_gpu
     }
     APPEND_EXT_TEXT: str = "\n For getting all registred methods please use python3 main.py help"
