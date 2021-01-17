@@ -43,44 +43,22 @@ class ModelNN:
 
     def create(self):
         model = Sequential()
-        
-        model.add(LSTM(units=128, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
-        model.add(LSTM(units=64, return_sequences=True))
-        model.add(LSTM(units=64, return_sequences=True))
-        model.add(LSTM(units=32, return_sequences=True))
-        model.add(LSTM(units=32, return_sequences=True))
-        model.add(LSTM(units=32, return_sequences=False))
-        """
-        model.add(Flatten(input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
-        model.add(Dense(units=2048, activation="relu"))
-        model.add(Dense(units=2048, activation="relu"))
-        model.add(Dense(units=1024, activation="relu"))
-        model.add(Dense(units=1024, activation="relu"))
-        model.add(Dense(units=512, activation="relu"))
-        model.add(Dense(units=256, activation="relu"))
-        model.add(Dense(units=128, activation="relu"))
-        model.add(Dense(units=64, activation="relu"))
-        model.add(Dense(units=64, activation="relu"))
-        model.add(Dense(units=32, activation="relu"))
-        model.add(Dense(units=16, activation="relu"))
-        model.add(Dense(units=8, activation="relu"))
-        """
+        model.add(LSTM(units=64, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
 
-        model.add(Dense(units=64, activation="relu"))
-        model.add(Dense(units=32, activation="relu"))
-        model.add(Dense(units=32, activation="relu"))
-        model.add(Dense(units=16, activation="relu"))
+        for _ in range(1):
+            model.add(LSTM(units=64, return_sequences=True))
+        model.add(LSTM(units=64, return_sequences=False))
         model.add(Dense(units=8, activation="relu"))
-        model.add(Dense(units=2, activation="relu"))
+        model.add(Dense(units=4, activation="relu"))
         model.add(Dense(units=1, activation='sigmoid'))
-        opt = Adam(learning_rate=0.00005)
+        opt = Adam(learning_rate=0.01, )
         model.compile(optimizer=opt, loss='binary_crossentropy', metrics=["binary_accuracy"])
         self.model = model
         print("Model created.")
         self.save()
 
     def train(self):
-        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=64)
+        self.model.fit(self.x_train, self.y_train, epochs=Config.EPOCHS, batch_size=128)
         self.save()
 
     def eval(self, symbol, note):

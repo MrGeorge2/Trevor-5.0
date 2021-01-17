@@ -47,6 +47,7 @@ class MethodRegistrator:
         full_fetch.__name__: full_fetch,
         Samples.create_samples.__name__: Samples.create_samples,
         Results.divide_train_test.__name__: Results.divide_train_test,
+        Results.reverse_train_data.__name__: Results.reverse_train_data,
         TrainNN.train.__name__: TrainNN.train,
         test_tf_gpu.__name__: test_tf_gpu
     }

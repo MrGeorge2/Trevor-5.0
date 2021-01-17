@@ -228,25 +228,22 @@ class Config:
     ]
     SYMBOL_GROUPS_1H = [
         [
+            "BTCUSDT",
+        ],
+        [
             "AAVEBNB",
             "AAVEETH",
             "AAVEUSDT",
             "ADABNB",
             "ADABTC",
-        ],
-        [
             "ADAUSDT",
             "ALGOBTC",
             "ATOMBTC",
-        ],
-        [
             "ATOMUSDT",
             "BATUSDT",
             "BCHBNB",
             "BCHBTC",
             "BCHUSDT",
-        ],
-        [
             "BNBBTC",
             "BNBETH",
         ],
@@ -254,18 +251,12 @@ class Config:
             "BNBUSDT",
             "BTCUSDT",
             "COMPUSDT",
-        ],
-        [
             "DAIUSDT",
             "DASHBNB",
             "DASHBTC",
-        ],
-        [
             "DASHETH",
             "DASHUSDT",
             "DOGEUSDT",
-        ],
-        [
             "DOTBNB",
             "DOTBTC",
             "DOTUSDT",
@@ -275,16 +266,10 @@ class Config:
         [
             "EOSBNB",
             "EOSETH",
-        ],
-        [
             "EOSUSDT",
             "ETCUSDT",
-        ],
-        [
             "ETHBTC",
             "ETHUSDT",
-        ],
-        [
             "FILBTC",
             "FILUSDT",
             "GRTETH",
@@ -298,16 +283,10 @@ class Config:
         [
             "LINKETH",
             "LINKUSDT",
-        ],
-        [
             "LRCETH",
             "LTCBNB",
-        ],
-        [
             "LTCBTC",
             "LTCETH",
-        ],
-        [
             "LTCUSDT",
             "LUNABTC",
             "MKRBNB",
@@ -317,18 +296,12 @@ class Config:
             "NEOBTC",
             "NEOETH",
             "OCEANBTC",
-        ],
-        [
             "OMGETH",
             "ONTUSDT",
-        ],
-        [
             "QTUMUSDT",
             "RENBTC",
             "RENUSDT",
             "RUNEBTC",
-        ],
-        [
             "THETABTC",
             "THETAETH",
             "TRXUSDT",
@@ -338,12 +311,8 @@ class Config:
             "UNIUSDT",
             "VETETH",
             "VETUSDT",
-        ],
-        [
             "WANETH",
             "WAVESBTC"
-        ],
-        [
             "XEMETH",
             "XLMETH"
         ],
@@ -351,13 +320,9 @@ class Config:
             "XLMUSDT",
             "XMRBNB",
             "XMRBTC",
-        ],
-        [
             "XMRETH",
             "XMRUSDT",
             "XRPBNB",
-        ],
-        [
             "XRPBTC",
             "XRPETH",
         ],
@@ -367,12 +332,8 @@ class Config:
             "YFIBNB",
             "YFIBTC",
             "YFIIBNB",
-        ],
-        [
             "ZECBNB",
             "ZECETH",
-        ],
-        [
             "ZENBTC",
             "ZILETH"
         ]
@@ -405,12 +366,12 @@ class Config:
     ### SAMPLES ###
     """
     RANDOM_SYMBOLS_FOR_SAMPLE = 5
-    NUMBER_OF_SAMPLE_COLUMNS = 16
-    FINAL_SAMPLE_COLUMNS = 14
+    NUMBER_OF_SAMPLE_COLUMNS = 92
+    FINAL_SAMPLE_COLUMNS = 90
 
     """
     #### MODEL ####
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
     EPOCHS = 10
-    ITERATIONS_CANLED_GROUP = 100
+    ITERATIONS_CANLED_GROUP = 10

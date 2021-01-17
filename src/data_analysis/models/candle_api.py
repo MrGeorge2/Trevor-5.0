@@ -21,3 +21,13 @@ class CandleApi(DB.DECLARATIVE_BASE):
     def __repr__(self):
         return f"open_time={self.open_time} close_time={self.close_time} open={self.open_price} " \
                f"high={self.high_price} low={self.low_price} close={self.close_price}"
+
+    def prices_as_dict(self):
+        return {
+            'open_time': self.open_time,
+            'open_price': float(self.open_price),
+            'high_price': float(self.high_price),
+            'low_price': float(self.low_price),
+            'close_price': float(self.close_price),
+            'volume': float(self.volume),
+        }

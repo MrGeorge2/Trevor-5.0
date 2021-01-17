@@ -66,9 +66,9 @@ class Results(DB.DECLARATIVE_BASE):
             results: List[Results] = db.SESSION.query(Results).filter(Results.symbol == symbol).all()
             print(f"Dividing train test for {symbol}")
 
-            train_samples = results[int(len(results) * 0.85): ]
+            test_samples = results[int(len(results) * 0.85): ]
             # train_samples = sample(results, int(len(results) * 0.85))
-            test_samples = [candle for candle in results if candle not in train_samples]
+            train_samples = [candle for candle in results if candle not in test_samples]
 
             for candle in train_samples:
                 setattr(candle, "train", True)
@@ -77,3 +77,16 @@ class Results(DB.DECLARATIVE_BASE):
                 setattr(candle, "train", False)
         DB.SESSION.commit()
         print("Done")
+
+    @staticmethod
+    def reverse_train_data(*args):
+        db = DB.get_globals()
+        for symbol in Config.SYMBOLS_TO_SCRAPE:
+            print(f"Reversing train-test for symbol {symbol}")
+            results: List[Results] = db.SESSION.query(Results).filter(Results.symbol == symbol).all()
+            for candle in results:
+                setattr(candle, "train", not candle.train)
+            db.SESSION.commit()
+
+
+

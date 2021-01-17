@@ -26,7 +26,6 @@ class DB:
         cls.SESSION = sess()
 
         cls.execute_sql("view_joined_with_res.sql")
-        cls.execute_sql("view_joined_without_res.sql")
 
     @classmethod
     def execute_sql(cls, script_name: str):
@@ -65,7 +64,6 @@ class DB:
         src_path_splitted.append("sql_scripts")
         src_path = "\\".join(src_path_splitted)
         return os.path.join(src_path, script_name)
-
 
 
     @classmethod
