@@ -31,7 +31,7 @@ class TrainNN:
             model.show_real_output()
 
     @classmethod
-    def train_two_samples(cls):
+    def train_on_few_samples(cls):
         model = ModelNN()
         model.load()
 
@@ -45,8 +45,8 @@ class TrainNN:
                     first = False
                 model.set_train_samples(sample_thread.join())
                 
-                model.x_train = model.x_train[:64, :, :]
-                model.y_train = model.y_train[:64, :]
+                model.x_train = model.x_train[:Config.NUMBER_OF_SAMPLES_FOR_NN_TEST, :, :]
+                model.y_train = model.y_train[:Config.NUMBER_OF_SAMPLES_FOR_NN_TEST, :]
                 for i in range(10000):
                     model.train()
             TrainNN.eval()

@@ -375,3 +375,10 @@ class Config:
     PATH_MODEL = "./src/nn_model/data/model.h5"
     EPOCHS = 10
     ITERATIONS_CANLED_GROUP = 10
+
+    """
+    #### TRAIN TWO SAMPLES ####
+    """
+    # pro testovani modelu na par vzorcich, jestli se pretrenuje
+    NUMBER_OF_SAMPLES_FOR_NN_TEST = 2
+
