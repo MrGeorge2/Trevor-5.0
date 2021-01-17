@@ -45,8 +45,8 @@ class TrainNN:
                     first = False
                 model.set_train_samples(sample_thread.join())
                 
-                model.x_train[:64, :, :]
-                model.x_test[:64, :]
+                model.x_train = model.x_train[:64, :, :]
+                model.y_train = model.y_train[:64, :]
                 for i in range(10000):
                     model.train()
             TrainNN.eval()
