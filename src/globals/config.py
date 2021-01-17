@@ -228,9 +228,6 @@ class Config:
     ]
     SYMBOL_GROUPS_1H = [
         [
-            "BTCUSDT",
-        ],
-        [
             "AAVEBNB",
             "AAVEETH",
             "AAVEUSDT",
