@@ -3,8 +3,8 @@ import os
 import numpy as np
 from tensorflow.keras.models import load_model, Sequential
 from ..data_analysis.models.train_log import TrainLog
-from tensorflow.keras.layers import Dense, LSTM, Dropout, Flatten
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import Dense, LSTM, Dropout, Flatten, BatchNormalization
+from tensorflow.keras.optimizers import Adam, SGD
 
 
 class ModelNN:
@@ -43,16 +43,22 @@ class ModelNN:
 
     def create(self):
         model = Sequential()
-        model.add(LSTM(units=64, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
+        model.add(LSTM(units=128, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
+        model.add(BatchNormalization())
 
-        for _ in range(1):
+        for i in range(8):
             model.add(LSTM(units=64, return_sequences=True))
-        model.add(LSTM(units=64, return_sequences=False))
+            if i % 2 == 0:
+                model.add(BatchNormalization())
+
+        model.add(LSTM(units=32, return_sequences=False))
+        model.add(BatchNormalization())
+
         model.add(Dense(units=8, activation="relu"))
         model.add(Dense(units=4, activation="relu"))
         model.add(Dense(units=1, activation='sigmoid'))
-        opt = Adam(learning_rate=0.01, )
-        model.compile(optimizer=opt, loss='binary_crossentropy', metrics=["binary_accuracy"])
+        opt = SGD()
+        model.compile(optimizer=opt, loss='binary_crossentropy', metrics=["accuracy"])
         self.model = model
         print("Model created.")
         self.save()
