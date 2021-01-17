@@ -11,6 +11,11 @@ class TrainNN:
     def train(cls):
         model = ModelNN()
         model.load()
+        print("Creating test dataset for BTCUSDT")
+        btc_usdt_test_samples = ViewWithtRes.get_test_candles_for_symbols(['BTCUSDT'])
+        btc_usdt_test_samples = Samples.create_samples(btc_usdt_test_samples)
+        model.set_test_samples(btc_usdt_test_samples)
+        print("Test dataset created")
 
         first = True
         for i in range(Config.ITERATIONS_CANLED_GROUP):
@@ -27,13 +32,20 @@ class TrainNN:
                 sample_thread = ReturningThread(target=Samples.create_samples_for_symbols, args=(next_symbols,))
                 sample_thread.start()
                 model.train()
-            TrainNN.eval()
+
+            TrainNN.eval(model)
             model.show_real_output()
+            model.set_test_samples(btc_usdt_test_samples)
 
     @classmethod
     def train_on_few_samples(cls):
         model = ModelNN()
         model.load()
+        print("Creating test dataset for BTCUSDT")
+        btc_usdt_test_samples = ViewWithtRes.get_test_candles_for_symbols(['BTCUSDT'])
+        btc_usdt_test_samples = Samples.create_samples(btc_usdt_test_samples)
+        model.set_test_samples(btc_usdt_test_samples)
+        print("Test dataset created")
 
         first = True
         for i in range(Config.ITERATIONS_CANLED_GROUP):
@@ -49,14 +61,14 @@ class TrainNN:
                 model.y_train = model.y_train[:Config.NUMBER_OF_SAMPLES_FOR_NN_TEST, :]
                 for i in range(10000):
                     model.train()
-            TrainNN.eval()
+
+            TrainNN.eval(model)
             model.show_real_output()
+            model.set_test_samples(btc_usdt_test_samples)
+
 
     @staticmethod
-    def eval():
-        model = ModelNN()
-        model.load()
-
+    def eval(model):
         print("Evaluate")
         for symbols in Config.SYMBOL_GROUPS_1H:
             test_candles = ViewWithtRes.get_test_candles_for_symbols(symbols)

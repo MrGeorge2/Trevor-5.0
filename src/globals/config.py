@@ -228,43 +228,67 @@ class Config:
     ]
     SYMBOL_GROUPS_1H = [
         [
-            "BTCUSDT",
+            "AAVEBNB",
+            "AAVEETH",
+            "AAVEUSDT",
+            "ADABNB",
+            "ADABTC",
         ],
         [
+            "ADAUSDT",
+            "ALGOBTC",
+            "ATOMBTC",
+            "ATOMUSDT",
+        ],
+        [
+            "BATUSDT",
+            "BCHBNB",
+            "BCHBTC",
+            "BCHUSDT",
+            "BNBBTC",
+        ],
+        [
+            "BNBETH",
+            "BNBUSDT",
+        ],
+        [
+            "BTCUSDT",
+            "COMPUSDT",
+            "DASHBNB",
+        ],
+        [
+            "DASHBTC",
             "DASHETH",
             "DASHUSDT",
+        ],
+        [
             "DOGEUSDT",
+            "DOTBNB",
+            "DOTBTC",
+            "DOTUSDT",
+            "EASYETH",
+            "ENJETH",
         ],
         [
-            "DOTBNB"
-            "DOTBTC"
-            "DOTUSDT"
-            "EASYETH"
-            "ENJETH"
-        ],
-        [
-            "EOSBNB"
-            "EOSETH"
-        ],
-        [
+            "EOSBNB",
+            "EOSETH",
             "EOSUSDT",
+        ],
+        [
             "ETCUSDT",
-        ],
-        [
             "ETHBTC",
-            "ETHUSDT",
         ],
         [
+            "ETHUSDT",
             "FILBTC",
             "FILUSDT",
-            "GRTETH",
             "HOTETH",
+        ],
+        [
             "INJBTC",
             "KP3RBNB",
             "KSMBNB",
             "KSMBTC",
-        ],
-        [
             "LINKBTC",
             "LINKETH",
         ],
@@ -295,9 +319,9 @@ class Config:
         [
             "QTUMUSDT",
             "RENBTC",
+            "RENUSDT",
         ],
         [
-            "RENUSDT",
             "RUNEBTC",
             "THETABTC",
             "THETAETH",
@@ -307,24 +331,20 @@ class Config:
             "UNIBTC",
             "UNIUSDT",
             "VETETH",
-        ],
-        [
             "VETUSDT",
-            "WANETH",
         ],
         [
+            "WANETH",
             "WAVESBTC",
             "XEMETH",
         ],
         [
-            "XLMETH"
-            "XLMUSDT"
-        ],
-        [
+            "XLMETH",
+            "XLMUSDT",
             "XMRBNB",
-            "XMRBTC",
         ],
         [
+            "XMRBTC",
             "XMRETH",
             "XMRUSDT",
         ],
@@ -335,16 +355,16 @@ class Config:
         [
             "XRPETH",
             "XRPUSDT",
+            "XTZUSDT",
         ],
         [
-            "XTZUSDT",
             "YFIBNB",
             "YFIBTC",
             "YFIIBNB",
             "ZECBNB",
+            "ZECETH",
         ],
         [
-            "ZECETH",
             "ZENBTC",
             "ZILETH",
         ]
