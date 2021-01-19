@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 import math
 from copy import deepcopy
-
+from sklearn.preprocessing import StandardScaler
 
 class Samples:
     def __init__(self, candles: List[ViewTypeWithRes]):
@@ -55,14 +55,14 @@ class Samples:
             add_enable = False
         else:
             for i in range(5, np.shape(input_array)[1] - 2):
-                normalized_array[:, i] = self.normalize(input_array[:, i])
+                normalized_array[:, i:i+1] = self.normalize(input_array[:, i:i+1])
         
         if (input_array[-1, 90] == 0) and (input_array[-1, 91] == 0):
             add_enable = False
 
         y = input_array[-1, 90]
         normalized_array = normalized_array[:, :-2]
-        # sample_3d = np.reshape(normalized_array, newshape=(1, np.shape(sample_2d)[0], np.shape(sample_2d)[1]))
+
         return normalized_array, y, add_enable
 
     def normalize(self, array_2d):
@@ -70,9 +70,15 @@ class Samples:
         scaler = MinMaxScaler()
         normalized_array = scaler.fit_transform(array)
         """
+
+        """
+        # vlastni minmax scaler - funguje vyborne, nema problem se vstupnimi shapes tak jako scaler od scikit learn
         minumum = array_2d.min()
         maximum = array_2d.max()
         normalized_array = (array_2d - minumum) / (maximum - minumum)
+        """
+        scaler = StandardScaler()
+        normalized_array = scaler.fit_transform(X=array_2d)
         return normalized_array
 
     def normalize_time(self, dt):
@@ -189,10 +195,8 @@ class Samples:
             one_candle_array[0, 91] = None if candle.down is None else float(candle.down)
 
             one_pair_array = np.concatenate((one_pair_array, one_candle_array), axis=0).astype(np.float32)
-        one_pair_array = one_pair_array[1:, :]
-        o_p_a = deepcopy(one_pair_array)
 
-        x, y = self.create3d_samples(o_p_a)
+        x, y = self.create3d_samples(deepcopy(one_pair_array[1:, :]))
         return x, y
 
     @classmethod
