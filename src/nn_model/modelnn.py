@@ -57,10 +57,12 @@ class ModelNN:
         model.add(LSTM(units=32, return_sequences=False))
         # model.add(BatchNormalization())
 
+        model.add(Dense(units=32, activation="relu"))
+        model.add(Dense(units=16, activation="relu"))
         model.add(Dense(units=8, activation="relu"))
         model.add(Dense(units=4, activation="relu"))
         model.add(Dense(units=1, activation='sigmoid'))
-        opt = SGD()
+        opt = Adam(learning_rate=0.0001)
         model.compile(optimizer=opt, loss='binary_crossentropy', metrics=["accuracy"])
         self.model = model
         print("Model created.")
