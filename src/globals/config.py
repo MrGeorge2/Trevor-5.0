@@ -229,9 +229,17 @@ class Config:
     SYMBOL_GROUPS_1H = [
         [
             "AAVEBNB",
+        ],
+        [
             "AAVEETH",
+        ],
+        [
             "AAVEUSDT",
+        ],
+        [
             "ADABNB",
+        ],
+        [
             "ADABTC",
         ],
         [

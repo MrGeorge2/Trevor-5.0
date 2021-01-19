@@ -71,7 +71,7 @@ class ModelNN:
             self.x_train,
             self.y_train,
             epochs=Config.EPOCHS,
-            batch_size=128,
+            batch_size=64,
             validation_data=(self.x_test, self.y_test),
             verbose=1
         )

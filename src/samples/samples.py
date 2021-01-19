@@ -6,12 +6,14 @@ import math
 from copy import deepcopy
 from sklearn.preprocessing import StandardScaler
 
+
 class Samples:
     def __init__(self, candles: List[ViewTypeWithRes]):
         self.candles: List[ViewTypeWithRes] = candles
+        self.candles: List[ViewTypeWithRes] = candles
 
     def create3d_samples(self, one_pair_array):
-        input_array = deepcopy(one_pair_array)
+        input_array = deepcopy(one_pair_array).astype(np.float64)
         x = np.zeros(shape=(1, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
         y = np.zeros(shape=(1, 1))
 
@@ -49,13 +51,16 @@ class Samples:
         normalized_array = deepcopy(sample_2d)
         
         add_enable = True
-        normalized_array[:, 1:5] = self.normalize(input_array[:, 1:5])
+        # normalized_array[:, 1:5] = self.normalize(input_array[:, 1:5])
 
         if np.isnan(input_array).any():
             add_enable = False
         else:
+            """
             for i in range(5, np.shape(input_array)[1] - 2):
                 normalized_array[:, i:i+1] = self.normalize(input_array[:, i:i+1])
+            """
+            normalized_array[:, :-2] = self.normalize(input_array[:, :-2])
         
         if (input_array[-1, 90] == 0) and (input_array[-1, 91] == 0):
             add_enable = False
@@ -77,8 +82,9 @@ class Samples:
         maximum = array_2d.max()
         normalized_array = (array_2d - minumum) / (maximum - minumum)
         """
-        scaler = StandardScaler()
-        normalized_array = scaler.fit_transform(X=array_2d)
+        scaler = StandardScaler(with_mean=0, with_std=1)
+        scaler.fit(array_2d)
+        normalized_array = scaler.transform(X=array_2d)
         return normalized_array
 
     def normalize_time(self, dt):
@@ -194,7 +200,7 @@ class Samples:
             one_candle_array[0, 90] = None if candle.up is None else float(candle.up)
             one_candle_array[0, 91] = None if candle.down is None else float(candle.down)
 
-            one_pair_array = np.concatenate((one_pair_array, one_candle_array), axis=0).astype(np.float32)
+            one_pair_array = np.concatenate((one_pair_array, one_candle_array), axis=0)
 
         x, y = self.create3d_samples(deepcopy(one_pair_array[1:, :]))
         return x, y
