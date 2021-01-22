@@ -42,7 +42,6 @@ class Samples:
                 final_res.append(iter_res[0])
 
         # VStack az na konci -> v cyklu je nepouzitelny, protoze je extremne pomaly
-        # obraceni samplu zpatky
         x = np.vstack([batch_arr for batch_arr in batch_arrays])
         y = np.array(final_res)
         return x, y
