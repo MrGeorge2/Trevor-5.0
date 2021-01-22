@@ -64,6 +64,7 @@ class Samples:
         input_arr = array_2d[:]
 
         scaler = StandardScaler(with_mean=0, with_std=1)
+        # beru nulty index protoze je shape (1, timesteps, features)
         scaler.fit(input_arr[0])
         normalized_array = scaler.transform(X=input_arr[0])
         return normalized_array
