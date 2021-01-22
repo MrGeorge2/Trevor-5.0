@@ -18,7 +18,7 @@ class Samples:
 
         final_res = []
         batch_arrays = []
-        
+
         for i in range(len(features)):
             # check overflow check
             if i + Config.TIMESTEPS >= len(input_array):
@@ -26,7 +26,7 @@ class Samples:
 
             first_index = i
             second_index = i + Config.TIMESTEPS
-            iter_res = results[i]
+            iter_res = results[second_index - 1]
 
             batch_array = input_array[first_index: second_index]
             batch_array = np.reshape(batch_array, (1, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
