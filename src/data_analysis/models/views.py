@@ -1,6 +1,8 @@
 from ...globals.db import DB
+from ...globals.config import Config
 from sqlalchemy import Table, Column, Integer, asc, and_, or_
 from typing import List
+import numpy as np
 
 
 class ViewTypeWithoutRes:
@@ -112,6 +114,126 @@ class ViewTypeWithRes(ViewTypeWithoutRes):
     down = None
     train = None
 
+    def get_features(self):
+        attribs_to_return = [
+            ViewTypeWithRes.normalize_time(self.open_time),
+            self.open_price,
+            self.high_price,
+            self.low_price,
+            self.close_price,
+            self.volume,
+            self.quote_asset_volume,
+            self.number_of_trades,
+            self.taker_buy_base_asset_volume,
+            self.taker_buy_quote_asset_volume,
+
+            self.volume_adi,
+            self.volume_obv,
+            self.volume_cmf,
+            self.volume_fi,
+            self.volume_mfi,
+            self.volume_em,
+            self.volume_sma_em,
+            self.volume_vpt,
+            self.volume_nvi,
+            self.volume_vwap,
+
+            self.volatility_atr,
+            self.volatility_bbm,
+            self.volatility_bbh,
+            self.volatility_bbl,
+            self.volatility_bbw,
+            self.volatility_bbp,
+            self.volatility_bbhi,
+            self.volatility_bbli,
+            self.volatility_kcc,
+            self.volatility_kch,
+            self.volatility_kcl,
+            self.volatility_kcw,
+            self.volatility_kcp,
+            self.volatility_kchi,
+            self.volatility_kcli,
+            self.volatility_dcl,
+            self.volatility_dch,
+            self.volatility_dcm,
+            self.volatility_dcw,
+            self.volatility_dcp,
+            self.volatility_ui,
+
+            self.trend_macd,
+            self.trend_macd_signal,
+            self.trend_macd_diff,
+            self.trend_sma_fast,
+            self.trend_sma_slow,
+            self.trend_ema_fast,
+            self.trend_ema_slow,
+            self.trend_adx,
+            self.trend_adx_pos,
+            self.trend_adx_neg,
+            self.trend_vortex_ind_pos,
+            self.trend_vortex_ind_neg,
+            self.trend_vortex_ind_diff,
+            self.trend_trix,
+            self.trend_mass_index,
+            self.trend_cci,
+            self.trend_dpo,
+            self.trend_kst,
+            self.trend_kst_sig,
+            self.trend_kst_diff,
+            self.trend_ichimoku_conv,
+            self.trend_ichimoku_base,
+            self.trend_ichimoku_a,
+            self.trend_ichimoku_b,
+            self.trend_visual_ichimoku_a,
+            self.trend_visual_ichimoku_b,
+            self.trend_aroon_up,
+            self.trend_aroon_down,
+            self.trend_aroon_ind,
+            self.trend_psar_up,
+            self.trend_psar_down,
+            self.trend_psar_up_indicator,
+            self.trend_psar_down_indicator,
+            self.trend_stc,
+
+            self.momentum_rsi,
+            self.momentum_stoch_rsi,
+            self.momentum_stoch_rsi_k,
+            self.momentum_stoch_rsi_d,
+            self.momentum_tsi,
+            self.momentum_uo,
+            self.momentum_stoch,
+            self.momentum_stoch_signal,
+            self.momentum_wr,
+            self.momentum_ao,
+            self.momentum_kama,
+            self.momentum_roc,
+            self.momentum_ppo,
+            self.momentum_ppo_signal,
+            self.momentum_ppo_hist,
+
+            self.others_dr,
+            self.others_dlr,
+            self.others_cr,
+        ]
+
+        return np.asarray([attribs_to_return], dtype=np.float32)
+
+    def get_results(self):
+        attribs_to_return = [
+            self.up,
+            self.down
+        ]
+
+        return np.asarray(attribs_to_return, dtype=np.float32)
+
+    @staticmethod
+    def normalize_time(dt):
+        """
+        0-24 hod do rozsahu 0-1
+        """
+        normalized_time = float(dt.hour*3600+dt.minute*60+dt.second)/86400
+        return normalized_time
+
 
 db = DB.get_globals()
 
@@ -125,7 +247,7 @@ class ViewWithtRes(ViewTypeWithRes, db.DECLARATIVE_BASE):
     @staticmethod
     def get_test_candles() -> List[ViewTypeWithRes]:
         dbb = DB.get_globals()
-        test_candles = dbb.SESSION.query(ViewWithtRes).filter(ViewWithtRes.train == False).order_by(asc(ViewWithtRes.open_time)).all()
+        test_candles = dbb.SESSION.query(ViewWithtRes).filter(ViewWithtRes.train == False).order_by(asc(ViewWithtRes.open_time)).limit(500).all()
         return test_candles
 
     @classmethod

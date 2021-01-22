@@ -226,7 +226,13 @@ class Config:
             "ZILETH",
         ]
     ]
+    """
+
+    """
     SYMBOL_GROUPS_1H = [
+        [
+            "BTCUSDT",
+        ],
         [
             "AAVEBNB",
         ],
@@ -240,140 +246,255 @@ class Config:
             "ADABNB",
         ],
         [
-            "ADABTC",
+            "ADAUSDT",
         ],
         [
-            "ADAUSDT",
             "ALGOBTC",
+        ],
+        [
             "ATOMBTC",
+        ],
+        [
             "ATOMUSDT",
         ],
         [
             "BATUSDT",
+        ],
+        [
             "BCHBNB",
+        ],
+        [
             "BCHBTC",
+        ],
+        [
             "BCHUSDT",
+        ],
+        [
             "BNBBTC",
         ],
         [
             "BNBETH",
+        ],
+        [
             "BNBUSDT",
         ],
         [
             "BTCUSDT",
+        ],
+        [
             "COMPUSDT",
+        ],
+        [
             "DASHBNB",
         ],
         [
             "DASHBTC",
+        ],
+        [
             "DASHETH",
+        ],
+        [
             "DASHUSDT",
         ],
         [
             "DOGEUSDT",
+        ],
+        [
             "DOTBNB",
+        ],
+        [
             "DOTBTC",
+        ],
+        [
             "DOTUSDT",
+        ],
+        [
             "EASYETH",
+        ],
+        [
             "ENJETH",
         ],
         [
             "EOSBNB",
+        ],
+        [
             "EOSETH",
+        ],
+        [
             "EOSUSDT",
         ],
         [
             "ETCUSDT",
+        ],
+        [
             "ETHBTC",
         ],
         [
             "ETHUSDT",
+        ],
+        [
             "FILBTC",
+        ],
+        [
             "FILUSDT",
+        ],
+        [
             "HOTETH",
         ],
         [
             "INJBTC",
+        ],
+        [
             "KP3RBNB",
+        ],
+        [
             "KSMBNB",
+        ],
+        [
             "KSMBTC",
+        ],
+        [
             "LINKBTC",
+        ],
+        [
             "LINKETH",
         ],
         [
             "LINKUSDT",
+        ],
+        [
             "LRCETH",
+        ],
+        [
             "LTCBNB",
         ],
         [
             "LTCBTC",
+        ],
+        [
             "LTCETH",
         ],
         [
             "LTCUSDT",
+        ],
+        [
             "LUNABTC",
+        ],
+        [
             "MKRBNB",
+        ],
+        [
             "NASETH",
         ],
         [
             "NEOBTC",
+        ],
+        [
             "NEOETH",
+        ],
+        [
             "OCEANBTC",
         ],
         [
             "OMGETH",
+        ],
+        [
             "ONTUSDT",
         ],
         [
             "QTUMUSDT",
+        ],
+        [
             "RENBTC",
+        ],
+        [
             "RENUSDT",
         ],
         [
             "RUNEBTC",
+        ],
+        [
             "THETABTC",
+        ],
+        [
             "THETAETH",
         ],
         [
             "TRXUSDT",
+        ],
+        [
             "UNIBTC",
+        ],
+        [
             "UNIUSDT",
+        ],
+        [
             "VETETH",
+        ],
+        [
             "VETUSDT",
         ],
         [
             "WANETH",
+        ],
+        [
             "WAVESBTC",
+        ],
+        [
             "XEMETH",
         ],
         [
             "XLMETH",
+        ],
+        [
             "XLMUSDT",
+        ],
+        [
             "XMRBNB",
         ],
         [
             "XMRBTC",
+        ],
+        [
             "XMRETH",
+        ],
+        [
             "XMRUSDT",
         ],
         [
             "XRPBNB",
+        ],
+        [
             "XRPBTC",
         ],
         [
             "XRPETH",
+        ],
+        [
             "XRPUSDT",
+        ],
+        [
             "XTZUSDT",
         ],
         [
             "YFIBNB",
+        ],
+        [
             "YFIBTC",
+        ],
+        [
             "YFIIBNB",
+        ],
+        [
             "ZECBNB",
+        ],
+        [
             "ZECETH",
         ],
         [
             "ZENBTC",
+        ],
+        [
             "ZILETH",
         ]
     ]
@@ -406,13 +527,13 @@ class Config:
     """
     RANDOM_SYMBOLS_FOR_SAMPLE = 5
     NUMBER_OF_SAMPLE_COLUMNS = 92
-    FINAL_SAMPLE_COLUMNS = 90
+    FINAL_SAMPLE_COLUMNS = 93
 
     """
     #### MODEL ####
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
-    EPOCHS = 50
+    EPOCHS = 150
     ITERATIONS_CANLED_GROUP = 10
 
     """
