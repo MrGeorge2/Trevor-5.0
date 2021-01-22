@@ -87,9 +87,9 @@ class Samples:
             one_pair_results.append(results)
 
         np_one_pair_features = np.array(one_pair_features)
-        y = np.array(one_pair_results)
+        np_one_pair_results = np.array(one_pair_results)
 
-        x = self.__create3d_samples(np_one_pair_features[:], y[:])
+        x, y = self.__create3d_samples(np_one_pair_features[:], np_one_pair_results[:])
         return x, y
 
     @classmethod

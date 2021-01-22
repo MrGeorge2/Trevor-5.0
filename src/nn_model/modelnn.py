@@ -4,7 +4,7 @@ import numpy as np
 from tensorflow.keras.models import load_model, Sequential
 from ..data_analysis.models.train_log import TrainLog
 from tensorflow.keras.layers import Dense, LSTM, Dropout, Flatten, BatchNormalization
-from tensorflow.keras.optimizers import Adam, SGD
+from tensorflow.keras.optimizers import Adam, SGD, Adadelta
 from tensorflow.keras.callbacks import TensorBoard
 from datetime import datetime
 
@@ -61,7 +61,7 @@ class ModelNN:
         model.add(Dense(units=8, activation="relu"))
         model.add(Dense(units=4, activation="relu"))
         model.add(Dense(units=1, activation='sigmoid'))
-        opt = Adam()
+        opt = Adadelta()
         model.compile(optimizer=opt, loss='binary_crossentropy', metrics=["accuracy"])
         self.model = model
         print("Model created.")
