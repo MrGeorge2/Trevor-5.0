@@ -61,7 +61,7 @@ class ModelNN:
         model.add(Dense(units=8, activation="relu"))
         model.add(Dense(units=4, activation="relu"))
         model.add(Dense(units=1, activation='sigmoid'))
-        opt = SGD()
+        opt = Adam()
         model.compile(optimizer=opt, loss='binary_crossentropy', metrics=["accuracy"])
         self.model = model
         print("Model created.")
