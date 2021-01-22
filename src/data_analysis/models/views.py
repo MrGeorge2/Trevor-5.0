@@ -247,7 +247,7 @@ class ViewWithtRes(ViewTypeWithRes, db.DECLARATIVE_BASE):
     @staticmethod
     def get_test_candles() -> List[ViewTypeWithRes]:
         dbb = DB.get_globals()
-        test_candles = dbb.SESSION.query(ViewWithtRes).filter(ViewWithtRes.train == False).order_by(asc(ViewWithtRes.open_time)).limit(500).all()
+        test_candles = dbb.SESSION.query(ViewWithtRes).filter(ViewWithtRes.train == False).order_by(asc(ViewWithtRes.open_time)).all()
         return test_candles
 
     @classmethod
