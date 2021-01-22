@@ -18,8 +18,7 @@ class Samples:
 
         final_res = []
         batch_arrays = []
-        # otocim si i vysledky - abych to mel ve stejnym shapu
-
+        
         for i in range(len(features)):
             # check overflow check
             if i + Config.TIMESTEPS >= len(input_array):
