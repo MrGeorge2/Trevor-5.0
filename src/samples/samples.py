@@ -2,8 +2,6 @@ from ..globals.config import Config
 from ..data_analysis.models.views import ViewTypeWithRes, ViewWithtRes
 from typing import List
 import numpy as np
-import math
-from copy import deepcopy
 from sklearn.preprocessing import StandardScaler
 
 
@@ -16,7 +14,7 @@ class Samples:
         if len(features) != len(results):
             raise Exception(f"Lenght of features {len(features)} does not match len of results {len(results)}")
 
-        input_array = deepcopy(features)
+        input_array = features[:]
 
         final_res = []
         batch_arrays = []
@@ -50,7 +48,7 @@ class Samples:
         return x, y
 
     def __sample_preprocessing(self, sample_2d, results):
-        input_array = deepcopy(sample_2d)
+        input_array = sample_2d[:]
         add_enable = True
 
         if ((results[0] == 0) and (results[1] == 0)) or np.any(np.isnan(input_array)) or np.any(np.isinf(input_array)):
