@@ -53,14 +53,15 @@ class ModelNN:
         for i in range(8):
             model.add(LSTM(units=64, return_sequences=True))
             # model.add(BatchNormalization())
-
-        model.add(LSTM(units=32, return_sequences=False))
+        model.add(LSTM(units=32, return_sequences=True))
+        model.add(LSTM(units=16, return_sequences=True))
+        model.add(LSTM(units=8, return_sequences=False))
         # model.add(BatchNormalization())
 
         model.add(Dense(units=8, activation="relu"))
         model.add(Dense(units=4, activation="relu"))
         model.add(Dense(units=1, activation='sigmoid'))
-        opt = SGD()
+        opt = Adam()
         model.compile(optimizer=opt, loss='binary_crossentropy', metrics=["accuracy"])
         self.model = model
         print("Model created.")
