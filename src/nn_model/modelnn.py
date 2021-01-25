@@ -1,9 +1,10 @@
 from ..globals.config import Config
 import os
 import numpy as np
+from tensorflow.keras.regularizers import l1_l2
 from tensorflow.keras.models import load_model, Sequential
 from ..data_analysis.models.train_log import TrainLog
-from tensorflow.keras.layers import Dense, LSTM, Dropout, Flatten, BatchNormalization
+from tensorflow.keras.layers import Dense, LSTM, Dropout, Flatten, BatchNormalization, Bidirectional, TimeDistributed
 from tensorflow.keras.optimizers import Adam, SGD, Adadelta
 from tensorflow.keras.callbacks import TensorBoard
 from datetime import datetime
@@ -47,24 +48,28 @@ class ModelNN:
 
     def create(self):
         model = Sequential()
-        model.add(LSTM(units=128, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
-        # model.add(BatchNormalization())
+        model.add(Bidirectional(
+            LSTM(units=128, return_sequences=True, input_shape=(Config.TIMESTEPS - 1, Config.FINAL_SAMPLE_COLUMNS),
+                 kernel_regularizer=l1_l2(l1=0.02, l2=0.01))))
+        model.add(BatchNormalization())
 
-        for i in range(8):
-            model.add(LSTM(units=64, return_sequences=True))
-            # model.add(BatchNormalization())
-        model.add(LSTM(units=32, return_sequences=True))
-        model.add(LSTM(units=16, return_sequences=True))
-        model.add(LSTM(units=8, return_sequences=False))
-        # model.add(BatchNormalization())
+        model.add(Bidirectional(
+            LSTM(units=128, return_sequences=True, dropout=0.2, kernel_regularizer=l1_l2(l1=0.02, l2=0.02))))
+        model.add(BatchNormalization())
 
-        model.add(Dense(units=8, activation="relu"))
-        model.add(Dense(units=4, activation="relu"))
-        model.add(Dense(units=1, activation='sigmoid'))
-        opt = Adadelta()
-        model.compile(optimizer=opt, loss='binary_crossentropy', metrics=["accuracy"])
+        model.add(Bidirectional(
+            LSTM(units=128, return_sequences=False, dropout=0.2, kernel_regularizer=l1_l2(l1=0.02, l2=0.02))))
+        model.add(BatchNormalization())
+
+        model.add(Dense(32, activation='relu'))
+        model.add(Dropout(0.2))
+
+        model.add(TimeDistributed(Dense(units=1, activation='sigmoid')))
+        opt = Adadelta(learning_rate=0.01)
+        model.compile(optimizer=opt, loss='binary_crossentropy', metrics=["binary_accuracy"])
         self.model = model
         print("Model created.")
+        self.model.build(input_shape=(None, Config.TIMESTEPS - 1, Config.FINAL_SAMPLE_COLUMNS))
         self.save()
 
     def train(self):
@@ -74,7 +79,8 @@ class ModelNN:
             epochs=Config.EPOCHS,
             batch_size=128,
             validation_data=(self.x_test, self.y_test),
-            verbose=1
+            verbose=1,
+            shuffle=True,
         )
         self.save()
 

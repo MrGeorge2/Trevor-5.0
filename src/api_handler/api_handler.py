@@ -5,7 +5,7 @@ from datetime import datetime
 
 class ApiHandler(Client):
     def __init__(self, cfg: Config):
-        super().__init__(cfg.API_KEY, cfg.S_KEY, {"verify": True, "timeout": 20000})
+        super().__init__(cfg.API_KEY, cfg.S_KEY, {"verify": True, "timeout": 2000000})
         self._config: Config = cfg
     
     @classmethod

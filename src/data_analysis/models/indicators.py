@@ -1,10 +1,11 @@
 from ...globals.db import DB
 from .candle_api import CandleApi
 from ...globals.config import Config
-from sqlalchemy import Column, DECIMAL, DATETIME, Integer, String, ForeignKey, and_, asc
+from sqlalchemy import Column, DECIMAL, DATETIME, Integer, String, ForeignKey, and_, asc, between
 from typing import List
 import pandas as pd
 from ta import add_all_ta_features
+from ...utils.day_counter import DayCounter
 
 
 class Indicators(DB.DECLARATIVE_BASE):
@@ -106,44 +107,52 @@ class Indicators(DB.DECLARATIVE_BASE):
         db = DB.get_globals()
 
         for symbol in Config.SYMBOLS_TO_SCRAPE:
-            print(f"Counting indentificators for {symbol}")
-            candles: List[CandleApi] = db.SESSION.query(CandleApi).filter(
-                CandleApi.symbol == symbol).order_by(asc(CandleApi.open_time)).all()
-            df = pd.DataFrame([candle.prices_as_dict() for candle in candles])
-            df = add_all_ta_features(
-                df,
-                open="open_time",
-                high="high_price",
-                low="low_price",
-                close="close_price",
-                volume="volume",
-            )
+            day_counter = DayCounter()
+            while not day_counter.done:
+                start_date, end_date = day_counter.next_date_datetime
+                print(f"Counting indicators for {symbol} start date={start_date} end date={end_date}")
+                candles: List[CandleApi] = db.SESSION.query(CandleApi).filter(
+                    and_(CandleApi.symbol == symbol, between(CandleApi.open_time, start_date, end_date))).order_by(
+                    asc(CandleApi.open_time)).all()
 
-            # remove cols that are not in TIndicators
-            df = df.drop(
-                [
-                    'open_price',
-                    'high_price',
-                    'low_price',
-                    'close_price',
-                    'volume',
-                ],
-                axis='columns')
+                if len(candles) == 0:
+                    continue
 
-            df['trend_psar_up'] = df['trend_psar_up'].fillna(0)
-            df['trend_psar_down'] = df['trend_psar_down'].fillna(0)
+                df = pd.DataFrame([candle.prices_as_dict() for candle in candles])
+                df = add_all_ta_features(
+                    df,
+                    open="open_time",
+                    high="high_price",
+                    low="low_price",
+                    close="close_price",
+                    volume="volume",
+                )
 
-            for i, data in df.iterrows():
-                if Config.CHECK_ROW_IN_DB:
+                # remove cols that are not in TIndicators
+                df = df.drop(
+                    [
+                        'open_price',
+                        'high_price',
+                        'low_price',
+                        'close_price',
+                        'volume',
+                    ],
+                    axis='columns')
 
-                    if not db.SESSION.query(db.SESSION.query(Indicators).filter(
-                            and_(Indicators.symbol == symbol,
-                                 Indicators.open_time == data["open_time"])).exists()).scalar():
+                df['trend_psar_up'] = df['trend_psar_up'].fillna(0)
+                df['trend_psar_down'] = df['trend_psar_down'].fillna(0)
+
+                for i, data in df.iterrows():
+                    if Config.CHECK_ROW_IN_DB:
+
+                        if not db.SESSION.query(db.SESSION.query(Indicators).filter(
+                                and_(Indicators.symbol == symbol,
+                                     Indicators.open_time == data["open_time"])).exists()).scalar():
+                            ind = Indicators(**data)
+                            db.SESSION.add(ind)
+                    else:
                         ind = Indicators(**data)
+                        ind.symbol = symbol
                         db.SESSION.add(ind)
-                else:
-                    ind = Indicators(**data)
-                    ind.symbol = symbol
-                    db.SESSION.add(ind)
-            db.SESSION.commit()
-            print(f"Done")
+                db.SESSION.commit()
+                print(f"Done")

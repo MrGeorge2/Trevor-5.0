@@ -1,7 +1,7 @@
 from ..globals.db import DB
 from ..globals.config import Config
 from ..api_handler.api_handler import ApiHandler
-from binance.client import Client
+from ..utils.day_counter import DayCounter
 from .models.candle_api import CandleApi
 from typing import List
 from datetime import datetime
@@ -9,9 +9,6 @@ from sqlalchemy import and_
 
 
 class Scraper:
-    def __init__(self):
-        pass
-    
     @staticmethod
     def scrape(symbol: str) -> None:
         print(f"SCRAPING {symbol}")
@@ -19,32 +16,37 @@ class Scraper:
         db = global_i.get_globals()
 
         api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
+        day_counter = DayCounter()
 
-        scraped = api_handler.get_historical_klines(symbol, Config.CANDLE_INTERVAL, "1 DEC, 2010")
-        for candle in scraped:
-            m_candle: CandleApi = CandleApi(
-                symbol=symbol,
-                open_time=datetime.fromtimestamp(int(candle[0])/1000),
-                open_price=candle[1],
-                high_price=candle[2],
-                low_price=candle[3],
-                close_price=candle[4],
-                volume=candle[5],
-                close_time=datetime.fromtimestamp(int(candle[6])/1000),
-                quote_asset_volume=candle[7],
-                number_of_trades=candle[8],
-                taker_buy_base_asset_volume=candle[9],
-                taker_buy_quote_asset_volume=candle[10],
-            )
+        while not day_counter.done:
+            start_date, end_date = day_counter.next_date
+            print(f"start={start_date} end={end_date}")
 
-            if Config.CHECK_ROW_IN_DB:
-                if not db.SESSION.query(db.SESSION.query(CandleApi).filter(
-                        and_(CandleApi.symbol == symbol, CandleApi.open_time == m_candle.open_time)).exists()).scalar():
+            scraped = api_handler.get_historical_klines(symbol, Config.CANDLE_INTERVAL, start_date, end_date)
+            for candle in scraped:
+                m_candle: CandleApi = CandleApi(
+                    symbol=symbol,
+                    open_time=datetime.fromtimestamp(int(candle[0])/1000),
+                    open_price=candle[1],
+                    high_price=candle[2],
+                    low_price=candle[3],
+                    close_price=candle[4],
+                    volume=candle[5],
+                    close_time=datetime.fromtimestamp(int(candle[6])/1000),
+                    quote_asset_volume=candle[7],
+                    number_of_trades=candle[8],
+                    taker_buy_base_asset_volume=candle[9],
+                    taker_buy_quote_asset_volume=candle[10],
+                )
+
+                if Config.CHECK_ROW_IN_DB:
+                    if not db.SESSION.query(db.SESSION.query(CandleApi).filter(
+                            and_(CandleApi.symbol == symbol, CandleApi.open_time == m_candle.open_time)).exists()).scalar():
+                        db.SESSION.add(m_candle)
+                else:
                     db.SESSION.add(m_candle)
-            else:
-                db.SESSION.add(m_candle)
 
-        db.SESSION.commit()
+            db.SESSION.commit()
         print(f"Sraping {symbol} done")
 
     @staticmethod

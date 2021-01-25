@@ -116,7 +116,7 @@ class ViewTypeWithRes(ViewTypeWithoutRes):
 
     def get_features(self):
         attribs_to_return = [
-            ViewTypeWithRes.normalize_time(self.open_time),
+            # ViewTypeWithRes.normalize_time(self.open_time),
             self.open_price,
             self.high_price,
             self.low_price,
@@ -126,40 +126,37 @@ class ViewTypeWithRes(ViewTypeWithoutRes):
             self.number_of_trades,
             self.taker_buy_base_asset_volume,
             self.taker_buy_quote_asset_volume,
-
             self.volume_adi,
             self.volume_obv,
             self.volume_cmf,
             self.volume_fi,
             self.volume_mfi,
-            self.volume_em,
-            self.volume_sma_em,
+            # self.volume_em,
+            # self.volume_sma_em,
             self.volume_vpt,
-            self.volume_nvi,
+            # self.volume_nvi,
             self.volume_vwap,
-
             self.volatility_atr,
             self.volatility_bbm,
             self.volatility_bbh,
             self.volatility_bbl,
             self.volatility_bbw,
             self.volatility_bbp,
-            self.volatility_bbhi,
-            self.volatility_bbli,
+            # self.volatility_bbhi,
+            # self.volatility_bbli,
             self.volatility_kcc,
             self.volatility_kch,
             self.volatility_kcl,
-            self.volatility_kcw,
-            self.volatility_kcp,
-            self.volatility_kchi,
-            self.volatility_kcli,
-            self.volatility_dcl,
-            self.volatility_dch,
-            self.volatility_dcm,
+            # self.volatility_kcw,
+            # self.volatility_kcp,
+            # self.volatility_kchi,
+            # self.volatility_kcli,
+            # self.volatility_dcl,
+            # self.volatility_dch,
+            # self.volatility_dcm,
             self.volatility_dcw,
             self.volatility_dcp,
             self.volatility_ui,
-
             self.trend_macd,
             self.trend_macd_signal,
             self.trend_macd_diff,
@@ -181,38 +178,37 @@ class ViewTypeWithRes(ViewTypeWithoutRes):
             self.trend_kst_sig,
             self.trend_kst_diff,
             self.trend_ichimoku_conv,
-            self.trend_ichimoku_base,
-            self.trend_ichimoku_a,
-            self.trend_ichimoku_b,
-            self.trend_visual_ichimoku_a,
-            self.trend_visual_ichimoku_b,
+            # self.trend_ichimoku_base,
+            # self.trend_ichimoku_a,
+            # self.trend_ichimoku_b,
+            # self.trend_visual_ichimoku_a,
+            # self.trend_visual_ichimoku_b,
             self.trend_aroon_up,
             self.trend_aroon_down,
-            self.trend_aroon_ind,
-            self.trend_psar_up,
-            self.trend_psar_down,
-            self.trend_psar_up_indicator,
-            self.trend_psar_down_indicator,
+            # self.trend_aroon_ind,
+            # self.trend_psar_up,
+            # self.trend_psar_down,
+            # self.trend_psar_up_indicator,
+            # self.trend_psar_down_indicator,
             self.trend_stc,
-
             self.momentum_rsi,
             self.momentum_stoch_rsi,
             self.momentum_stoch_rsi_k,
             self.momentum_stoch_rsi_d,
             self.momentum_tsi,
-            self.momentum_uo,
+            # self.momentum_uo,
             self.momentum_stoch,
             self.momentum_stoch_signal,
             self.momentum_wr,
             self.momentum_ao,
-            self.momentum_kama,
+            # self.momentum_kama,
             self.momentum_roc,
             self.momentum_ppo,
             self.momentum_ppo_signal,
             self.momentum_ppo_hist,
 
-            self.others_dr,
-            self.others_dlr,
+            # self.others_dr,
+            # self.others_dlr,
             self.others_cr,
         ]
 
@@ -251,11 +247,12 @@ class ViewWithtRes(ViewTypeWithRes, db.DECLARATIVE_BASE):
         return test_candles
 
     @classmethod
-    def get_test_candles_for_symbols(cls, symbols) -> List[ViewTypeWithRes]:
+    def get_test_candles_for_symbols(cls, symbols, start_date, end_date) -> List[ViewTypeWithRes]:
         train_expression = getattr(cls, "train") == False
         dbb = DB.get_globals()
-        return dbb.SESSION.query(ViewWithtRes).filter(and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(
-            asc(ViewWithtRes.open_time)).all()
+        return dbb.SESSION.query(ViewWithtRes).filter(
+            and_(train_expression, ViewWithtRes.symbol.in_(symbols), ViewWithtRes.open_time >= start_date,
+                 ViewWithtRes.open_time <= end_date)).order_by(asc(ViewWithtRes.open_time)).all()
 
     @staticmethod
     def get_train_candles_for_symbol(symbol) -> List[ViewTypeWithRes]:
@@ -266,11 +263,12 @@ class ViewWithtRes(ViewTypeWithRes, db.DECLARATIVE_BASE):
         return train_candles
 
     @classmethod
-    def get_train_candles(cls, symbols: List[str]):
+    def get_train_candles(cls, symbols: List[str], start_date, end_date):
         dbb = DB.get_globals()
         train_expression = getattr(cls, "train") == True
-        return dbb.SESSION.query(ViewWithtRes).filter(and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(
-            asc(ViewWithtRes.open_time)).all()
+        return dbb.SESSION.query(ViewWithtRes).filter(
+            and_(train_expression, ViewWithtRes.symbol.in_(symbols), ViewWithtRes.open_time >= start_date,
+                 ViewWithtRes.open_time <= end_date)).order_by(asc(ViewWithtRes.open_time)).all()
 
     def __repr__(self):
         return f"symbol={self.symbol} open_time={self.open_time} up={self.up} down={self.down}"
