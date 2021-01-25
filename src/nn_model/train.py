@@ -19,7 +19,9 @@ class TrainNN:
                 while not day_counter.done:
                     # Load samples before training only first time
                     if first:
+
                         start_date, end_date = day_counter.next_date_datetime
+
                         sample_thread = ReturningThread(target=Samples.create_samples_for_symbols,
                                                         args=(Config.SYMBOL_GROUPS_1H[0], start_date, end_date))
                         sample_thread.start()
@@ -87,7 +89,6 @@ class TrainNN:
             TrainNN.eval(model)
             model.show_real_output()
             model.set_test_samples(btc_usdt_test_samples)
-
 
     @staticmethod
     def eval(model):

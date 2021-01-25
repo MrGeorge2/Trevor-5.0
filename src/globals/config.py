@@ -3,7 +3,7 @@ from binance.client import Client
 
 
 class Config:
-    TIMESTEPS = 100
+    TIMESTEPS = 60
 
     DEBUGING = True
     MARGIN_TRADING = False
@@ -55,14 +55,14 @@ class Config:
     """
     RANDOM_SYMBOLS_FOR_SAMPLE = 5
     NUMBER_OF_SAMPLE_COLUMNS = 92
-    FINAL_SAMPLE_COLUMNS = 66
+    FINAL_SAMPLE_COLUMNS = 5
     NUMBER_FUTURE_CANDLE_PREDICT = 12
 
     """
     #### MODEL ####
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
-    EPOCHS = 50
+    EPOCHS = 2
     ITERATIONS_CANLED_GROUP = 10
 
     """

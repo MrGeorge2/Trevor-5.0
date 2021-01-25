@@ -14,99 +14,6 @@ class ViewTypeWithoutRes:
     low_price = None
     close_price = None
     volume = None
-    close_time = None
-    quote_asset_volume = None
-    number_of_trades = None
-    taker_buy_base_asset_volume = None
-    taker_buy_quote_asset_volume = None
-
-    volume_adi = None
-    volume_obv = None
-    volume_cmf = None
-    volume_fi = None
-    volume_mfi = None
-    volume_em = None
-    volume_sma_em = None
-    volume_vpt = None
-    volume_nvi = None
-    volume_vwap = None
-
-    volatility_atr = None
-    volatility_bbm = None
-    volatility_bbh = None
-    volatility_bbl = None
-    volatility_bbw = None
-    volatility_bbp = None
-    volatility_bbhi = None
-    volatility_bbli = None
-    volatility_kcc = None
-    volatility_kch = None
-    volatility_kcl = None
-    volatility_kcw = None
-    volatility_kcp = None
-    volatility_kchi = None
-    volatility_kcli = None
-    volatility_dcl = None
-    volatility_dch = None
-    volatility_dcm = None
-    volatility_dcw = None
-    volatility_dcp = None
-    volatility_ui = None
-
-    trend_macd = None
-    trend_macd_signal = None
-    trend_macd_diff = None
-    trend_sma_fast = None
-    trend_sma_slow = None
-    trend_ema_fast = None
-    trend_ema_slow = None
-    trend_adx = None
-    trend_adx_pos = None
-    trend_adx_neg = None
-    trend_vortex_ind_pos = None
-    trend_vortex_ind_neg = None
-    trend_vortex_ind_diff = None
-    trend_trix = None
-    trend_mass_index = None
-    trend_cci = None
-    trend_dpo = None
-    trend_kst = None
-    trend_kst_sig = None
-    trend_kst_diff = None
-    trend_ichimoku_conv = None
-    trend_ichimoku_base = None
-    trend_ichimoku_a = None
-    trend_ichimoku_b = None
-    trend_visual_ichimoku_a = None
-    trend_visual_ichimoku_b = None
-    trend_aroon_up = None
-    trend_aroon_down = None
-    trend_aroon_ind = None
-    trend_psar_up = None
-    trend_psar_down = None
-    trend_psar_up_indicator = None
-    trend_psar_down_indicator = None
-    trend_stc = None
-
-    momentum_rsi = None
-    momentum_stoch_rsi = None
-    momentum_stoch_rsi_k = None
-    momentum_stoch_rsi_d = None
-    momentum_tsi = None
-    momentum_uo = None
-    momentum_stoch = None
-    momentum_stoch_signal = None
-    momentum_wr = None
-    momentum_ao = None
-    momentum_kama = None
-    momentum_roc = None
-    momentum_ppo = None
-    momentum_ppo_signal = None
-    momentum_ppo_hist = None
-
-    others_dr = None
-    others_dlr = None
-    others_cr = None
 
 
 class ViewTypeWithRes(ViewTypeWithoutRes):
@@ -122,94 +29,6 @@ class ViewTypeWithRes(ViewTypeWithoutRes):
             self.low_price,
             self.close_price,
             self.volume,
-            self.quote_asset_volume,
-            self.number_of_trades,
-            self.taker_buy_base_asset_volume,
-            self.taker_buy_quote_asset_volume,
-            self.volume_adi,
-            self.volume_obv,
-            self.volume_cmf,
-            self.volume_fi,
-            self.volume_mfi,
-            # self.volume_em,
-            # self.volume_sma_em,
-            self.volume_vpt,
-            # self.volume_nvi,
-            self.volume_vwap,
-            self.volatility_atr,
-            self.volatility_bbm,
-            self.volatility_bbh,
-            self.volatility_bbl,
-            self.volatility_bbw,
-            self.volatility_bbp,
-            # self.volatility_bbhi,
-            # self.volatility_bbli,
-            self.volatility_kcc,
-            self.volatility_kch,
-            self.volatility_kcl,
-            # self.volatility_kcw,
-            # self.volatility_kcp,
-            # self.volatility_kchi,
-            # self.volatility_kcli,
-            # self.volatility_dcl,
-            # self.volatility_dch,
-            # self.volatility_dcm,
-            self.volatility_dcw,
-            self.volatility_dcp,
-            self.volatility_ui,
-            self.trend_macd,
-            self.trend_macd_signal,
-            self.trend_macd_diff,
-            self.trend_sma_fast,
-            self.trend_sma_slow,
-            self.trend_ema_fast,
-            self.trend_ema_slow,
-            self.trend_adx,
-            self.trend_adx_pos,
-            self.trend_adx_neg,
-            self.trend_vortex_ind_pos,
-            self.trend_vortex_ind_neg,
-            self.trend_vortex_ind_diff,
-            self.trend_trix,
-            self.trend_mass_index,
-            self.trend_cci,
-            self.trend_dpo,
-            self.trend_kst,
-            self.trend_kst_sig,
-            self.trend_kst_diff,
-            self.trend_ichimoku_conv,
-            # self.trend_ichimoku_base,
-            # self.trend_ichimoku_a,
-            # self.trend_ichimoku_b,
-            # self.trend_visual_ichimoku_a,
-            # self.trend_visual_ichimoku_b,
-            self.trend_aroon_up,
-            self.trend_aroon_down,
-            # self.trend_aroon_ind,
-            # self.trend_psar_up,
-            # self.trend_psar_down,
-            # self.trend_psar_up_indicator,
-            # self.trend_psar_down_indicator,
-            self.trend_stc,
-            self.momentum_rsi,
-            self.momentum_stoch_rsi,
-            self.momentum_stoch_rsi_k,
-            self.momentum_stoch_rsi_d,
-            self.momentum_tsi,
-            # self.momentum_uo,
-            self.momentum_stoch,
-            self.momentum_stoch_signal,
-            self.momentum_wr,
-            self.momentum_ao,
-            # self.momentum_kama,
-            self.momentum_roc,
-            self.momentum_ppo,
-            self.momentum_ppo_signal,
-            self.momentum_ppo_hist,
-
-            # self.others_dr,
-            # self.others_dlr,
-            self.others_cr,
         ]
 
         return np.asarray([attribs_to_return], dtype=np.float32)
@@ -221,6 +40,16 @@ class ViewTypeWithRes(ViewTypeWithoutRes):
         ]
 
         return np.asarray(attribs_to_return, dtype=np.float32)
+
+    def get_as_dict(self):
+        return {
+            "open_price": np.float64(self.open_price),
+            "high_price": np.float64(self.high_price),
+            "low_price": np.float64(self.low_price),
+            "close_price": np.float64(self.close_price),
+            "volume": np.float64(self.volume),
+            "target": np.float64(self.up),
+        }
 
     @staticmethod
     def normalize_time(dt):

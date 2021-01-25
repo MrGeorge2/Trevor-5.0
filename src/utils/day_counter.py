@@ -17,25 +17,29 @@ class DayCounter:
         "DEC",
     ]
 
-    def __init__(self, start_year=2017):
+    def __init__(self, start_year=2017, year_iterator=False):
         self.month = "JAN"
         self.month_cursor = 0
         self.year = start_year
 
         self.max_month = "DEC"
         self.max_year = 2020
+        self.year_iterator = year_iterator
 
     @property
     def next_date(self):
         start_date = f"1 {self.month}, {self.year}"
 
-        if self.month_cursor + 1 >= len(self.MONTHS):
-            self.month_cursor = 0
-            self.year += 1
-        else:
-            self.month_cursor += 1
+        if not self.year_iterator:
+            if self.month_cursor + 1 >= len(self.MONTHS):
+                self.month_cursor = 0
+                self.year += 1
+            else:
+                self.month_cursor += 1
 
-        self.month = self.MONTHS[self.month_cursor]
+            self.month = self.MONTHS[self.month_cursor]
+        else:
+            self.year += 1
 
         end_date = f"1 {self.month}, {self.year}"
 
