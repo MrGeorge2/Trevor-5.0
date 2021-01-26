@@ -40,7 +40,9 @@ class TrainNN:
 
                         model.set_train_samples(train_samples)
                         model.set_test_samples(test_samples)
-                    except:
+                        # model.show_real_output()
+                    except Exception as e:
+                        print(e)
                         continue
                     """
                     next_symbols = Config.SYMBOL_GROUPS_1H[symbol_index + 1] if symbol_index + 1 < len(

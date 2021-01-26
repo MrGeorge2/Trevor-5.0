@@ -98,9 +98,11 @@ class ModelNN:
     def show_real_output(self):
         for i in range(50):
             test_sample = self.x_test[i:i+1, :, :]
-            print(f"TEST: predicted: {self.model.predict(test_sample)},  real: {self.y_test[i, :]}")
+            real = self.y_test[i]
+            print(f"TEST: predicted: {self.model.predict(test_sample)},  real: {real}")
         for i in range(50):
             train_sample = self.x_train[i:i+1, :, :]
-            print(f"TRAIN: predicted: {self.model.predict(train_sample)},  real: {self.y_train[i, :]}")
+            real = self.y_train[i]
+            print(f"TRAIN: predicted: {self.model.predict(train_sample)},  real: {real}")
 
 
