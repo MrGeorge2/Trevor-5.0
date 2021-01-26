@@ -63,7 +63,7 @@ class Config:
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
     EPOCHS = 2
-    ITERATIONS_CANLED_GROUP = 10
+    ITERATIONS_CANLED_GROUP = 15
 
     """
     #### TRAIN TWO SAMPLES ####
