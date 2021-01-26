@@ -9,7 +9,7 @@ from collections import deque
 from sklearn import preprocessing
 
 
-def preprocess_df(df):
+def preprocess_df(df, shuffle=True):
     for col in df.columns:  # go through all of the columns
         if col != "target":  # normalize all ... except for the target itself!
             df[col] = df[col].pct_change()  # pct change "normalizes" the different currencies (each crypto coin has vastly diff values, we're really more interested in the other coin's movements)
@@ -27,27 +27,28 @@ def preprocess_df(df):
         if len(prev_days) == Config.TIMESTEPS:  # make sure we have 60 sequences!
             sequential_data.append([np.array(prev_days), i[-1]])  # append those bad boys!
 
-    random.shuffle(sequential_data)  # shuffle for good measure.
+    if shuffle:
+        random.shuffle(sequential_data)  # shuffle for good measure.
 
-    buys = []  # list that will store our buy sequences and targets
-    sells = []  # list that will store our sell sequences and targets
+        buys = []  # list that will store our buy sequences and targets
+        sells = []  # list that will store our sell sequences and targets
 
-    for seq, target in sequential_data:  # iterate over the sequential data
-        if target == 0:  # if it's a "not buy"
-            sells.append([seq, target])  # append to sells list
-        elif target == 1:  # otherwise if the target is a 1...
-            buys.append([seq, target])  # it's a buy!
+        for seq, target in sequential_data:  # iterate over the sequential data
+            if target == 0:  # if it's a "not buy"
+                sells.append([seq, target])  # append to sells list
+            elif target == 1:  # otherwise if the target is a 1...
+                buys.append([seq, target])  # it's a buy!
 
-    random.shuffle(buys)  # shuffle the buys
-    random.shuffle(sells)  # shuffle the sells!
+        random.shuffle(buys)  # shuffle the buys
+        random.shuffle(sells)  # shuffle the sells!
 
-    lower = min(len(buys), len(sells))  # what's the shorter length?
+        lower = min(len(buys), len(sells))  # what's the shorter length?
 
-    buys = buys[:lower]  # make sure both lists are only up to the shortest length.
-    sells = sells[:lower]  # make sure both lists are only up to the shortest length.
+        buys = buys[:lower]  # make sure both lists are only up to the shortest length.
+        sells = sells[:lower]  # make sure both lists are only up to the shortest length.
 
-    sequential_data = buys+sells  # add them together
-    random.shuffle(sequential_data)  # another shuffle, so the model doesn't get confused with all 1 class then the other.
+        sequential_data = buys+sells  # add them together
+        random.shuffle(sequential_data)  # another shuffle, so the model doesn't get confused with all 1 class then the other.
 
     X = []
     y = []
@@ -138,7 +139,7 @@ class Samples:
         normalized_time = float(dt.hour*3600+dt.minute*60+dt.second)/86400
         return normalized_time
 
-    def create_samples_for_symbol(self):
+    def create_samples_for_symbol(self, shuffle=True):
         one_pair_features = []
         one_pair_results = []
 
@@ -156,7 +157,7 @@ class Samples:
 
         x, y = self.__create3d_samples(np_one_pair_features[:], np_one_pair_results[:])
         """
-        x, y = preprocess_df(df)
+        x, y = preprocess_df(df, shuffle)
         return x, y
 
     @classmethod
@@ -164,9 +165,9 @@ class Samples:
         return Samples(symbol)
 
     @staticmethod
-    def create_samples(candles):
+    def create_samples(candles, shuffle=True):
         samples = Samples(candles)
-        return samples.create_samples_for_symbol()
+        return samples.create_samples_for_symbol(shuffle)
 
     @staticmethod
     def create_samples_for_symbols(symbols, start_date, end_date):
