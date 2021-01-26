@@ -57,7 +57,7 @@ class TrainNN:
 
                     model.train()
 
-            # TrainNN.eval(model)
+            TrainNN.eval(model)
             # model.show_real_output()
             # model.set_test_samples(btc_usdt_test_samples)
 
@@ -94,7 +94,7 @@ class TrainNN:
     def eval(model):
         print("Evaluate")
         for symbols in Config.SYMBOL_GROUPS_1H:
-            test_candles = ViewWithtRes.get_test_candles_for_symbols(symbols)
+            test_candles = ViewWithtRes.get_test_candles()
             test_samples = Samples.create_samples(test_candles)
 
             model.set_test_samples(test_samples)
