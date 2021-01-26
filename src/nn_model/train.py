@@ -11,6 +11,8 @@ class TrainNN:
     def train(cls):
         model = ModelNN()
         model.load()
+        TrainNN.eval(model)
+        TrainNN.eval(model)
 
         first = True
         for i in range(Config.ITERATIONS_CANLED_GROUP):
