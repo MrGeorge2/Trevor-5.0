@@ -8,6 +8,7 @@ from tensorflow.keras.layers import Dense, LSTM, Dropout, Flatten, BatchNormaliz
 from tensorflow.keras.optimizers import Adam, SGD, Adadelta
 from tensorflow.keras.callbacks import TensorBoard
 from datetime import datetime
+import os
 
 
 class ModelNN:
@@ -89,6 +90,7 @@ class ModelNN:
         loss = score[0]
         acc = score[1]
 
+        os.system(f'cmd /c "git commit -am "model checkpoint loss={loss} acc={acc}"')
         TrainLog.add_train_log(loss=loss, acc=acc, symbol=symbol, note=note)
         print(f'Test loss: {score[0]} / Test accuracy: {score[1]}')
         self.x_test = []
