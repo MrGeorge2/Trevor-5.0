@@ -49,6 +49,7 @@ class BackTest:
 
     def full_back_test(self):
         final_percentage = 0
+        trade_counter = 0
         model = ModelNN()
         model.load()
         test_samples = Samples.create_samples(self.test_data, False)[0]
@@ -72,16 +73,16 @@ class BackTest:
                 temp_raise = ((iter_candle.close_price - next_candle.open_price) * 100) / iter_candle.open_price
 
                 # UP
-                if predicted == 0:
+                if predicted == 1:
                     # SL CHECK
                     if temp_drop <= self.MAX_DROP:
-                        final_percentage += temp_drop
+                        final_percentage += self.MAX_DROP
                         trade_closed = True
                         break
 
                     # TP CHECK
                     elif temp_raise >= self.MAX_RAISE:
-                        final_percentage += temp_raise
+                        final_percentage += self.MAX_RAISE
                         trade_closed = True
                         break
 
@@ -89,13 +90,13 @@ class BackTest:
                 else:
                     # SL CHECK
                     if temp_raise >= self.MAX_RAISE:
-                        final_percentage -= temp_raise
+                        final_percentage -= self.MAX_RAISE
                         trade_closed = True
                         break
 
                     # TP CHECK
                     elif temp_drop <= self.MAX_DROP:
-                        final_percentage -= temp_drop
+                        final_percentage -= self.MAX_DROP
                         trade_closed = True
                         break
 
@@ -105,9 +106,11 @@ class BackTest:
 
                 percentage_gain = (close_candle.close_price - open_candle.open_price) * 100 / open_candle.open_price
                 final_percentage += percentage_gain
-            print(f"temp_percentage={final_percentage}")
 
-        print(f"final_percentage={final_percentage}")
+            trade_counter += 1
+            print(f"temp_percentage={final_percentage} trade_counter={trade_counter} days={trade_counter / 1440}")
+
+        print(f"final_percentage={final_percentage} trade_counter={trade_counter} days={trade_counter / 1440}")
         return final_percentage
 
 
@@ -118,11 +121,11 @@ def count_average_movements():
 
 
 def backtest():
-    # avg_drop, median_drop, avg_raise, median_raise = count_average_movements()
+    avg_drop, median_drop, avg_raise, median_raise = count_average_movements()
     test_candles = ViewWithtRes.get_test_candles()
 
     bcktest = BackTest(test_candles)
-    bcktest.MAX_DROP = 0.1062
-    bcktest.MAX_RAISE = 0.1062
+    bcktest.MAX_DROP = avg_raise
+    bcktest.MAX_RAISE = avg_raise
 
     bcktest.full_back_test()
