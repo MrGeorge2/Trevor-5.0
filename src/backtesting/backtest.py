@@ -49,6 +49,7 @@ class BackTest:
 
     def full_back_test(self):
         final_percentage = 0
+        day_counter = 0
         trade_counter = 0
         model = ModelNN()
         model.load()
@@ -59,9 +60,11 @@ class BackTest:
                 break
 
             sequence_to_predict = reshape(test_samples[Config.TIMESTEPS - i], (1, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
-            sequence_backtest = self.test_data[i: i + Config.NUMBER_FUTURE_CANDLE_PREDICT]
+            sequence_backtest = self.test_data[i: ]
 
-            predicted = argmax(model.model.predict(sequence_to_predict))
+            prediction = model.model.predict(sequence_to_predict)
+            predicted = argmax(prediction)
+            certainty = max(prediction[0])
 
             trade_closed = False
             for j, iter_candle in enumerate(sequence_backtest):
@@ -108,9 +111,10 @@ class BackTest:
                 final_percentage += percentage_gain
 
             trade_counter += 1
-            print(f"temp_percentage={final_percentage} trade_counter={trade_counter} days={trade_counter / 1440}")
+            day_counter += 1
+            print(f"certainty={certainty} temp_percentage={final_percentage} trade_counter={trade_counter} days={day_counter / 1440}")
 
-        print(f"final_percentage={final_percentage} trade_counter={trade_counter} days={trade_counter / 1440}")
+        print(f"final_percentage={final_percentage} trade_counter={trade_counter} days={day_counter / 1440}")
         return final_percentage
 
 

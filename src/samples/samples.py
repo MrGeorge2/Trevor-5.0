@@ -140,23 +140,8 @@ class Samples:
         return normalized_time
 
     def create_samples_for_symbol(self, shuffle=True):
-        one_pair_features = []
-        one_pair_results = []
-
         df = pd.DataFrame([candle.get_as_dict() for candle in self.candles])
-        """
-        for i, candle in enumerate(self.candles):
-            features = candle.get_features()
-            results = candle.get_results()
 
-            one_pair_features.append(features)
-            one_pair_results.append(results)
-
-        np_one_pair_features = np.array(one_pair_features)
-        np_one_pair_results = np.array(one_pair_results)
-
-        x, y = self.__create3d_samples(np_one_pair_features[:], np_one_pair_results[:])
-        """
         x, y = preprocess_df(df, shuffle)
         return x, y
 
