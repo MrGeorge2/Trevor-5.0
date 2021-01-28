@@ -11,8 +11,6 @@ class TrainNN:
     def train(cls):
         model = ModelNN()
         model.load()
-        TrainNN.eval(model)
-        TrainNN.eval(model)
 
         first = True
         for i in range(Config.ITERATIONS_CANLED_GROUP):
@@ -46,24 +44,19 @@ class TrainNN:
                     except Exception as e:
                         print(e)
                         continue
-                    """
-                    next_symbols = Config.SYMBOL_GROUPS_1H[symbol_index + 1] if symbol_index + 1 < len(
-                        Config.SYMBOL_GROUPS_1H) else Config.SYMBOL_GROUPS_1H[0]
-                    """
+
                     start_date, end_date = day_counter.next_date_datetime
                     sample_thread = ReturningThread(target=Samples.create_samples_for_symbols,
-                                                    args=(Config.SYMBOL_GROUPS_1H[0], start_date, end_date))
+                                                    args=(Config.SYMBOL_GROUPS_1H[symbols], start_date, end_date))
                     sample_thread.start()
 
                     test_thread = ReturningThread(target=Samples.create_test_samples_for_symbols,
-                                                  args=(Config.SYMBOL_GROUPS_1H[0], start_date, end_date))
+                                                  args=(Config.SYMBOL_GROUPS_1H[symbols], start_date, end_date))
                     test_thread.start()
 
                     model.train()
 
             TrainNN.eval(model)
-            # model.show_real_output()
-            # model.set_test_samples(btc_usdt_test_samples)
 
     @classmethod
     def train_on_few_samples(cls):
