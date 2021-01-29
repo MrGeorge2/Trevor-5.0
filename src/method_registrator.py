@@ -5,13 +5,14 @@ from .data_analysis.models.indicators import Indicators
 from .samples.samples import Samples
 from .nn_model.train import TrainNN
 from .nn_model.test_gpu import test_tf_gpu
+from .backtesting.backtest import count_average_movements, backtest
 
 
 """
 Scrape all symbols from config with result
 """
 def full_fetch(*args):
-    Scraper.scrape_all()
+    # Scraper.scrape_all()
     Results.count_results()
     Results.divide_train_test()
     Indicators.count_indicators()
@@ -50,7 +51,9 @@ class MethodRegistrator:
         Results.reverse_train_data.__name__: Results.reverse_train_data,
         TrainNN.train.__name__: TrainNN.train,
         TrainNN.train_on_few_samples.__name__: TrainNN.train_on_few_samples,
-        test_tf_gpu.__name__: test_tf_gpu
+        test_tf_gpu.__name__: test_tf_gpu,
+        count_average_movements.__name__: count_average_movements,
+        backtest.__name__: backtest,
     }
     APPEND_EXT_TEXT: str = "\n For getting all registred methods please use python3 main.py help"
 
