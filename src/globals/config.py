@@ -19,6 +19,9 @@ class Config:
     SYMBOL_LIVE_TRADING = [
             "BTCUSDT",
     ]
+    TAKE_PROFIT = 0.0021
+    STOP_LOSS = 0.0021
+
 
     """
     SCRAPER

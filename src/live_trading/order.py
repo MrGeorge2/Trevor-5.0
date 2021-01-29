@@ -1,4 +1,5 @@
 from datetime import datetime
+from ..globals.config import Config
 
 
 class Order:
@@ -29,10 +30,12 @@ class Order:
 
 class Long(Order):
     UP = 1
+    LIMIT = Config.TAKE_PROFIT
 
 
 class Short(Order):
     UP = 0
+    LIMIT = Config.STOP_LOSS
 
 #TODO: ziskat svicky z api
     #TODO: preprocessing
