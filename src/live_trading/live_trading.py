@@ -33,7 +33,7 @@ class LiveTrading:
         return np.array([preprocess_df(scraped_df, shuffle=False)[0][-1]])
 
     def predict_result(self, input_sample):
-        self.NN_MODEL.predict(input_sample)
+        return self.NN_MODEL.predict(input_sample)
 
     def create_order(self):
         pass
@@ -42,7 +42,8 @@ class LiveTrading:
         pass
 
     def run(self):
-
+        preprocessed = self.preprocess_candles()
+        predikce = self.predict_result(preprocessed)
         return 0
 
     @staticmethod
