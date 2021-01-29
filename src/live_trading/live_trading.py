@@ -64,13 +64,13 @@ class LiveTrading:
 
             else:
                 if order.UP == 1:
-                    if ((open_price - order.OPEN_PRICE) / order.OPEN_PRICE) > order.LIMIT:
+                    if ((open_price - order.OPEN_PRICE) / order.OPEN_PRICE) * 100 > order.LIMIT:
                         order.close(close_price=open_price)
 
                         self.CLOSED_ORDERS.append(order)
                         self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
                 if order.UP == 0:
-                    if ((order.OPEN_PRICE - open_price) / order.OPEN_PRICE) > order.LIMIT:
+                    if ((order.OPEN_PRICE - open_price) / order.OPEN_PRICE) * 100 > order.LIMIT:
                         order.close(close_price=open_price)
 
                         self.CLOSED_ORDERS.append(order)
