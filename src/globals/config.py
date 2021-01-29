@@ -11,6 +11,15 @@ class Config:
     PLOTING = False
     BACKTESTING_DATA = False
     STORE_BACK_TEST_DATA = False
+
+    """
+    LIVE TRADING
+    """
+    SIMULATION = True
+    SYMBOL_LIVE_TRADING = [
+            "BTCUSDT",
+    ]
+
     """
     SCRAPER
     """
