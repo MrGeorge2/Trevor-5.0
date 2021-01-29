@@ -25,7 +25,7 @@ class Order:
         return True if self.CLOSED else False
 
     def get_profit(self) -> float:
-        return self.CLOSE_PRICE - self.OPEN_PRICE
+        return (self.CLOSE_PRICE - self.OPEN_PRICE) / self.OPEN_PRICE
 
 
 class Long(Order):
