@@ -25,6 +25,13 @@ class LiveTrading:
                              volume=candle[5]) for candle in scraped]
         return candles
 
+    def preprocess_candles(self):
+        scraped_candles = self.scrape_candles("BTCUSDT")
+        scraped_df = pd.DataFrame(candle.prices_as_dict_live() for candle in scraped_candles)
+        # [0] - protoze tam jsou sequence
+        # [-1] potrebuju posledni sequenci
+        return np.array([preprocess_df(scraped_df, shuffle=False)[0][-1]])
+
     def predict_result(self, input_sample):
         self.NN_MODEL.predict(input_sample)
 
@@ -35,11 +42,7 @@ class LiveTrading:
         pass
 
     def run(self):
-        scraped_candles = self.scrape_candles("BTCUSDT")
-        scraped_df = pd.DataFrame(candle.prices_as_dict_live() for candle in scraped_candles)
-        # [0] - protoze tam jsou sequence
-        # [-1] potrebuju posledni sequenci
-        sc = np.array([preprocess_df(scraped_df, shuffle=False)[0][-1]])
+
         return 0
 
     @staticmethod
