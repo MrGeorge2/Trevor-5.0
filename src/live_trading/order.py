@@ -7,8 +7,8 @@ class Order:
 
     OPEN_TIME = None
     CLOSE_TIME = None
-    OPEN_PRICE: float = 0
-    CLOSE_PRICE: float = 0
+    ORDER_OPEN_PRICE: float = 0
+    ORDER_CLOSE_PRICE: float = 0
 
     def __init__(self, open_price, symbol):
         self.OPEN_PRICE = open_price
@@ -27,7 +27,14 @@ class Order:
         return self.CLOSE_PRICE - self.OPEN_PRICE
 
 
-    #TODO: ziskat svicky z api
+class Long(Order):
+    UP = 1
+
+
+class Short(Order):
+    UP = 0
+
+#TODO: ziskat svicky z api
     #TODO: preprocessing
     #TODO: narvat to do nn
     #TODO: metody pro orders
