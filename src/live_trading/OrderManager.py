@@ -1,13 +1,13 @@
 from decimal import Decimal
 from typing import Sequence
-from .order import StopLossOrder, TakeProfitOrder, InitOrder,  Long, Short, Order
+from .order import StopLossOrder, TakeProfitOrder, InitOrder,  Long, Short, Order, FullOrderBase
 
 
 class OrderManager:
     def __init__(self):
         self.total_profit = 0
-        self.opened_orders: Sequence[Order] = []
-        self.closed_orders: Sequence[Order] = []
+        self.opened_orders: Sequence[FullOrderBase] = []
+        self.closed_orders: Sequence[FullOrderBase] = []
 
     def open_long(self, open_price: Decimal, take_profit: Decimal, stop_loss: Decimal):
         """
