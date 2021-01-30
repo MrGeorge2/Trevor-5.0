@@ -6,7 +6,7 @@ from decimal import Decimal
 
 
 class OrderInterface:
-    ORDER_TYPE: str = ORDER_TYPE_MARKET.maketrans()  # TODO: nejak vymyslet, jak to ma byt pro futures market
+    # ORDER_TYPE: str = ORDER_TYPE_MARKET.maketrans()  # TODO: nejak vymyslet, jak to ma byt pro futures market
 
     def set_order_id(self):
         pass

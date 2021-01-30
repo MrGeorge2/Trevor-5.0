@@ -6,6 +6,7 @@ from ..data_analysis.models.candle_api import CandleApi
 import pandas as pd
 import numpy as np
 import time
+from decimal import Decimal
 from datetime import datetime, timedelta
 from .OrderManager import OrderManager
 
@@ -24,7 +25,12 @@ class LiveTrading:
         candles = [CandleApi(open_price=candle[1], high_price=candle[2], low_price=candle[3], close_price=candle[4],
                              volume=candle[5]) for candle in scraped]
 
-        last_candle = float(candles[-1])
+        last_candle: CandleApi = candles[-1]
+        last_candle.open_price = Decimal(last_candle.open_price)
+        last_candle.high_price = Decimal(last_candle.high_price)
+        last_candle.low_price = Decimal(last_candle.low_price)
+        last_candle.close_price = Decimal(last_candle.close_price)
+
         return candles, last_candle
 
     @staticmethod
@@ -39,15 +45,14 @@ class LiveTrading:
         return self.nn_model.predict(input_sample)
 
     def create_order(self, predikce, last_candle: CandleApi):
-        last_close_price = last_candle.close_price
-
-        tp = last_close_price * (1 + Config.TP/100)
-        sl = last_close_price * (1 - Config.SL/100)
+        lc: Decimal = last_candle
+        tp: Decimal = last_candle.close_price * Decimal((1 + Config.TP/100))
+        sl = last_candle.close_price * Decimal((1 - Config.SL/100))
 
         if predikce == 1:
-            self.manager.open_long(price=last_close_price, take_profit=tp, stop_loss=sl)
+            self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
         else:
-            self.manager.open_short(price=last_close_price, take_profit=tp, stop_loss=sl)
+            self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
 
     def check_orders(self, last_candle):
         self.manager.check_opened_orders(last_candle)
@@ -72,9 +77,9 @@ class LiveTrading:
                 preprocessed = self.preprocess_candles(scraped_candles=scraped_candles)
                 predikce = self.predict_result(preprocessed)
 
-                self.create_order(predikce=predikce, last_candle=last_candle.close_price)
+                self.create_order(predikce=predikce, last_candle=last_candle)
                 self.check_orders(last_candle)
-
+                self.print_profit()
                 check_new_candle = False
                 time.sleep(50)
 
