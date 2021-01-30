@@ -9,9 +9,13 @@ from ..data_analysis.models.candle_api import CandleApi
 class OrderManager:
     def __init__(self, symbol: str):
         self.symbol: str = symbol
+
+        self.profitable_trades: int = 0
+        self.not_profitable_trades: int = 0
+        self.closed_orders: int = 0
+
         self.total_profit: Decimal = Decimal(0)
         self.opened_orders: List[FullOrderBase] = []
-        self.closed_orders: List[FullOrderBase] = []
 
     def open_long(self, price: Decimal, take_profit: Decimal, stop_loss: Decimal):
         print(f"Opening long init_price={round(price, 4)} take_profit={round(take_profit, 4)} stop_loss={round(stop_loss, 4)}")
@@ -48,7 +52,7 @@ class OrderManager:
                 if isinstance(order, Short):
                     self.total_profit += (-1 * (last_candle.close_price - order.init_order.price) / order.init_order.price) * 100
 
-                self.closed_orders.append(order)
+                self.closed_orders += 1
                 self.opened_orders.pop((self.opened_orders.index(order)))
 
             else:
@@ -57,29 +61,41 @@ class OrderManager:
                         order.close()
                         self.total_profit += Config.TP
 
-                        self.closed_orders.append(order)
+                        self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
+                        self.profitable_trades += 1
+                        print(f"Closing Long TP\tlast_candle.high_price={round(last_candle.high_price, 4)}\torder.take_profit={round(order.take_profit.price, 4)}")
+                        print(f"profitable trades={self.profitable_trades} \t not profitable trades{self.not_profitable_trades}")
 
                     elif last_candle.low_price <= order.stop_loss.price:
                         order.close()
                         self.total_profit -= Config.SL
 
-                        self.closed_orders.append(order)
+                        self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
+                        self.not_profitable_trades += 1
+                        print(f"Closing Long SL\tlast_candle.low_price={round(last_candle.low_price, 4)}\torder.stop_loss={round(order.stop_loss.price, 4)}")
+                        print(f"profitable trades={self.profitable_trades} \t not profitable trades{self.not_profitable_trades}")
 
                 if isinstance(order, Short):
                     if last_candle.low_price <= order.take_profit.price:
                         order.close()
                         self.total_profit += Config.TP
 
-                        self.closed_orders.append(order)
+                        self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
+                        self.profitable_trades += 1
+                        print(f"Closing SHORT TP\tlast_candle.low_price={round(last_candle.low_price,4)}\torder.take_profit={round(order.take_profit.price, 4)}")
+                        print(f"profitable trades={self.profitable_trades} \t not profitable trades{self.not_profitable_trades}")
 
                     elif last_candle.high_price >= order.stop_loss.price:
                         order.close()
                         self.total_profit -= Config.SL
 
-                        self.closed_orders.append(order)
+                        self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
+                        self.not_profitable_trades += 1
+                        print(f"Closing SHORT SL\tlast_candle.low_price={round(last_candle.high_price, 4)}\torder.stop_loss={round(order.stop_loss.price, 4)}")
+                        print(f"profitable trades={self.profitable_trades} \t not profitable trades{self.not_profitable_trades}")
 
 

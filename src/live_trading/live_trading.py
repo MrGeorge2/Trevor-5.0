@@ -59,7 +59,7 @@ class LiveTrading:
         self.manager.check_opened_orders(last_candle)
 
     def print_profit(self):
-        print(f"closed orders: {len(self.manager.closed_orders)}, opened orders: {len(self.manager.opened_orders)}")
+        print(f"closed orders: {self.manager.closed_orders}, opened orders: {len(self.manager.opened_orders)}")
         print(f"total profit: {round(self.manager.total_profit, 4)} %")
         print()
 
