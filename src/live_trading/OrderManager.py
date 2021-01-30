@@ -5,7 +5,7 @@ from .order import StopLossOrder, TakeProfitOrder, InitOrder,  Long, Short, Orde
 
 class OrderManager:
     def __init__(self):
-        self.total_profit = 0
+        self.total_profit: Decimal = Decimal(0)
         self.opened_orders: Sequence[FullOrderBase] = []
         self.closed_orders: Sequence[FullOrderBase] = []
 
