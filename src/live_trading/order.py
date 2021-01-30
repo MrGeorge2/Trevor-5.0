@@ -37,7 +37,6 @@ class Order(OrderInterface):
         self._order_id: Optional[str] = None
 
         self.filled: Optional[bool] = False
-        self.opened: Optional[bool] = False
         self.closed: Optional[bool] = False
         self.close_time: Optional[datetime] = None
 
@@ -51,10 +50,6 @@ class Order(OrderInterface):
         if self.is_opened:
             self.close_time = datetime.now()
             self.closed = True
-
-    @property
-    def is_opened(self):
-        return self.opened
 
     @property
     def is_filled(self) -> bool:
