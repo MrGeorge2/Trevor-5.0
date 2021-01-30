@@ -4,32 +4,31 @@ from .order import StopLossOrder, TakeProfitOrder, InitOrder,  Long, Short, Orde
 
 
 class OrderManager:
-    def __init__(self):
+    def __init__(self, symbol: str):
+        self.symbol: str = symbol
         self.total_profit: Decimal = Decimal(0)
         self.opened_orders: Sequence[FullOrderBase] = []
         self.closed_orders: Sequence[FullOrderBase] = []
 
-    def open_long(self, open_price: Decimal, take_profit: Decimal, stop_loss: Decimal):
-        """
-        open_order = InitOrder()
-        sl_order = StopLossOrder()
-        tp_order = TakeProfitOrder()
+    def open_long(self, price: Decimal, take_profit: Decimal, stop_loss: Decimal):
+
+        open_order = InitOrder(price=price, symbol=self.symbol)
+        sl_order = StopLossOrder(price=stop_loss, symbol=self.symbol)
+        tp_order = TakeProfitOrder(price=take_profit, symbol=self.symbol)
 
         long = Long(open_order, sl_order, tp_order)
         long.init_order.open()
-        """
-        pass
 
-    def open_short(self, open_price: Decimal, take_profit: Decimal, stop_loss: Decimal):
-        """
-        open_order = InitOrder()
-        sl_order = StopLossOrder()
-        tp_order = TakeProfitOrder()
+        self.opened_orders
+
+    def open_short(self, price: Decimal, take_profit: Decimal, stop_loss: Decimal):
+
+        open_order = InitOrder(price=price, symbol=self.symbol)
+        sl_order = StopLossOrder(price=stop_loss, symbol=self.symbol)
+        tp_order = TakeProfitOrder(price=take_profit, symbol=self.symbol)
 
         short = Short(open_order, sl_order, tp_order)
         short.init_order.open()
-        """
-        pass
 
     def close_all_opened(self):
         pass

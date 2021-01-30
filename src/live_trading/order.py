@@ -6,6 +6,8 @@ from decimal import Decimal
 
 
 class OrderInterface:
+    ORDER_TYPE: str = ORDER_TYPE_MARKET.maketrans()  # TODO: nejak vymyslet, jak to ma byt pro futures market
+
     def set_order_id(self):
         pass
 
@@ -29,11 +31,11 @@ class OrderInterface:
 
 
 class Order(OrderInterface):
-    def __init__(self, open_price: Decimal, symbol: str, order_type: str):
-        self.price: Decimal = open_price
+    def __init__(self, price: Decimal, symbol: str):
+        self.price: Decimal = price
         self.symbol: str = symbol
         self.open_time: datetime = datetime.now()
-        self.order_type: str = order_type
+
         self._order_id: Optional[str] = None
 
         self.filled: Optional[bool] = False
@@ -80,9 +82,9 @@ class FullOrderBase(OrderInterface):
 
     def get_profit(self) -> float:
         if self.stop_loss.is_filled:
-            return (Decimal(self.stop_loss.price - self.init_order.price) / self.init_order.price) * 100
+            return Decimal(self.stop_loss.price - self.init_order.price) / self.init_order.price  # * 100
         elif self.take_profit.is_filled:
-            return (Decimal(self.stop_loss.price - self.init_order.price) / self.init_order.price) * 100
+            return Decimal(self.stop_loss.price - self.init_order.price) / self.init_order.price  # * 100
         else:
             Decimal(0)
 
