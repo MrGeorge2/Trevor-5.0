@@ -112,10 +112,3 @@ class Long(FullOrderBase):
 
 class Short(FullOrderBase):
     pass
-
-
-#TODO: ziskat svicky z api
-    #TODO: preprocessing
-    #TODO: narvat to do nn
-    #TODO: metody pro orders
-    #TODO: sledovani zisku

@@ -1,16 +1,12 @@
 from ..globals.config import Config
 from ..api_handler.api_handler import ApiHandler
-from ..data_analysis.models.candle_api import CandleApi
-
 from ..nn_model.modelnn import ModelNN
 from ..samples.samples import Samples, preprocess_df
 from ..data_analysis.models.candle_api import CandleApi
 import pandas as pd
 import numpy as np
 import time
-
 from datetime import datetime, timedelta
-from .order import Long, Short
 from .OrderManager import OrderManager
 
 
@@ -24,14 +20,15 @@ class LiveTrading:
 
     def scrape_candles(self):
         api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
-        scraped = api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "2 hour ago UTC")   #TODO: zkontrolovat casove pasmo
+        scraped = api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "2 hour ago UTC")   # TODO: zkontrolovat casove pasmo
         candles = [CandleApi(open_price=candle[1], high_price=candle[2], low_price=candle[3], close_price=candle[4],
                              volume=candle[5]) for candle in scraped]
 
         last_candle = float(candles[-1])
         return candles, last_candle
 
-    def preprocess_candles(self, scraped_candles):
+    @staticmethod
+    def preprocess_candles(scraped_candles):
         scraped_df = pd.DataFrame(candle.prices_as_dict_live() for candle in scraped_candles)
         # [0] - protoze tam jsou sequence
         # [-1] potrebuju posledni sequenci
@@ -41,53 +38,25 @@ class LiveTrading:
     def predict_result(self, input_sample):
         return self.nn_model.predict(input_sample)
 
-    def create_order(self, predikce, price):
-        scraped_candles = self.scrape_candles()
-        open_time = datetime.now()
+    def create_order(self, predikce, last_candle: CandleApi):
+        last_close_price = last_candle.close_price
 
-        tp = price * (1 + Config.TP/100)
-        sl = price * (1 - Config.SL/100)
+        tp = last_close_price * (1 + Config.TP/100)
+        sl = last_close_price * (1 - Config.SL/100)
 
         if predikce == 1:
-            self.manager.open_long(price=price, take_profit=tp, stop_loss=sl)
+            self.manager.open_long(price=last_close_price, take_profit=tp, stop_loss=sl)
         else:
-            self.manager.open_short(price=price, take_profit=tp, stop_loss=sl)
+            self.manager.open_short(price=last_close_price, take_profit=tp, stop_loss=sl)
 
     def check_orders(self, last_candle):
         self.manager.check_opened_orders(last_candle)
 
-            """
-            else:
-                if order.UP == 1:
-                    if ((order.OPEN_PRICE - low_price) / order.OPEN_PRICE) * 100 > order.LIMIT:
-                        order.close(close_price=(order.OPEN_PRICE) * (1 - (order.LIMIT/100)))
-
-                    if ((high_price - order.OPEN_PRICE) / order.OPEN_PRICE) * 100 > order.LIMIT:
-                        order.close(close_price=(order.OPEN_PRICE) * (1 + (order.LIMIT/100)))
-
-                    self.CLOSED_ORDERS.append(order)
-                    self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
-
-                if order.UP == 0:
-                    if ((high_price - order.OPEN_PRICE) / order.OPEN_PRICE) * 100 > order.LIMIT:
-                        order.close(close_price=(order.OPEN_PRICE) * (1 - (order.LIMIT/100)))
-
-                    if ((order.OPEN_PRICE - low_price) / order.OPEN_PRICE) * 100 > order.LIMIT:
-                        order.close(close_price=(order.OPEN_PRICE) * (1 + (order.LIMIT/100)))
-
-                    self.CLOSED_ORDERS.append(order)
-                    self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
-            """
-
-    def count_profit(self):
-        profit_counter = 0
-        for order in self.CLOSED_ORDERS:
-            profit_counter += order.get_profit()
-        print(f"open orders: {len(self.OPEN_ORDERS)}, closed orders: {len(self.CLOSED_ORDERS)}")
-        print(f"total profit from all closed orders is {profit_counter} %")
+    def print_profit(self):
+        print(f"closed orders: {len(self.manager.closed_orders)}, opened orders: {len(self.manager.opened_orders)}")
+        print(f"total profit: {round(self.manager.total_profit, 4)} %")
 
     def run(self):
-        time_compare = datetime.now()
         check_new_candle = False
 
         while True:
@@ -99,11 +68,11 @@ class LiveTrading:
             if check_new_candle:
                 last_candle: CandleApi
 
-                scraped_candles, last_candle = self.scrape_candles() #prices for last candle in df
+                scraped_candles, last_candle = self.scrape_candles()    # scraped candles, last candle in df
                 preprocessed = self.preprocess_candles(scraped_candles=scraped_candles)
                 predikce = self.predict_result(preprocessed)
 
-                self.create_order(predikce=predikce, price=last_candle.close_price)
+                self.create_order(predikce=predikce, last_candle=last_candle.close_price)
                 self.check_orders(last_candle)
 
                 check_new_candle = False

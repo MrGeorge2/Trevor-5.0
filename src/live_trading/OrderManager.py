@@ -1,5 +1,4 @@
 from decimal import Decimal
-from typing import Sequence
 from typing import List
 from datetime import datetime, timedelta
 from .order import StopLossOrder, TakeProfitOrder, InitOrder,  Long, Short, Order, FullOrderBase
