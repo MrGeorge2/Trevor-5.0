@@ -59,43 +59,38 @@ class OrderManager:
                 if isinstance(order, Long):
                     if last_candle.high_price >= order.take_profit.price:
                         order.close()
-                        self.total_profit += Config.TP
+                        self.total_profit += ((order.take_profit.price - order.init_order.price) / order.init_order.price) * 100    # v procentech
 
                         self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
                         self.profitable_trades += 1
                         print(f"Closing Long TP\tlast_candle.high_price={round(last_candle.high_price, 4)}\torder.take_profit={round(order.take_profit.price, 4)}")
-                        print(f"profitable trades={self.profitable_trades} \t not profitable trades{self.not_profitable_trades}")
 
                     elif last_candle.low_price <= order.stop_loss.price:
                         order.close()
-                        self.total_profit -= Config.SL
+                        self.total_profit -= ((order.init_order.price - order.stop_loss.price) / order.init_order.price) * 100    # v procentech
 
                         self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
                         self.not_profitable_trades += 1
                         print(f"Closing Long SL\tlast_candle.low_price={round(last_candle.low_price, 4)}\torder.stop_loss={round(order.stop_loss.price, 4)}")
-                        print(f"profitable trades={self.profitable_trades} \t not profitable trades{self.not_profitable_trades}")
 
                 if isinstance(order, Short):
                     if last_candle.low_price <= order.take_profit.price:
                         order.close()
-                        self.total_profit += Config.TP
+                        self.total_profit += ((order.init_order.price - order.take_profit.price) / order.init_order.price) * 100  # v procentech
 
                         self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
                         self.profitable_trades += 1
                         print(f"Closing SHORT TP\tlast_candle.low_price={round(last_candle.low_price,4)}\torder.take_profit={round(order.take_profit.price, 4)}")
-                        print(f"profitable trades={self.profitable_trades} \t not profitable trades{self.not_profitable_trades}")
 
                     elif last_candle.high_price >= order.stop_loss.price:
                         order.close()
-                        self.total_profit -= Config.SL
+                        self.total_profit -= ((order.stop_loss.price - order.init_order.price) / order.init_order.price) * 100  # v procentech
 
                         self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
                         self.not_profitable_trades += 1
                         print(f"Closing SHORT SL\tlast_candle.low_price={round(last_candle.high_price, 4)}\torder.stop_loss={round(order.stop_loss.price, 4)}")
-                        print(f"profitable trades={self.profitable_trades} \t not profitable trades{self.not_profitable_trades}")
-
 
