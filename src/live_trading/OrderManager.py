@@ -14,7 +14,7 @@ class OrderManager:
         self.closed_orders: List[FullOrderBase] = []
 
     def open_long(self, price: Decimal, take_profit: Decimal, stop_loss: Decimal):
-
+        print(f"Opening long init_price={round(price, 4)} take_profit={round(take_profit, 4)} stop_loss={round(stop_loss, 4)}")
         open_order = InitOrder(price=price, symbol=self.symbol)
         sl_order = StopLossOrder(price=stop_loss, symbol=self.symbol)
         tp_order = TakeProfitOrder(price=take_profit, symbol=self.symbol)
@@ -25,7 +25,7 @@ class OrderManager:
         self.opened_orders.append(long)
 
     def open_short(self, price: Decimal, take_profit: Decimal, stop_loss: Decimal):
-
+        print(f"Opening short init_price={round(price, 4)} take_profit={round(take_profit, 4)} stop_loss={round(stop_loss, 4)}")
         open_order = InitOrder(price=price, symbol=self.symbol)
         sl_order = StopLossOrder(price=stop_loss, symbol=self.symbol)
         tp_order = TakeProfitOrder(price=take_profit, symbol=self.symbol)
@@ -75,7 +75,7 @@ class OrderManager:
                         self.closed_orders.append(order)
                         self.opened_orders.pop((self.opened_orders.index(order)))
 
-                    if last_candle.high_price >= order.stop_loss.price:
+                    elif last_candle.high_price >= order.stop_loss.price:
                         order.close()
                         self.total_profit -= Config.SL
 
