@@ -30,7 +30,7 @@ class OrderInterface:
 
 class Order(OrderInterface):
     def __init__(self, open_price: Decimal, symbol: str, order_type: str):
-        self.open_price: Decimal = open_price
+        self.price: Decimal = open_price
         self.symbol: str = symbol
         self.open_time: datetime = datetime.now()
         self.order_type: str = order_type
@@ -85,9 +85,9 @@ class FullOrderBase(OrderInterface):
 
     def get_profit(self) -> float:
         if self.stop_loss.is_filled:
-            return (Decimal(self.stop_loss.open_price - self.init_order.open_price) / self.init_order.open_price) * 100
+            return (Decimal(self.stop_loss.price - self.init_order.price) / self.init_order.price) * 100
         elif self.take_profit.is_filled:
-            return (Decimal(self.stop_loss.open_price - self.init_order.open_price) / self.init_order.open_price) * 100
+            return (Decimal(self.stop_loss.price - self.init_order.price) / self.init_order.price) * 100
         else:
             Decimal(0)
 
