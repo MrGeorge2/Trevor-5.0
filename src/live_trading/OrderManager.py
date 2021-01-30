@@ -36,7 +36,8 @@ class OrderManager:
         self.opened_orders.append(short)
 
     def close_all_opened(self):
-        pass
+        for order in self.opened_orders:
+            order.close()
 
     def check_opened_orders(self, last_candle: CandleApi):
         for order in self.opened_orders:
