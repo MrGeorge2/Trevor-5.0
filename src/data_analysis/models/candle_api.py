@@ -1,5 +1,6 @@
 from ...globals.db import DB
 from sqlalchemy import Column,  DECIMAL, Integer, DATETIME, String
+import numpy as np
 
 
 class CandleApi(DB.DECLARATIVE_BASE):
@@ -30,4 +31,14 @@ class CandleApi(DB.DECLARATIVE_BASE):
             'low_price': float(self.low_price),
             'close_price': float(self.close_price),
             'volume': float(self.volume),
+        }
+
+    def prices_as_dict_live(self):
+        return {
+            "open_price": np.float64(self.open_price),
+            "high_price": np.float64(self.high_price),
+            "low_price": np.float64(self.low_price),
+            "close_price": np.float64(self.close_price),
+            "volume": np.float64(self.volume),
+            "target": 0,
         }

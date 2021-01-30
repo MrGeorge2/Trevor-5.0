@@ -11,10 +11,21 @@ class Config:
     PLOTING = False
     BACKTESTING_DATA = False
     STORE_BACK_TEST_DATA = False
+
+    """
+    LIVE TRADING
+    """
+    SIMULATION = True
+    SYMBOL_LIVE_TRADING = [
+            "BTCUSDT",
+    ]
+    SL: Decimal = Decimal(0.21)   # %
+    TP: Decimal = Decimal(0.21)  # %
     """
     SCRAPER
     """
     CANDLE_INTERVAL = Client.KLINE_INTERVAL_1MINUTE
+    CANDLE_MINUTES_INTERVAL = 12
     CHECK_ROW_IN_DB = False
 
     SYMBOLS_TO_SCRAPE = [

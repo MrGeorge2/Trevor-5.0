@@ -85,6 +85,9 @@ class ModelNN:
         )
         self.save()
 
+    def predict(self, input_data):
+        return np.argmax(self.model.predict(input_data))
+
     def eval(self, symbol, note):
         score = self.model.evaluate(self.x_test, self.y_test, verbose=1)
         loss = score[0]
