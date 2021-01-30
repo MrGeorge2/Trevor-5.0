@@ -8,23 +8,23 @@ from ..data_analysis.models.candle_api import CandleApi
 import pandas as pd
 import numpy as np
 import time
+
 from datetime import datetime, timedelta
 from .order import Long, Short
+from .OrderManager import OrderManager
 
 
 class LiveTrading:
-    OPEN_ORDERS = []
-    CLOSED_ORDERS = []
-
     SIMULATION = Config.SIMULATION
 
     def __init__(self, symbol):
-        self.NN_MODEL = ModelNN()
-        self.SYMBOL = symbol
+        self.nn_model = ModelNN()
+        self.symbol = symbol
+        self.manager = OrderManager(symbol=self.symbol)
 
     def scrape_candles(self):
         api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
-        scraped = api_handler.get_historical_klines(self.SYMBOL, Config.CANDLE_INTERVAL, "2 hour ago UTC")   #TODO: zkontrolovat casove pasmo
+        scraped = api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "2 hour ago UTC")   #TODO: zkontrolovat casove pasmo
         candles = [CandleApi(open_price=candle[1], high_price=candle[2], low_price=candle[3], close_price=candle[4],
                              volume=candle[5]) for candle in scraped]
 
@@ -42,22 +42,24 @@ class LiveTrading:
         return np.array([preprocess_df(scraped_df, shuffle=False)[0][-1]])
 
     def predict_result(self, input_sample):
-        return self.NN_MODEL.predict(input_sample)
+        return self.nn_model.predict(input_sample)
 
-    def create_order(self, predikce, order_open_price):
+    def create_order(self, predikce, price):
         scraped_candles = self.scrape_candles()
         open_time = datetime.now()
-        if predikce == 1:
-            order = Long(open_price=order_open_price, symbol=self.SYMBOL)
-        else:
-            order = Short(open_price=order_open_price, symbol=self.SYMBOL)
 
-        self.OPEN_ORDERS.append(order)
+        tp = price * (1 + Config.TP/100)
+        sl = price * (1 - Config.SL/100)
+
+        if predikce == 1:
+            self.manager.open_long(price=price, take_profit=tp, stop_loss=sl)
+        else:
+            self.manager.open_short(price=price, take_profit=tp, stop_loss=sl)
 
     def check_orders(self, open_price, high_price, low_price, close_price, actual_time):
-        for order in self.OPEN_ORDERS:
-            if (actual_time - order.OPEN_TIME) >= timedelta(minutes=Config.CANDLE_MINUTES_INTERVAL):
-                order.close(close_price=close_price)
+        for order in self.manager.opened_orders:
+            if (actual_time - order.init_order.open_time) >= timedelta(minutes=Config.CANDLE_MINUTES_INTERVAL):
+                order.close()
 
                 self.CLOSED_ORDERS.append(order)
                 self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
@@ -104,7 +106,7 @@ class LiveTrading:
                 scraped_candles, open_price, high_price, low_price, close_price = self.scrape_candles() #prices for last candle in df
                 preprocessed = self.preprocess_candles(scraped_candles=scraped_candles)
                 predikce = self.predict_result(preprocessed)
-                self.create_order(predikce=predikce, order_open_price=close_price)
+                self.create_order(predikce=predikce, price=close_price)
                 self.check_orders(high_price, close_price, low_price, close_price, actual_time=datetime.now())
                 self.count_profit()
                 check_new_candle = False

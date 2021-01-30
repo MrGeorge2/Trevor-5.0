@@ -19,8 +19,8 @@ class Config:
     SYMBOL_LIVE_TRADING = [
             "BTCUSDT",
     ]
-
-
+    SL = 0.21   # %
+    TP = 0.21  # %
     """
     SCRAPER
     """
