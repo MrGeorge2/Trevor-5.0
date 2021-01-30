@@ -45,8 +45,6 @@ class LiveTrading:
         return self.nn_model.predict(input_sample)
 
     def create_order(self, predikce, last_candle: CandleApi):
-        lc: Decimal = last_candle
-
         if predikce == 1:
             tp: Decimal = last_candle.close_price * Decimal((1 + Config.TP / 100))
             sl: Decimal = last_candle.close_price * Decimal((1 - Config.SL / 100))
@@ -61,8 +59,9 @@ class LiveTrading:
         self.manager.check_opened_orders(last_candle)
 
     def print_profit(self):
-        print(f"closed orders: {len(self.manager.closed_orders)}, opened orders: {len(self.manager.opened_orders)}")
+        print(f"closed orders: {self.manager.closed_orders}, opened orders: {len(self.manager.opened_orders)} profitable_orders={self.manager.profitable_trades}")
         print(f"total profit: {round(self.manager.total_profit, 4)} %")
+        print()
 
     def run(self):
         check_new_candle = False
