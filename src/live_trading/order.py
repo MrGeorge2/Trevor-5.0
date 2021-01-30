@@ -86,6 +86,10 @@ class FullOrderBase(OrderInterface):
         else:
             Decimal(0)
 
+    def open(self):
+        self.init_order.open()
+        self.stop_loss.open()
+
     def close(self):
         self.init_order.close()
         self.take_profit.close()
