@@ -64,24 +64,24 @@ class LiveTrading:
 
             else:
                 if order.UP == 1:
-                    if ((close_price - order.OPEN_PRICE) / order.OPEN_PRICE) * 100 > order.LIMIT:
-                        order.close(close_price=(order.OPEN_PRICE) * (1 + (order.LIMIT/100)))
-
-                    if ((order.OPEN_PRICE - close_price) / order.OPEN_PRICE) * -100 > order.LIMIT:
+                    if ((order.OPEN_PRICE - low_price) / order.OPEN_PRICE) * 100 > order.LIMIT:
                         order.close(close_price=(order.OPEN_PRICE) * (1 - (order.LIMIT/100)))
 
-                        self.CLOSED_ORDERS.append(order)
-                        self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
+                    if ((high_price - order.OPEN_PRICE) / order.OPEN_PRICE) * 100 > order.LIMIT:
+                        order.close(close_price=(order.OPEN_PRICE) * (1 + (order.LIMIT/100)))
+
+                    self.CLOSED_ORDERS.append(order)
+                    self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
 
                 if order.UP == 0:
-                    if ((close_price - order.OPEN_PRICE) / order.OPEN_PRICE) * 100 > order.LIMIT:
+                    if ((high_price - order.OPEN_PRICE) / order.OPEN_PRICE) * 100 > order.LIMIT:
                         order.close(close_price=(order.OPEN_PRICE) * (1 - (order.LIMIT/100)))
 
-                    if ((order.OPEN_PRICE - close_price) / order.OPEN_PRICE) * -100 > order.LIMIT:
+                    if ((order.OPEN_PRICE - low_price) / order.OPEN_PRICE) * 100 > order.LIMIT:
                         order.close(close_price=(order.OPEN_PRICE) * (1 + (order.LIMIT/100)))
 
-                        self.CLOSED_ORDERS.append(order)
-                        self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
+                    self.CLOSED_ORDERS.append(order)
+                    self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
 
     def count_profit(self):
         profit_counter = 0
