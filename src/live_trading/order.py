@@ -1,41 +1,73 @@
 from datetime import datetime
 from ..globals.config import Config
+from binance.enums import ORDER_TYPE_MARKET
+from typing import Optional
+from decimal import Decimal
 
 
 class Order:
-    CLOSED = False
-    SYMBOL = None
 
-    OPEN_TIME = None
-    CLOSE_TIME = None
-    ORDER_OPEN_PRICE: float = 0
-    ORDER_CLOSE_PRICE: float = 0
+    def __init__(self, open_price: Decimal, symbol: str, order_type: str):
+        self.open_price: Decimal = open_price
+        self.symbol: str = symbol
+        self.open_time: datetime = datetime.now()
+        self.order_type: str = order_type
+        self._order_id: Optional[str] = None
 
-    def __init__(self, open_price, symbol):
-        self.OPEN_PRICE = open_price
-        self.SYMBOL = symbol
-        self.OPEN_TIME = datetime.now()
+        self.closed: Optional[bool] = False
+        self.close_price: Optional[Decimal] = None
+        self.close_time: Optional[datetime] = None
+
+    def set_order_id(self, order_id):
+        self._order_id = order_id
+
+    def open(self):
+        pass
 
     def close(self, close_price):
-        self.CLOSE_PRICE = close_price
-        self.CLOSE_TIME = datetime.now()
-        self.CLOSED = True
+        self.close_price = close_price
+        self.close_time = datetime.now()
+        self.closed = True
 
+    @property
+    def is_filled(self) -> bool:
+        return True
+
+    @property
     def is_closed(self) -> bool:
-        return True if self.CLOSED else False
+        return self.closed
 
     def get_profit(self) -> float:
-        return ((self.CLOSE_PRICE - self.OPEN_PRICE) / self.OPEN_PRICE) * 100
+        if self.is_closed:
+            return (Decimal(self.close_price - self.open_price) / self.open_price) * 100
+        else:
+            Decimal(0)
 
 
-class Long(Order):
-    UP = 1
-    LIMIT = Config.TAKE_PROFIT
+class InitOrder(Order):
+    pass
 
 
-class Short(Order):
-    UP = 0
-    LIMIT = Config.STOP_LOSS
+class StopLossOrder(Order):
+    pass
+
+
+class TakeProfitOrder(Order):
+    pass
+
+
+class Long:
+    def __init__(self, init_order: InitOrder, stop_loss: StopLossOrder, take_profit: TakeProfitOrder):
+        self.init_order = init_order
+        self.stop_loss = stop_loss
+        self.take_profit = take_profit
+
+
+class Short:
+    def __init__(self, init_order: InitOrder, stop_loss: StopLossOrder, take_profit: TakeProfitOrder):
+        self.init_order = init_order
+        self.stop_loss = stop_loss
+        self.take_profit = take_profit
 
 #TODO: ziskat svicky z api
     #TODO: preprocessing

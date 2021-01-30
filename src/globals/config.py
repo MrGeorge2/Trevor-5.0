@@ -19,8 +19,6 @@ class Config:
     SYMBOL_LIVE_TRADING = [
             "BTCUSDT",
     ]
-    TAKE_PROFIT = 0.21  # v procentech
-    STOP_LOSS = 0.21    # v procentech
 
 
     """
