@@ -1,7 +1,10 @@
 from decimal import Decimal
 from typing import Sequence
 from typing import List
+from datetime import datetime, timedelta
 from .order import StopLossOrder, TakeProfitOrder, InitOrder,  Long, Short, Order, FullOrderBase
+from ..globals.config import Config
+from ..data_analysis.models.candle_api import CandleApi
 
 
 class OrderManager:
@@ -36,5 +39,26 @@ class OrderManager:
     def close_all_opened(self):
         pass
 
-    def check_opened_orders(self):
-        pass
+    def check_opened_orders(self, last_candle: CandleApi):
+        for order in self.opened_orders:
+            if (datetime.now() - order.init_order.open_time) >= timedelta(minutes=Config.CANDLE_MINUTES_INTERVAL):
+                order.close()
+                self.total_profit += (last_candle.close_price - order.init_order.price) / order.init_order.price
+
+                self.closed_orders.append(order)
+                self.opened_orders.pop((self.opened_orders.index(order)))
+
+            else:
+                if last_candle.high_price >= order.take_profit.price:
+                    order.close()
+                    self.total_profit += ((order.take_profit.price - order.init_order.price) / order.init_order.price) * 100    # v procentech
+
+                    self.closed_orders.append(order)
+                    self.opened_orders.pop((self.opened_orders.index(order)))
+
+                if last_candle.low_price <= order.stop_loss.price:
+                    order.close()
+                    self.total_profit -= ((order.init_order.price - order.stop_loss.price) / order.init_order.price) * 100    # v procentech
+
+                    self.closed_orders.append(order)
+                    self.opened_orders.pop((self.opened_orders.index(order)))

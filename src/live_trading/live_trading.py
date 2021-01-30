@@ -28,11 +28,8 @@ class LiveTrading:
         candles = [CandleApi(open_price=candle[1], high_price=candle[2], low_price=candle[3], close_price=candle[4],
                              volume=candle[5]) for candle in scraped]
 
-        open_price = float(candles[-1].open_price)
-        high_price = float(candles[-1].high_price)
-        low_price = float(candles[-1].low_price)
-        close_price = float(candles[-1].close_price)
-        return candles, open_price, high_price, low_price, close_price
+        last_candle = float(candles[-1])
+        return candles, last_candle
 
     def preprocess_candles(self, scraped_candles):
         scraped_df = pd.DataFrame(candle.prices_as_dict_live() for candle in scraped_candles)
@@ -56,14 +53,10 @@ class LiveTrading:
         else:
             self.manager.open_short(price=price, take_profit=tp, stop_loss=sl)
 
-    def check_orders(self, open_price, high_price, low_price, close_price, actual_time):
-        for order in self.manager.opened_orders:
-            if (actual_time - order.init_order.open_time) >= timedelta(minutes=Config.CANDLE_MINUTES_INTERVAL):
-                order.close()
+    def check_orders(self, last_candle):
+        self.manager.check_opened_orders(last_candle)
 
-                self.CLOSED_ORDERS.append(order)
-                self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
-
+            """
             else:
                 if order.UP == 1:
                     if ((order.OPEN_PRICE - low_price) / order.OPEN_PRICE) * 100 > order.LIMIT:
@@ -84,6 +77,7 @@ class LiveTrading:
 
                     self.CLOSED_ORDERS.append(order)
                     self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
+            """
 
     def count_profit(self):
         profit_counter = 0
@@ -99,16 +93,19 @@ class LiveTrading:
         while True:
             now = datetime.now()
             # if now - time_compare > timedelta(minutes=Config.CANDLE_MINUTES_INTERVAL):
-            if now.second < 5:
+            if 2 < now.second < 5:      # zacatek kazde minuty s rezervou 2s
                 check_new_candle = True
 
             if check_new_candle:
-                scraped_candles, open_price, high_price, low_price, close_price = self.scrape_candles() #prices for last candle in df
+                last_candle: CandleApi
+
+                scraped_candles, last_candle = self.scrape_candles() #prices for last candle in df
                 preprocessed = self.preprocess_candles(scraped_candles=scraped_candles)
                 predikce = self.predict_result(preprocessed)
-                self.create_order(predikce=predikce, price=close_price)
-                self.check_orders(high_price, close_price, low_price, close_price, actual_time=datetime.now())
-                self.count_profit()
+
+                self.create_order(predikce=predikce, price=last_candle.close_price)
+                self.check_orders(last_candle)
+
                 check_new_candle = False
                 time.sleep(50)
 
