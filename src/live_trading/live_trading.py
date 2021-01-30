@@ -56,25 +56,32 @@ class LiveTrading:
 
     def check_orders(self, open_price, high_price, low_price, close_price, actual_time):
         for order in self.OPEN_ORDERS:
-            if (order.OPEN_TIME - actual_time) > timedelta(minutes=Config.CANDLE_MINUTES_INTERVAL):
-                order.close(close_price=high_price)
+            if (actual_time - order.OPEN_TIME) >= timedelta(minutes=Config.CANDLE_MINUTES_INTERVAL):
+                order.close(close_price=close_price)
 
                 self.CLOSED_ORDERS.append(order)
                 self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
 
             else:
                 if order.UP == 1:
-                    if ((open_price - order.OPEN_PRICE) / order.OPEN_PRICE) * 100 > order.LIMIT:
-                        order.close(close_price=open_price)
+                    if ((close_price - order.OPEN_PRICE) / order.OPEN_PRICE) * 100 > order.LIMIT:
+                        order.close(close_price=(order.OPEN_PRICE) * (1 + (order.LIMIT/100)))
+
+                    if ((order.OPEN_PRICE - close_price) / order.OPEN_PRICE) * -100 > order.LIMIT:
+                        order.close(close_price=(order.OPEN_PRICE) * (1 - (order.LIMIT/100)))
 
                         self.CLOSED_ORDERS.append(order)
                         self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
+
                 if order.UP == 0:
-                    if ((order.OPEN_PRICE - open_price) / order.OPEN_PRICE) * 100 > order.LIMIT:
-                        order.close(close_price=open_price)
+                    if ((close_price - order.OPEN_PRICE) / order.OPEN_PRICE) * 100 > order.LIMIT:
+                        order.close(close_price=(order.OPEN_PRICE) * (1 - (order.LIMIT/100)))
+
+                    if ((order.OPEN_PRICE - close_price) / order.OPEN_PRICE) * -100 > order.LIMIT:
+                        order.close(close_price=(order.OPEN_PRICE) * (1 + (order.LIMIT/100)))
 
                         self.CLOSED_ORDERS.append(order)
-                        self.OPEN_ORDERS.pop(self.OPEN_ORDERS.index(order))
+                        self.OPEN_ORDERS.pop((self.OPEN_ORDERS.index(order)))
 
     def count_profit(self):
         profit_counter = 0
