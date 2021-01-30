@@ -46,12 +46,15 @@ class LiveTrading:
 
     def create_order(self, predikce, last_candle: CandleApi):
         lc: Decimal = last_candle
-        tp: Decimal = last_candle.close_price * Decimal((1 + Config.TP/100))
-        sl = last_candle.close_price * Decimal((1 - Config.SL/100))
 
         if predikce == 1:
+            tp: Decimal = last_candle.close_price * Decimal((1 + Config.TP / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 - Config.SL / 100))
             self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
+
         else:
+            tp: Decimal = last_candle.close_price * Decimal((1 - Config.SL / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 + Config.TP / 100))
             self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
 
     def check_orders(self, last_candle):
