@@ -22,7 +22,8 @@ class Scraper:
             start_date, end_date = day_counter.next_date
             print(f"start={start_date} end={end_date}")
 
-            scraped = api_handler.get_historical_klines(symbol, Config.CANDLE_INTERVAL, start_date, end_date)
+            scraped = api_handler.futures_klines(symbol=symbol, interval=Config.CANDLE_INTERVAL, start_date=start_date, end_date=end_date)
+
             for candle in scraped:
                 m_candle: CandleApi = CandleApi(
                     symbol=symbol,
