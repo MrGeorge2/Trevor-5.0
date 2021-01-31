@@ -49,16 +49,17 @@ class ModelNN:
 
     def create(self):
         model = Sequential()
-        model.add(
-            LSTM(units=128, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS)))
+        model.add(Bidirectional(
+            LSTM(units=128, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS),
+                 kernel_regularizer=l1_l2(l1=0.01, l2=0.01))))
         model.add(Dropout(0.2))
         model.add(BatchNormalization())
 
-        model.add(LSTM(units=128, return_sequences=True))
+        model.add(Bidirectional(LSTM(units=128, return_sequences=True, kernel_regularizer=l1_l2(l1=0.01, l2=0.01))))
         model.add(Dropout(0.2))
         model.add(BatchNormalization())
 
-        model.add(LSTM(units=128, return_sequences=False))
+        model.add(Bidirectional(LSTM(units=128, return_sequences=False, kernel_regularizer=l1_l2(l1=0.01, l2=0.01))))
         model.add(Dropout(0.2))
         model.add(BatchNormalization())
 
@@ -86,7 +87,8 @@ class ModelNN:
         self.save()
 
     def predict(self, input_data):
-        return np.argmax(self.model.predict(input_data))
+        predicted = self.model.predict(input_data)
+        return np.argmax(predicted), max(predicted[0])
 
     def eval(self, symbol, note):
         score = self.model.evaluate(self.x_test, self.y_test, verbose=1)
