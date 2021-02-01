@@ -9,6 +9,7 @@ import time
 from decimal import Decimal
 from datetime import datetime, timedelta
 from .OrderManager import OrderManager
+import logging
 
 
 class LiveTrading:
@@ -46,22 +47,22 @@ class LiveTrading:
 
     def create_order(self, predikce, last_candle: CandleApi):
         if predikce == 1:
-            tp: Decimal = last_candle.close_price * Decimal((1 + 0.106 / 100))
-            sl: Decimal = last_candle.close_price * Decimal((1 - 0.27 / 100))
+            tp: Decimal = last_candle.close_price * Decimal((1 + 0.2124 / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 - 0.289 / 100))
             self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
 
         else:
-            tp: Decimal = last_candle.close_price * Decimal((1 - 0.15 / 100))
-            sl: Decimal = last_candle.close_price * Decimal((1 + 0.217 / 100))
+            tp: Decimal = last_candle.close_price * Decimal((1 - 0.264 / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 + 0.2374 / 100))
             self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
 
     def check_orders(self, last_candle):
         self.manager.check_opened_orders(last_candle)
 
     def print_profit(self):
-        print(f"closed orders: {self.manager.closed_orders}, opened orders: {len(self.manager.opened_orders)} profitable_orders={self.manager.profitable_trades}")
-        print(f"total profit: {round(self.manager.total_profit, 4)} %")
-        print()
+        logging.info(f"closed orders: {self.manager.closed_orders}, opened orders: {len(self.manager.opened_orders)} profitable_orders={self.manager.profitable_trades}")
+        logging.info(f"total profit: {round(self.manager.total_profit, 4)} %")
+        logging.info('')
 
     def run(self):
         check_new_candle = False
@@ -74,13 +75,16 @@ class LiveTrading:
 
             if check_new_candle:
                 last_candle: CandleApi
+                try:
+                    scraped_candles, last_candle = self.scrape_candles()    # scraped candles, last candle in df
+                except Exception as e:
+                    logging.critical(e)
 
-                scraped_candles, last_candle = self.scrape_candles()    # scraped candles, last candle in df
                 preprocessed = self.preprocess_candles(scraped_candles=scraped_candles)
 
                 predikce, jistota = self.predict_result(preprocessed)
 
-                print(f"Jistota={jistota} predikce={predikce}")
+                logging.info(f"Jistota={jistota} predikce={predikce}")
                 if jistota >= 0.70:
                     self.create_order(predikce=predikce, last_candle=last_candle)
 

@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from .order import StopLossOrder, TakeProfitOrder, InitOrder,  Long, Short, Order, FullOrderBase
 from ..globals.config import Config
 from ..data_analysis.models.candle_api import CandleApi
+import logging
 
 
 class OrderManager:
@@ -18,7 +19,7 @@ class OrderManager:
         self.opened_orders: List[FullOrderBase] = []
 
     def open_long(self, price: Decimal, take_profit: Decimal, stop_loss: Decimal):
-        print(f"Opening long init_price={round(price, 4)} take_profit={round(take_profit, 4)} stop_loss={round(stop_loss, 4)}")
+        logging.info(f"Opening long init_price={round(price, 4)} take_profit={round(take_profit, 4)} stop_loss={round(stop_loss, 4)}")
         open_order = InitOrder(price=price, symbol=self.symbol)
         sl_order = StopLossOrder(price=stop_loss, symbol=self.symbol)
         tp_order = TakeProfitOrder(price=take_profit, symbol=self.symbol)
@@ -29,7 +30,7 @@ class OrderManager:
         self.opened_orders.append(long)
 
     def open_short(self, price: Decimal, take_profit: Decimal, stop_loss: Decimal):
-        print(f"Opening short init_price={round(price, 4)} take_profit={round(take_profit, 4)} stop_loss={round(stop_loss, 4)}")
+        logging.info(f"Opening short init_price={round(price, 4)} take_profit={round(take_profit, 4)} stop_loss={round(stop_loss, 4)}")
         open_order = InitOrder(price=price, symbol=self.symbol)
         sl_order = StopLossOrder(price=stop_loss, symbol=self.symbol)
         tp_order = TakeProfitOrder(price=take_profit, symbol=self.symbol)
@@ -47,10 +48,20 @@ class OrderManager:
             if (datetime.now() - order.init_order.open_time) >= timedelta(minutes=Config.CANDLE_MINUTES_INTERVAL):
                 order.close()
                 if isinstance(order, Long):
-                    self.total_profit += ((last_candle.close_price - order.init_order.price) / order.init_order.price) * 100
+                    profit = ((last_candle.close_price - order.init_order.price) / order.init_order.price) * 100
+                    if profit > 0:
+                        self.profitable_trades += 1
+
+                    logging.info(f"Closing Long TIMEOUT\t profit={profit}")
+                    self.total_profit += profit
 
                 if isinstance(order, Short):
-                    self.total_profit += (-1 * (last_candle.close_price - order.init_order.price) / order.init_order.price) * 100
+                    profit = (-1 * (last_candle.close_price - order.init_order.price) / order.init_order.price) * 100
+                    if profit > 0:
+                        self.profitable_trades += 1
+
+                    logging.info(f"Closing SHORT TIMEOUT\t profit={profit}")
+                    self.total_profit += profit
 
                 self.closed_orders += 1
                 self.opened_orders.pop((self.opened_orders.index(order)))
@@ -64,7 +75,7 @@ class OrderManager:
                         self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
                         self.profitable_trades += 1
-                        print(f"Closing Long TP\tlast_candle.high_price={round(last_candle.high_price, 4)}\torder.take_profit={round(order.take_profit.price, 4)}")
+                        logging.info(f"Closing Long TP\tlast_candle.high_price={round(last_candle.high_price, 4)}\torder.take_profit={round(order.take_profit.price, 4)}")
 
                     elif last_candle.low_price <= order.stop_loss.price:
                         order.close()
@@ -73,7 +84,7 @@ class OrderManager:
                         self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
                         self.not_profitable_trades += 1
-                        print(f"Closing Long SL\tlast_candle.low_price={round(last_candle.low_price, 4)}\torder.stop_loss={round(order.stop_loss.price, 4)}")
+                        logging.info(f"Closing Long SL\tlast_candle.low_price={round(last_candle.low_price, 4)}\torder.stop_loss={round(order.stop_loss.price, 4)}")
 
                 if isinstance(order, Short):
                     if last_candle.low_price <= order.take_profit.price:
@@ -83,7 +94,7 @@ class OrderManager:
                         self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
                         self.profitable_trades += 1
-                        print(f"Closing SHORT TP\tlast_candle.low_price={round(last_candle.low_price,4)}\torder.take_profit={round(order.take_profit.price, 4)}")
+                        logging.info(f"Closing SHORT TP\tlast_candle.low_price={round(last_candle.low_price,4)}\torder.take_profit={round(order.take_profit.price, 4)}")
 
                     elif last_candle.high_price >= order.stop_loss.price:
                         order.close()
@@ -92,5 +103,5 @@ class OrderManager:
                         self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
                         self.not_profitable_trades += 1
-                        print(f"Closing SHORT SL\tlast_candle.low_price={round(last_candle.high_price, 4)}\torder.stop_loss={round(order.stop_loss.price, 4)}")
+                        logging.info(f"Closing SHORT SL\tlast_candle.low_price={round(last_candle.high_price, 4)}\torder.stop_loss={round(order.stop_loss.price, 4)}")
 

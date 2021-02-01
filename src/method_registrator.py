@@ -7,6 +7,7 @@ from .nn_model.train import TrainNN
 from .nn_model.test_gpu import test_tf_gpu
 from .backtesting.backtest import count_average_movements, backtest
 from.live_trading.live_trading import LiveTrading
+import logging
 
 
 """
@@ -89,6 +90,13 @@ class MethodRegistrator:
     """
 
     def run(self: str):
+        logging.basicConfig(filename="trevor.log", level=logging.INFO, format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+        # define a Handler which writes INFO messages or higher to the sys.stderr
+        console = logging.StreamHandler()
+        console.setLevel(logging.INFO)
+        # add the handler to the root logger
+        logging.getLogger('').addHandler(console)
+
         self._check_function_registred()
         self.REGISTRED_FUNCTIONS[self.__function_name](*self.__arguments)
         
