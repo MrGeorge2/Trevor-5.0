@@ -54,7 +54,7 @@ class OrderManager:
                 if order.init_order.price >= last_candle.close_price:
                     better_opened += 1
 
-        return True if better_opened > 0 else False
+        return better_opened > 0
 
     def check_opened_orders(self, last_candle: CandleApi):
         for order in self.opened_orders:
