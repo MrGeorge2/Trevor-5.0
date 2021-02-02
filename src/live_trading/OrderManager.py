@@ -43,6 +43,19 @@ class OrderManager:
     def close_all_opened(self):
         pass
 
+    def is_order_already_opened(self,  last_candle: CandleApi, prediction):
+        better_opened = 0
+        for order in self.opened_orders:
+            if isinstance(order, Long) and prediction == 1:
+                if order.init_order.price <= last_candle.close_price:
+                    better_opened += 1
+
+            elif isinstance(order, Short) and prediction == 0:
+                if order.init_order.price >= last_candle.close_price:
+                    better_opened += 1
+
+        return better_opened > 0
+
     def check_opened_orders(self, last_candle: CandleApi):
         for order in self.opened_orders:
             if (datetime.now() - order.init_order.open_time) >= timedelta(minutes=Config.CANDLE_MINUTES_INTERVAL):
