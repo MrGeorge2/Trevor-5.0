@@ -44,18 +44,17 @@ class OrderManager:
         pass
 
     def is_order_already_opened(self,  last_candle: CandleApi, prediction):
+        better_opened = 0
         for order in self.opened_orders:
             if isinstance(order, Long) and prediction == 1:
                 if order.init_order.price <= last_candle.close_price:
-                    return True
-                else:
-                    return False
+                    better_opened += 1
 
             elif isinstance(order, Short) and prediction == 0:
                 if order.init_order.price >= last_candle.close_price:
-                    return True
-                else:
-                    return False
+                    better_opened += 1
+
+        return True if better_opened > 0 else False
 
     def check_opened_orders(self, last_candle: CandleApi):
         for order in self.opened_orders:
