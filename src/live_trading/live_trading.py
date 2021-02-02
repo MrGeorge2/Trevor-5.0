@@ -10,6 +10,7 @@ from decimal import Decimal
 from datetime import datetime, timedelta
 from .OrderManager import OrderManager
 import logging
+from typing import List
 
 
 class LiveTrading:
@@ -19,6 +20,19 @@ class LiveTrading:
         self.nn_model = ModelNN()
         self.symbol = symbol
         self.manager = OrderManager(symbol=self.symbol)
+        self.delta = 0
+
+    @staticmethod
+    def __get_delta_for_symbol(candles: List[CandleApi]) -> float:
+        if len(candles) <= 0:
+            return 0
+
+        first_candle = candles[0]
+        last_candle = candles[-1]
+
+        delta = float(last_candle.close_price - first_candle.close_price) / float(last_candle.close_price)
+        delta = abs(delta * 100)
+        return delta
 
     def scrape_candles(self):
         api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
@@ -34,6 +48,7 @@ class LiveTrading:
         last_candle.low_price = Decimal(last_candle.low_price)
         last_candle.close_price = Decimal(last_candle.close_price)
 
+        self.delta = self.__get_delta_for_symbol(candles)
         return candles, last_candle
 
     @staticmethod
@@ -82,13 +97,14 @@ class LiveTrading:
                     scraped_candles, last_candle = self.scrape_candles()    # scraped candles, last candle in df
                 except Exception as e:
                     logging.critical(e)
+                    continue
 
                 preprocessed = self.preprocess_candles(scraped_candles=scraped_candles)
 
                 predikce, jistota = self.predict_result(preprocessed)
 
                 logging.info(f"Jistota={jistota} predikce={predikce}")
-                if jistota >= 0.70:
+                if jistota >= 0.70 and self.delta >= Config.MINIMAL_DELTA:
                     self.create_order(prediction=predikce, last_candle=last_candle)
 
                 self.check_orders(last_candle)
