@@ -9,6 +9,7 @@ import time
 from decimal import Decimal
 from datetime import datetime, timedelta
 from .OrderManager import OrderManager
+import logging
 
 
 class LiveTrading:
@@ -21,7 +22,9 @@ class LiveTrading:
 
     def scrape_candles(self):
         api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
-        scraped = api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "2 hour ago UTC")   # TODO: zkontrolovat casove pasmo
+        # scraped = api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "2 hour ago UTC")   # TODO: zkontrolovat casove pasmo
+        scraped = api_handler.futures_klines(symbol=self.symbol, interval=Config.CANDLE_INTERVAL, )
+
         candles = [CandleApi(open_price=candle[1], high_price=candle[2], low_price=candle[3], close_price=candle[4],
                              volume=candle[5]) for candle in scraped]
 
@@ -44,24 +47,25 @@ class LiveTrading:
     def predict_result(self, input_sample):
         return self.nn_model.predict(input_sample)
 
-    def create_order(self, predikce, last_candle: CandleApi):
-        if predikce == 1:
-            tp: Decimal = last_candle.close_price * Decimal((1 + Config.TP / 100))
-            sl: Decimal = last_candle.close_price * Decimal((1 - Config.SL / 100))
+    def create_order(self, prediction, last_candle: CandleApi):
+
+        if prediction == 1 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
+            tp: Decimal = last_candle.close_price * Decimal((1 + 0.2124 / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 - 0.289 / 100))
             self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
 
-        else:
-            tp: Decimal = last_candle.close_price * Decimal((1 - Config.SL / 100))
-            sl: Decimal = last_candle.close_price * Decimal((1 + Config.TP / 100))
+        elif prediction == 0 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
+            tp: Decimal = last_candle.close_price * Decimal((1 - 0.264 / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 + 0.2374 / 100))
             self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
 
     def check_orders(self, last_candle):
         self.manager.check_opened_orders(last_candle)
 
     def print_profit(self):
-        print(f"closed orders: {self.manager.closed_orders}, opened orders: {len(self.manager.opened_orders)} profitable_orders={self.manager.profitable_trades}")
-        print(f"total profit: {round(self.manager.total_profit, 4)} %")
-        print()
+        logging.info(f"closed orders: {self.manager.closed_orders}, opened orders: {len(self.manager.opened_orders)} profitable_orders={self.manager.profitable_trades}")
+        logging.info(f"total profit: {round(self.manager.total_profit, 4)} %")
+        logging.info('')
 
     def run(self):
         check_new_candle = False
@@ -74,12 +78,19 @@ class LiveTrading:
 
             if check_new_candle:
                 last_candle: CandleApi
+                try:
+                    scraped_candles, last_candle = self.scrape_candles()    # scraped candles, last candle in df
+                except Exception as e:
+                    logging.critical(e)
 
-                scraped_candles, last_candle = self.scrape_candles()    # scraped candles, last candle in df
                 preprocessed = self.preprocess_candles(scraped_candles=scraped_candles)
-                predikce = self.predict_result(preprocessed)
 
-                self.create_order(predikce=predikce, last_candle=last_candle)
+                predikce, jistota = self.predict_result(preprocessed)
+
+                logging.info(f"Jistota={jistota} predikce={predikce}")
+                if jistota >= 0.70:
+                    self.create_order(prediction=predikce, last_candle=last_candle)
+
                 self.check_orders(last_candle)
                 self.print_profit()
                 check_new_candle = False
