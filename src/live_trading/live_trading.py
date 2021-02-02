@@ -22,7 +22,9 @@ class LiveTrading:
 
     def scrape_candles(self):
         api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
-        scraped = api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "2 hour ago UTC")   # TODO: zkontrolovat casove pasmo
+        # scraped = api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "2 hour ago UTC")   # TODO: zkontrolovat casove pasmo
+        scraped = api_handler.futures_klines(symbol=self.symbol, interval=Config.CANDLE_INTERVAL, )
+
         candles = [CandleApi(open_price=candle[1], high_price=candle[2], low_price=candle[3], close_price=candle[4],
                              volume=candle[5]) for candle in scraped]
 
