@@ -20,15 +20,18 @@ class LiveTrading:
         self.nn_model = ModelNN()
         self.symbol = symbol
         self.manager = OrderManager(symbol=self.symbol)
-        self.volume_avg = 0
+        self.delta = 0
 
     @staticmethod
-    def __get_volume_avg(candles: List[CandleApi]) -> float:
+    def __get_delta(candles: List[CandleApi]) -> float:
         if len(candles) <= 0:
             return 0
+        last_close = float(candles[-1].close_price)
+        first_close = float(candles[0].close_price)
 
-        volume_avg = np.average([float(candle.volume) for candle in candles])
-        return volume_avg
+        delta = (first_close - last_close) / last_close
+        delta = abs(delta) * 100
+        return delta
 
     def scrape_candles(self):
         api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
@@ -44,7 +47,7 @@ class LiveTrading:
         last_candle.low_price = Decimal(last_candle.low_price)
         last_candle.close_price = Decimal(last_candle.close_price)
 
-        self.volume_avg = self.__get_volume_avg(candles)
+        self.delta = self.__get_delta(candles)
         return candles, last_candle
 
     @staticmethod
@@ -62,12 +65,12 @@ class LiveTrading:
 
         if prediction == 1 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
             tp: Decimal = last_candle.close_price * Decimal((1 + 0.2124 / 100))
-            sl: Decimal = last_candle.close_price * Decimal((1 - 0.289 / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 - 0.15 / 100))
             self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
 
         elif prediction == 0 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
             tp: Decimal = last_candle.close_price * Decimal((1 - 0.264 / 100))
-            sl: Decimal = last_candle.close_price * Decimal((1 + 0.2374 / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 + 0.15 / 100))
             self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
 
     def check_orders(self, last_candle):
@@ -99,10 +102,9 @@ class LiveTrading:
 
                 predikce, jistota = self.predict_result(preprocessed)
 
-                logging.info(f"Jistota={jistota} Predikce={predikce} "
-                             f"AvgVolume={self.volume_avg} ActVolume={last_candle.volume}")
+                logging.info(f"Jistota={jistota} Predikce={predikce} Delta={self.delta}")
 
-                if jistota >= 0.70 and self.volume_avg >= last_candle.volume:
+                if jistota >= 0.80 and self.delta >= Config.MINIMAL_DELTA:
                     self.create_order(prediction=predikce, last_candle=last_candle)
 
                 self.check_orders(last_candle)
