@@ -31,7 +31,7 @@ class LiveTrading:
 
     def scrape_candles(self, limit=500):
         api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
-        scraped = api_handler.futures_klines(symbol=self.symbol, interval=Config.CANDLE_INTERVAL, limit=limit)
+        scraped = api_handler.futures_klines(symbol=self.symbol, interval=Config.CANDLE_INTERVAL, klines=limit)
 
         candles = [CandleApi(open_price=candle[1], high_price=candle[2], low_price=candle[3], close_price=candle[4],
                              volume=candle[5]) for candle in scraped]
@@ -45,8 +45,7 @@ class LiveTrading:
         scraped_df = pd.DataFrame(candle.prices_as_dict_live() for candle in scraped_candles)
         # [0] - protoze tam jsou sequence
         # [-1] potrebuju posledni sequenci
-
-        return np.array([preprocess_df(scraped_df, shuffle=False)[0][-1]])
+        return np.array([preprocess_df(scraped_df, shuffle=False)[0]][-1])
 
     def predict_result(self, input_sample):
         return self.nn_model.predict(input_sample)
@@ -57,11 +56,15 @@ class LiveTrading:
             tp: Decimal = last_candle.close_price * Decimal((1 + 0.2124 / 100))
             sl: Decimal = last_candle.close_price * Decimal((1 - 0.289 / 100))
             self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
+            return True
 
         elif prediction == 0 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
             tp: Decimal = last_candle.close_price * Decimal((1 - 0.264 / 100))
             sl: Decimal = last_candle.close_price * Decimal((1 + 0.2374 / 100))
             self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
+            return True
+
+        return False
 
     def check_orders(self, last_candle):
         self.manager.check_opened_orders(last_candle)
@@ -76,9 +79,9 @@ class LiveTrading:
 
         predikce, jistota = self.predict_result(preprocessed)
 
-        logging.info(f"Jistota={jistota} predikce={predikce}")
         if jistota >= 0.70:
-            self.create_order(prediction=predikce, last_candle=last_candle)
+            if self.create_order(prediction=predikce, last_candle=last_candle):
+                logging.info(f"ORDER CREATED! Jistota={jistota} predikce={predikce}")
             return True
         return False
 
