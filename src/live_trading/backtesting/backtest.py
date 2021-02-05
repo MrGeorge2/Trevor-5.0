@@ -11,16 +11,19 @@ class BackTest(TradingInterface):
 
     def run(self):
         api_handler = ApiHandler.get_new_ApiHandler()
-        backtesting_data, _ = self._scrape_candles(scraper_func=api_handler.get_historical_klines,
-                                                   limit=Config.NUMBER_OF_TESTING_CANDLES)
 
-        for i in range(len(backtesting_data) - Config.TIMESTEPS - 200):
+        def scraper_func():
+            return api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "7 day ago UTC")
+
+        backtesting_data, _ = self._scrape_candles(scraper_func=scraper_func, limit=Config.NUMBER_OF_TESTING_CANDLES)
+
+        for i in range(len(backtesting_data) - Config.TIMESTEPS - 500):
             logging.info(f"Backtest: {i}/{len(backtesting_data)},\t"
-                  f"number of trades: {self.manager.closed_orders},\t"
-                  f"total net profit: {self.total_net_profit},\t"
-                  f"net profit per trade: {self.net_profit_per_trade}")
+                         f"number of trades: {self.manager.closed_orders},\t"
+                         f"total net profit: {self.total_net_profit},\t"
+                         f"net profit per trade: {self.net_profit_per_trade}")
 
-            actual_sample = backtesting_data[i: i+Config.TIMESTEPS+200]
+            actual_sample = backtesting_data[i: i + Config.TIMESTEPS + (500 - Config.TIMESTEPS)]
             last_candle = actual_sample[-1]
             preprocessed = self._preprocess_candles(scraped_candles=actual_sample)
 
