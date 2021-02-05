@@ -65,12 +65,12 @@ class LiveTrading:
 
         if prediction == 1 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
             tp: Decimal = last_candle.close_price * Decimal((1 + 0.2124 / 100))
-            sl: Decimal = last_candle.close_price * Decimal((1 - 0.15 / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 - 0.1 / 100))
             self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
 
         elif prediction == 0 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
             tp: Decimal = last_candle.close_price * Decimal((1 - 0.264 / 100))
-            sl: Decimal = last_candle.close_price * Decimal((1 + 0.15 / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 + 0.1 / 100))
             self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
 
     def check_orders(self, last_candle):
@@ -104,7 +104,11 @@ class LiveTrading:
 
                 logging.info(f"Jistota={jistota} Predikce={predikce} Delta={self.delta}")
 
+                """
                 if jistota >= 0.80 and self.delta >= Config.MINIMAL_DELTA:
+                    self.create_order(prediction=predikce, last_candle=last_candle)
+                """
+                if self.delta >= Config.MINIMAL_DELTA:
                     self.create_order(prediction=predikce, last_candle=last_candle)
 
                 self.check_orders(last_candle)
@@ -114,5 +118,5 @@ class LiveTrading:
 
     @staticmethod
     def trade():
-        live_trader = LiveTrading(symbol="BTCUSDT")
+        live_trader = LiveTrading(symbol="ETHUSDT")
         live_trader.run()

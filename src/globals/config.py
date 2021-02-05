@@ -11,7 +11,7 @@ class Config:
     PLOTING = False
     BACKTESTING_DATA = False
     STORE_BACK_TEST_DATA = False
-    MINIMAL_DELTA = 2.5
+    MINIMAL_DELTA = 1
     """
     LIVE TRADING
     """
@@ -72,7 +72,7 @@ class Config:
     """
     #### MODEL ####
     """
-    PATH_MODEL = "./src/nn_model/data/model.h5"
+    PATH_MODEL = "./src/nn_model/data/model_eth.h5"
     EPOCHS = 10
     ITERATIONS_CANLED_GROUP = 10
 
