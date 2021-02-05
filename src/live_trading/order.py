@@ -1,6 +1,4 @@
 from datetime import datetime
-from ..globals.config import Config
-from binance.enums import ORDER_TYPE_MARKET
 from typing import Optional
 from decimal import Decimal
 
