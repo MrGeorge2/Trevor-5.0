@@ -67,12 +67,12 @@ class TradingInterface:
         ]
 
         last_candle: CandleApi = self._get_last_candle(candles)
-        self.delta = self._get_delta(candles)
 
         return candles, last_candle
 
-    @staticmethod
-    def _preprocess_candles(scraped_candles):
+    def _preprocess_candles(self, scraped_candles):
+        self.delta = self._get_delta(scraped_candles)
+
         scraped_df = pd.DataFrame(candle.prices_as_dict_live() for candle in scraped_candles)
         preprocesed = preprocess_df(scraped_df, shuffle=False)[0][1]
         # [0] - protoze tam jsou sequence
