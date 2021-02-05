@@ -8,18 +8,6 @@ import logging
 
 class BackTest(TradingInterface):
 
-    @property
-    def total_net_profit(self) -> Decimal:
-        return self.manager.total_profit - (self.manager.closed_orders * Config.FEE * 2)
-
-    @property
-    def net_profit_per_trade(self) -> Decimal:
-        return self.total_net_profit / self.manager.closed_orders if self.manager.closed_orders > 0 else 0
-
-    @property
-    def trading_time(self) -> timedelta:
-        return timedelta(minutes=self.manager.closed_orders)
-
     def __init__(self, symbol):
         super().__init__(symbol)
 

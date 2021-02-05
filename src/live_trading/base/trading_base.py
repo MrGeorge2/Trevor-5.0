@@ -8,8 +8,7 @@ import numpy as np
 import pandas as pd
 import logging
 from ...samples.samples import preprocess_df
-from datetime import datetime
-import time
+from datetime import timedelta
 
 
 class TradingInterface:
@@ -19,6 +18,18 @@ class TradingInterface:
         self.nn_model = ModelNN()
         self.symbol = symbol
         self.manager = OrderManager(symbol=self.symbol)
+
+    @property
+    def total_net_profit(self) -> Decimal:
+        return self.manager.total_profit - (self.manager.closed_orders * Config.FEE * 2)
+
+    @property
+    def net_profit_per_trade(self) -> Decimal:
+        return self.total_net_profit / self.manager.closed_orders if self.manager.closed_orders > 0 else 0
+
+    @property
+    def trading_time(self) -> timedelta:
+        return timedelta(minutes=self.manager.closed_orders)
 
     def _get_last_candle(self, timesteps_to_process):
         last_candle: CandleApi = timesteps_to_process[-1]
