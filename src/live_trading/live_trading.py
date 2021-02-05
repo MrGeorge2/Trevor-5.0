@@ -1,14 +1,7 @@
 from ..globals.config import Config
-from ..api_handler.api_handler import ApiHandler
-from ..nn_model.modelnn import ModelNN
-from ..samples.samples import Samples, preprocess_df
 from ..data_analysis.models.candle_api import CandleApi
-import pandas as pd
-import numpy as np
 import time
-from decimal import Decimal
-from datetime import datetime, timedelta
-from .order_manager import OrderManager
+from datetime import datetime
 import logging
 from .base.trading_base import TradingInterface
 
@@ -34,13 +27,14 @@ class LiveTrading(TradingInterface):
                     scraped_candles, last_candle = self._scrape_candles()    # scraped candles, last candle in df
                 except Exception as e:
                     logging.critical(e)
+                    continue
 
                 preprocessed = self._preprocess_candles(scraped_candles=scraped_candles)
 
                 predikce, jistota = self._predict_result(preprocessed)
+                logging.info(f"Jistota={jistota} Predikce={predikce} Delta={self.delta}")
 
-                logging.info(f"Jistota={jistota} predikce={predikce}")
-                if jistota >= 0.70:
+                if self.delta >= Config.MINIMAL_DELTA:
                     self._create_order(prediction=predikce, last_candle=last_candle)
 
                 self._check_orders(last_candle)
@@ -50,5 +44,5 @@ class LiveTrading(TradingInterface):
 
     @staticmethod
     def trade():
-        live_trader = LiveTrading(symbol="BTCUSDT")
+        live_trader = LiveTrading(symbol="ETHUSDT")
         live_trader.run()

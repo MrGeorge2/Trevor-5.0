@@ -21,8 +21,17 @@ class BackTest(TradingInterface):
                   f"net profit per trade: {self.net_profit_per_trade}")
 
             actual_sample = backtesting_data[i: i+Config.TIMESTEPS+200]
+            last_candle = actual_sample[-1]
+            preprocessed = self._preprocess_candles(scraped_candles=actual_sample)
 
-            self._process_candle(timesteps_to_process=actual_sample)
+            predikce, jistota = self._predict_result(preprocessed)
+            logging.info(f"Jistota={jistota} Predikce={predikce} Delta={self.delta}")
+
+            if self.delta >= Config.MINIMAL_DELTA:
+                self._create_order(prediction=predikce, last_candle=last_candle)
+
+            self._check_orders(last_candle)
+            self._print_profit()
 
         logging.info(f"Backtestesting DONE,\t"
                      f"number of trades: {self.manager.closed_orders},\t"

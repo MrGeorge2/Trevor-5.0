@@ -9,6 +9,7 @@ import pandas as pd
 import logging
 from ...samples.samples import preprocess_df
 from datetime import timedelta
+from typing import List
 
 
 class TradingInterface:
@@ -18,6 +19,18 @@ class TradingInterface:
         self.nn_model = ModelNN()
         self.symbol = symbol
         self.manager = OrderManager(symbol=self.symbol)
+        self.delta = 0
+
+    @staticmethod
+    def _get_delta(candles: List[CandleApi]) -> float:
+        if len(candles) <= 0:
+            return 0
+        last_close = float(candles[-1].close_price)
+        first_close = float(candles[0].close_price)
+
+        delta = (first_close - last_close) / last_close
+        delta = abs(delta) * 100
+        return delta
 
     @property
     def total_net_profit(self) -> Decimal:
@@ -31,7 +44,8 @@ class TradingInterface:
     def trading_time(self) -> timedelta:
         return timedelta(minutes=self.manager.closed_orders)
 
-    def _get_last_candle(self, timesteps_to_process):
+    @staticmethod
+    def _get_last_candle(timesteps_to_process):
         last_candle: CandleApi = timesteps_to_process[-1]
         last_candle.open_price = Decimal(last_candle.open_price)
         last_candle.high_price = Decimal(last_candle.high_price)
@@ -48,6 +62,7 @@ class TradingInterface:
                              volume=candle[5]) for candle in scraped]
 
         last_candle: CandleApi = self._get_last_candle(candles)
+        self.delta = self._get_delta(candles)
 
         return candles, last_candle
 
@@ -82,19 +97,6 @@ class TradingInterface:
 
     def _print_profit(self):
         self.manager.print_profit()
-
-    def _process_candle(self, timesteps_to_process):
-
-        last_candle: CandleApi = self._get_last_candle(timesteps_to_process=timesteps_to_process)
-        preprocessed = self._preprocess_candles(scraped_candles=timesteps_to_process)
-
-        predikce, jistota = self._predict_result(preprocessed)
-
-        if jistota >= 0.70:
-            if self._create_order(prediction=predikce, last_candle=last_candle):
-                logging.info(f"ORDER CREATED! Jistota={jistota} predikce={predikce}")
-            return True
-        return False
 
     def run(self):
         """
