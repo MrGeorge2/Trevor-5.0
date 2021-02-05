@@ -1,8 +1,6 @@
 from src.globals.config import Config
 from ..base.trading_base import TradingInterface
-from src.live_trading.live_trading import LiveTrading
-from datetime import timedelta
-from decimal import Decimal
+from ...api_handler.api_handler import ApiHandler
 import logging
 
 
@@ -12,7 +10,9 @@ class BackTest(TradingInterface):
         super().__init__(symbol)
 
     def run(self):
-        backtesting_data = self._scrape_candles(Config.NUMBER_OF_TESTING_CANDLES)
+        api_handler = ApiHandler.get_new_ApiHandler()
+        backtesting_data = self._scrape_candles(scraper_func=api_handler.get_historical_klines,
+                                                limit=Config.NUMBER_OF_TESTING_CANDLES)
 
         for i in range(len(backtesting_data) - Config.TIMESTEPS - 200):
             logging.info(f"Backtest: {i}/{len(backtesting_data)},\t"

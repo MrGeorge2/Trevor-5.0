@@ -54,9 +54,8 @@ class TradingInterface:
 
         return last_candle
 
-    def _scrape_candles(self, limit=500):
-        api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
-        scraped = api_handler.futures_klines(symbol=self.symbol, interval=Config.CANDLE_INTERVAL, klines=limit)
+    def _scrape_candles(self, scraper_func, limit=500):
+        scraped = scraper_func(symbol=self.symbol, interval=Config.CANDLE_INTERVAL, klines=limit)
 
         candles = [CandleApi(open_price=candle[1], high_price=candle[2], low_price=candle[3], close_price=candle[4],
                              volume=candle[5]) for candle in scraped]
