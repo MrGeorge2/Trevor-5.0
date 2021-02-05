@@ -15,6 +15,10 @@ class LiveTrading(TradingInterface):
 
     def run(self):
         api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
+
+        def scraper_func():
+            return api_handler.futures_klines(symbol=self.symbol, interval=Config.CANDLE_INTERVAL)
+
         check_new_candle = False
 
         while True:
@@ -26,7 +30,7 @@ class LiveTrading(TradingInterface):
             if check_new_candle:
                 last_candle: CandleApi
                 try:
-                    scraped_candles, last_candle = self._scrape_candles(api_handler.futures_klines)    # scraped candles, last candle in df
+                    scraped_candles, last_candle = self._scrape_candles(scraper_func)    # scraped candles, last candle in df
                 except Exception as e:
                     logging.critical(e)
                     continue
