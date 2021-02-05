@@ -20,19 +20,23 @@ class LiveTrading:
         self.symbol = symbol
         self.manager = OrderManager(symbol=self.symbol)
 
-    def scrape_candles(self):
-        api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
-        # scraped = api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "2 hour ago UTC")   # TODO: zkontrolovat casove pasmo
-        scraped = api_handler.futures_klines(symbol=self.symbol, interval=Config.CANDLE_INTERVAL, )
-
-        candles = [CandleApi(open_price=candle[1], high_price=candle[2], low_price=candle[3], close_price=candle[4],
-                             volume=candle[5]) for candle in scraped]
-
-        last_candle: CandleApi = candles[-1]
+    def get_last_candle(self, timesteps_to_process):
+        last_candle: CandleApi = timesteps_to_process[-1]
         last_candle.open_price = Decimal(last_candle.open_price)
         last_candle.high_price = Decimal(last_candle.high_price)
         last_candle.low_price = Decimal(last_candle.low_price)
         last_candle.close_price = Decimal(last_candle.close_price)
+
+        return last_candle
+
+    def scrape_candles(self, limit=500):
+        api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
+        scraped = api_handler.futures_klines(symbol=self.symbol, interval=Config.CANDLE_INTERVAL, klines=limit)
+
+        candles = [CandleApi(open_price=candle[1], high_price=candle[2], low_price=candle[3], close_price=candle[4],
+                             volume=candle[5]) for candle in scraped]
+
+        last_candle: CandleApi = self.get_last_candle(candles)
 
         return candles, last_candle
 
@@ -41,8 +45,7 @@ class LiveTrading:
         scraped_df = pd.DataFrame(candle.prices_as_dict_live() for candle in scraped_candles)
         # [0] - protoze tam jsou sequence
         # [-1] potrebuju posledni sequenci
-
-        return np.array([preprocess_df(scraped_df, shuffle=False)[0][-1]])
+        return np.array([preprocess_df(scraped_df, shuffle=False)[0]][-1])
 
     def predict_result(self, input_sample):
         return self.nn_model.predict(input_sample)
@@ -53,19 +56,34 @@ class LiveTrading:
             tp: Decimal = last_candle.close_price * Decimal((1 + 0.2124 / 100))
             sl: Decimal = last_candle.close_price * Decimal((1 - 0.289 / 100))
             self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
+            return True
 
         elif prediction == 0 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
             tp: Decimal = last_candle.close_price * Decimal((1 - 0.264 / 100))
             sl: Decimal = last_candle.close_price * Decimal((1 + 0.2374 / 100))
             self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
+            return True
+
+        return False
 
     def check_orders(self, last_candle):
         self.manager.check_opened_orders(last_candle)
 
     def print_profit(self):
-        logging.info(f"closed orders: {self.manager.closed_orders}, opened orders: {len(self.manager.opened_orders)} profitable_orders={self.manager.profitable_trades}")
-        logging.info(f"total profit: {round(self.manager.total_profit, 4)} %")
-        logging.info('')
+        self.manager.print_profit()
+
+    def process_candle(self, timesteps_to_process):
+
+        last_candle: CandleApi = self.get_last_candle(timesteps_to_process=timesteps_to_process)
+        preprocessed = self.preprocess_candles(scraped_candles=timesteps_to_process)
+
+        predikce, jistota = self.predict_result(preprocessed)
+
+        if jistota >= 0.70:
+            if self.create_order(prediction=predikce, last_candle=last_candle):
+                logging.info(f"ORDER CREATED! Jistota={jistota} predikce={predikce}")
+            return True
+        return False
 
     def run(self):
         check_new_candle = False

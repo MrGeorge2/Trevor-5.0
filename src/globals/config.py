@@ -21,6 +21,9 @@ class Config:
     ]
     SL: Decimal = Decimal(0.17)  # %
     TP: Decimal = Decimal(0.17)  # %
+
+    FEE: Decimal = Decimal(0.036)     # %
+    NUMBER_OF_TESTING_CANDLES = 14400
     """
     SCRAPER
     """

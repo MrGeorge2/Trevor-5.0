@@ -118,3 +118,7 @@ class OrderManager:
                         self.not_profitable_trades += 1
                         logging.info(f"Closing SHORT SL\tlast_candle.low_price={round(last_candle.high_price, 4)}\torder.stop_loss={round(order.stop_loss.price, 4)}")
 
+    def print_profit(self):
+        logging.info(f"closed orders: {self.closed_orders}, opened orders: {len(self.opened_orders)} profitable_orders={self.profitable_trades}")
+        logging.info(f"total profit: {round(self.total_profit, 4)} %")
+        logging.info('')
