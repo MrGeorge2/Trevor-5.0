@@ -5,8 +5,7 @@ from .data_analysis.models.indicators import Indicators
 from .samples.samples import Samples
 from .nn_model.train import TrainNN
 from .nn_model.test_gpu import test_tf_gpu
-from .backtesting.backtest import backtest
-from .backtesting.backtest import BackTest
+from src.live_trading.backtesting import backtest
 from.live_trading.live_trading import LiveTrading
 import logging
 
