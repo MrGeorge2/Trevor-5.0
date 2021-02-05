@@ -11,8 +11,8 @@ class BackTest(TradingInterface):
 
     def run(self):
         api_handler = ApiHandler.get_new_ApiHandler()
-        backtesting_data = self._scrape_candles(scraper_func=api_handler.get_historical_klines,
-                                                limit=Config.NUMBER_OF_TESTING_CANDLES)
+        backtesting_data, _ = self._scrape_candles(scraper_func=api_handler.get_historical_klines,
+                                                   limit=Config.NUMBER_OF_TESTING_CANDLES)
 
         for i in range(len(backtesting_data) - Config.TIMESTEPS - 200):
             logging.info(f"Backtest: {i}/{len(backtesting_data)},\t"
