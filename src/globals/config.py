@@ -11,7 +11,7 @@ class Config:
     PLOTING = False
     BACKTESTING_DATA = False
     STORE_BACK_TEST_DATA = False
-    MINIMAL_DELTA = 1.5
+    MINIMAL_DELTA = 2
     """
     LIVE TRADING
     """
@@ -23,7 +23,7 @@ class Config:
     TP: Decimal = Decimal(0.17)  # %
 
     FEE: Decimal = Decimal(0.036)     # %
-    NUMBER_OF_TESTING_CANDLES = 14400
+
     """
     SCRAPER
     """

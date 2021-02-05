@@ -43,8 +43,9 @@ class LiveTrading(TradingInterface):
                 if self.delta >= Config.MINIMAL_DELTA:
                     self._create_order(prediction=predikce, last_candle=last_candle)
 
-                self._check_orders(last_candle)
+                self._check_orders(last_candle) # TODO: NEMELO BY TO BYT AZ PO NACTENI DALSICH SVICEK?
                 self._print_profit()
+
                 check_new_candle = False
                 time.sleep(50)
 
