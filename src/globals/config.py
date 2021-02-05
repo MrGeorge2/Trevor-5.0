@@ -11,7 +11,7 @@ class Config:
     PLOTING = False
     BACKTESTING_DATA = False
     STORE_BACK_TEST_DATA = False
-    MINIMAL_DELTA = 1
+    MINIMAL_DELTA = 3
     """
     LIVE TRADING
     """

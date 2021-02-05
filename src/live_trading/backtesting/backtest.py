@@ -17,7 +17,7 @@ class BackTest(TradingInterface):
 
         backtesting_data, _ = self._scrape_candles(scraper_func=scraper_func, limit=Config.NUMBER_OF_TESTING_CANDLES)
 
-        for i in range(len(backtesting_data) - Config.TIMESTEPS - 500):
+        for i in range(len(backtesting_data) - Config.TIMESTEPS + (500 - Config.TIMESTEPS)):
             logging.info(f"Backtest: {i}/{len(backtesting_data)},\t"
                          f"number of trades: {self.manager.closed_orders},\t"
                          f"total net profit: {self.total_net_profit},\t"
