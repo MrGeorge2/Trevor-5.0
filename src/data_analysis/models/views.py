@@ -52,6 +52,7 @@ class ViewTypeWithRes(ViewTypeWithoutRes):
             'low_price': float(self.low_price),
             'close_price': float(self.close_price),
             'volume': float(self.volume),
+            'number_of_trades': float(self.number_of_trades),
             'quote_asset_volume': float(self.quote_asset_volume),
             'taker_buy_base_asset_volume': float(self.taker_buy_base_asset_volume),
             'taker_buy_quote_asset_volume': float(self.taker_buy_quote_asset_volume),

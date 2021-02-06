@@ -90,7 +90,7 @@ class Config:
     """
     RANDOM_SYMBOLS_FOR_SAMPLE = 5
     NUMBER_OF_SAMPLE_COLUMNS = 92
-    FINAL_SAMPLE_COLUMNS = 8
+    FINAL_SAMPLE_COLUMNS = 9
     NUMBER_FUTURE_CANDLE_PREDICT = 4
 
     """
@@ -98,7 +98,7 @@ class Config:
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
     EPOCHS = 10
-    ITERATIONS_CANLED_GROUP = 10
+    EPOCHS_ITERATION = 10
 
     """
     #### TRAIN TWO SAMPLES ####

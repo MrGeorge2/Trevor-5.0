@@ -49,16 +49,15 @@ class ModelNN:
 
     def create(self):
         model = Sequential()
-        model.add(LSTM(units=128, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS),
-                       kernel_regularizer=l1_l2(l1=0.01, l2=0.01)))
+        model.add(LSTM(units=128, return_sequences=True, input_shape=(Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS),))
         model.add(Dropout(0.2))
         model.add(BatchNormalization())
 
-        model.add((LSTM(units=128, return_sequences=True, kernel_regularizer=l1_l2(l1=0.01, l2=0.01))))
+        model.add((LSTM(units=128, return_sequences=True)))
         model.add(Dropout(0.2))
         model.add(BatchNormalization())
 
-        model.add(LSTM(units=128, return_sequences=False, kernel_regularizer=l1_l2(l1=0.01, l2=0.01)))
+        model.add(LSTM(units=128, return_sequences=False))
         model.add(Dropout(0.2))
         model.add(BatchNormalization())
 
@@ -67,7 +66,7 @@ class ModelNN:
 
         model.add(Dense(units=2, activation='softmax'))
         opt = Adam(learning_rate=0.001, decay=1e-6)
-        model.compile(optimizer=opt, loss='sparse_categorical_crossentropy', metrics=['acc'])
+        model.compile(optimizer=opt, loss='sparse_categorical_crossentropy', metrics=['categorical_accuracy'])
         self.model = model
         print("Model created.")
         self.model.build(input_shape=(None, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))

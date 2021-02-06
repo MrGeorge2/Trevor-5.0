@@ -13,43 +13,44 @@ class TrainNN:
         model.load()
 
         first = True
-        for symbol_index, symbols in enumerate(Config.SYMBOL_GROUPS_1H):
-            # Load samples before training only first time
-            if first:
+        for _ in range(Config.EPOCHS_ITERATION):
+            for symbol_index, symbols in enumerate(Config.SYMBOL_GROUPS_1H):
+                # Load samples before training only first time
+                if first:
+                    sample_thread = ReturningThread(target=Samples.create_samples_for_symbols,
+                                                    args=([Config.SYMBOL_GROUPS_1H[0]],))
+                    sample_thread.start()
+
+                    test_thread = ReturningThread(target=Samples.create_test_samples_for_symbols,
+                                                  args=([Config.SYMBOL_GROUPS_1H[0]],))
+                    test_thread.start()
+                    first = False
+                try:
+                    train_samples = sample_thread.join()
+                    test_samples = test_thread.join()
+
+                    if len(test_samples) == 0 or len(train_samples) == 0:
+                        first = True
+                        continue
+
+                    model.set_train_samples(train_samples)
+                    model.set_test_samples(test_samples)
+                    # model.show_real_output()
+                except Exception as e:
+                    print(e)
+                    continue
+
                 sample_thread = ReturningThread(target=Samples.create_samples_for_symbols,
-                                                args=([Config.SYMBOL_GROUPS_1H[0]],))
+                                                args=([symbols], ))
                 sample_thread.start()
 
                 test_thread = ReturningThread(target=Samples.create_test_samples_for_symbols,
-                                              args=([Config.SYMBOL_GROUPS_1H[0]],))
+                                              args=([symbols], ))
                 test_thread.start()
-                first = False
-            try:
-                train_samples = sample_thread.join()
-                test_samples = test_thread.join()
 
-                if len(test_samples) == 0 or len(train_samples) == 0:
-                    first = True
-                    continue
+                model.train()
 
-                model.set_train_samples(train_samples)
-                model.set_test_samples(test_samples)
-                # model.show_real_output()
-            except Exception as e:
-                print(e)
-                continue
-
-            sample_thread = ReturningThread(target=Samples.create_samples_for_symbols,
-                                            args=([symbols], ))
-            sample_thread.start()
-
-            test_thread = ReturningThread(target=Samples.create_test_samples_for_symbols,
-                                          args=([symbols], ))
-            test_thread.start()
-
-            model.train()
-
-            TrainNN.eval(model)
+            # TrainNN.eval(model)
 
     @classmethod
     def train_on_few_samples(cls):
