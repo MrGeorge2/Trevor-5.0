@@ -16,10 +16,9 @@ class BackTest(TradingInterface):
         def scraper_func():
             return api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "7 day ago UTC")
 
-        backtesting_data, _ = self._scrape_candles(scraper_func=scraper_func)
+        backtesting_data, last_candle = self._scrape_candles(scraper_func=scraper_func)
 
         for i in range(len(backtesting_data) - Config.TIMESTEPS + (500 - Config.TIMESTEPS)):
-            simulation_time = datetime.now() - timedelta(minutes=((len(backtesting_data) - Config.TIMESTEPS + (500 - Config.TIMESTEPS)) - i))
 
             logging.info(f"Backtest: {i}/{len(backtesting_data)},\t"
                          f"number of trades: {self.manager.closed_orders},\t"
@@ -28,7 +27,7 @@ class BackTest(TradingInterface):
 
             actual_sample = backtesting_data[i: i + Config.TIMESTEPS + (500 - Config.TIMESTEPS)]
             last_candle = actual_sample[-1]
-            self._check_orders(last_candle, checktime=simulation_time)
+            self._check_orders(last_candle, checktime=last_candle.close_time)
             self._print_profit()
 
             preprocessed = self._preprocess_candles(scraped_candles=actual_sample)
@@ -36,11 +35,8 @@ class BackTest(TradingInterface):
             predikce, jistota = self._predict_result(preprocessed)
             logging.info(f"Jistota={jistota} Predikce={predikce} Delta={self.delta}")
 
-            pocet_otevrenych_obchodu = len(self.manager.opened_orders)
             if self.delta >= Config.MINIMAL_DELTA:
                 self._create_order(prediction=predikce, last_candle=last_candle)
-                if len(self.manager.opened_orders) > pocet_otevrenych_obchodu:
-                    self.manager.opened_orders[-1].init_order.open_time = simulation_time
 
         logging.info(f"Backtestesting DONE,\t"
                      f"number of trades: {self.manager.closed_orders},\t"

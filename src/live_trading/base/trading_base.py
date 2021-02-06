@@ -58,6 +58,8 @@ class TradingInterface:
         scraped = scraper_func()
 
         candles = [CandleApi(
+            open_time=datetime.fromtimestamp(int(candle[0])/1000),
+            close_time=datetime.fromtimestamp(int(candle[6])/1000),
             open_price=Decimal(candle[1]),
             high_price=Decimal(candle[2]),
             low_price=Decimal(candle[3]),
@@ -89,7 +91,7 @@ class TradingInterface:
             tp: Decimal = last_candle.close_price * Decimal((1 + 0.35 / 100))
             # sl: Decimal = last_candle.close_price * Decimal((1 - 0.05 / 100))
             sl: Decimal = last_candle.close_price * Decimal((1 - 0.5 / 100))
-            self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
+            self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl, last_candle=last_candle)
             return True
 
         elif prediction == 0 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
@@ -97,7 +99,7 @@ class TradingInterface:
             tp: Decimal = last_candle.close_price * Decimal((1 - 0.35 / 100))
             # sl: Decimal = last_candle.close_price * Decimal((1 + 0.05 / 100))
             sl: Decimal = last_candle.close_price * Decimal((1 + 0.5 / 100))
-            self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
+            self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl, last_candle=last_candle)
             return True
 
         return False

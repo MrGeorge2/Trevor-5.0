@@ -18,24 +18,24 @@ class OrderManager:
         self.total_profit: Decimal = Decimal(0)
         self.opened_orders: List[FullOrderBase] = []
 
-    def open_long(self, price: Decimal, take_profit: Decimal, stop_loss: Decimal):
+    def open_long(self, price: Decimal, take_profit: Decimal, stop_loss: Decimal, last_candle: CandleApi):
         logging.info(
             f"Opening long init_price={round(price, 4)} take_profit={round(take_profit, 4)} stop_loss={round(stop_loss, 4)}")
-        open_order = InitOrder(price=price, symbol=self.symbol)
-        sl_order = StopLossOrder(price=stop_loss, symbol=self.symbol)
-        tp_order = TakeProfitOrder(price=take_profit, symbol=self.symbol)
+        open_order = InitOrder(price=price, symbol=self.symbol, last_candle=last_candle)
+        sl_order = StopLossOrder(price=stop_loss, symbol=self.symbol, last_candle=last_candle)
+        tp_order = TakeProfitOrder(price=take_profit, symbol=self.symbol, last_candle=last_candle)
 
         long = Long(open_order, sl_order, tp_order)
         long.init_order.open()
 
         self.opened_orders.append(long)
 
-    def open_short(self, price: Decimal, take_profit: Decimal, stop_loss: Decimal):
+    def open_short(self, price: Decimal, take_profit: Decimal, stop_loss: Decimal, last_candle: CandleApi):
         logging.info(
             f"Opening short init_price={round(price, 4)} take_profit={round(take_profit, 4)} stop_loss={round(stop_loss, 4)}")
-        open_order = InitOrder(price=price, symbol=self.symbol)
-        sl_order = StopLossOrder(price=stop_loss, symbol=self.symbol)
-        tp_order = TakeProfitOrder(price=take_profit, symbol=self.symbol)
+        open_order = InitOrder(price=price, symbol=self.symbol, last_candle=last_candle)
+        sl_order = StopLossOrder(price=stop_loss, symbol=self.symbol, last_candle=last_candle)
+        tp_order = TakeProfitOrder(price=take_profit, symbol=self.symbol, last_candle=last_candle)
 
         short = Short(open_order, sl_order, tp_order)
         short.init_order.open()
@@ -85,8 +85,7 @@ class OrderManager:
                 if isinstance(order, Long):
                     if last_candle.high_price >= order.take_profit.price:
                         order.close()
-                        self.total_profit += ((
-                                                          order.take_profit.price - order.init_order.price) / order.init_order.price) * 100  # v procentech
+                        self.total_profit += ((order.take_profit.price - order.init_order.price) / order.init_order.price) * 100  # v procentech
 
                         self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
@@ -96,8 +95,7 @@ class OrderManager:
 
                     elif last_candle.low_price <= order.stop_loss.price:
                         order.close()
-                        self.total_profit -= ((
-                                                          order.init_order.price - order.stop_loss.price) / order.init_order.price) * 100  # v procentech
+                        self.total_profit -= ((order.init_order.price - order.stop_loss.price) / order.init_order.price) * 100  # v procentech
 
                         self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
@@ -108,8 +106,7 @@ class OrderManager:
                 if isinstance(order, Short):
                     if last_candle.low_price <= order.take_profit.price:
                         order.close()
-                        self.total_profit += ((
-                                                          order.init_order.price - order.take_profit.price) / order.init_order.price) * 100  # v procentech
+                        self.total_profit += ((order.init_order.price - order.take_profit.price) / order.init_order.price) * 100  # v procentech
 
                         self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
@@ -119,8 +116,7 @@ class OrderManager:
 
                     elif last_candle.high_price >= order.stop_loss.price:
                         order.close()
-                        self.total_profit -= ((
-                                                          order.stop_loss.price - order.init_order.price) / order.init_order.price) * 100  # v procentech
+                        self.total_profit -= ((order.stop_loss.price - order.init_order.price) / order.init_order.price) * 100  # v procentech
 
                         self.closed_orders += 1
                         self.opened_orders.pop((self.opened_orders.index(order)))
