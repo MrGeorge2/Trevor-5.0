@@ -85,21 +85,25 @@ class TradingInterface:
     def _create_order(self, prediction, last_candle: CandleApi):
 
         if prediction == 1 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
-            tp: Decimal = last_candle.close_price * Decimal((1 + 0.212 / 100))
-            sl: Decimal = last_candle.close_price * Decimal((1 - 0.05 / 100))
+            # tp: Decimal = last_candle.close_price * Decimal((1 + 0.212 / 100))
+            tp: Decimal = last_candle.close_price * Decimal((1 + 0.35 / 100))
+            # sl: Decimal = last_candle.close_price * Decimal((1 - 0.05 / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 - 0.5 / 100))
             self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
             return True
 
         elif prediction == 0 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
-            tp: Decimal = last_candle.close_price * Decimal((1 - 0.25 / 100))
-            sl: Decimal = last_candle.close_price * Decimal((1 + 0.05 / 100))
+            # tp: Decimal = last_candle.close_price * Decimal((1 - 0.25 / 100))
+            tp: Decimal = last_candle.close_price * Decimal((1 - 0.35 / 100))
+            # sl: Decimal = last_candle.close_price * Decimal((1 + 0.05 / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 + 0.5 / 100))
             self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl)
             return True
 
         return False
 
-    def _check_orders(self, last_candle):
-        self.manager.check_opened_orders(last_candle)
+    def _check_orders(self, last_candle, checktime):
+        self.manager.check_opened_orders(last_candle, checktime=checktime)
 
     def _print_profit(self):
         self.manager.print_profit()
