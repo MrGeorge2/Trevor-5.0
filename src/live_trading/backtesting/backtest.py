@@ -2,6 +2,7 @@ from src.globals.config import Config
 from ..base.trading_base import TradingInterface
 from ...api_handler.api_handler import ApiHandler
 import logging
+from datetime import datetime, timedelta
 
 
 class BackTest(TradingInterface):
@@ -15,9 +16,10 @@ class BackTest(TradingInterface):
         def scraper_func():
             return api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "7 day ago UTC")
 
-        backtesting_data, _ = self._scrape_candles(scraper_func=scraper_func)
+        backtesting_data, last_candle = self._scrape_candles(scraper_func=scraper_func)
 
         for i in range(len(backtesting_data) - Config.TIMESTEPS + (500 - Config.TIMESTEPS)):
+
             logging.info(f"Backtest: {i}/{len(backtesting_data)},\t"
                          f"number of trades: {self.manager.closed_orders},\t"
                          f"total net profit: {self.total_net_profit},\t"
@@ -25,7 +27,7 @@ class BackTest(TradingInterface):
 
             actual_sample = backtesting_data[i: i + Config.TIMESTEPS + (500 - Config.TIMESTEPS)]
             last_candle = actual_sample[-1]
-            self._check_orders(last_candle)
+            self._check_orders(last_candle, checktime=last_candle.close_time)
             self._print_profit()
 
             preprocessed = self._preprocess_candles(scraped_candles=actual_sample)

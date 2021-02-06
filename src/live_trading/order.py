@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from decimal import Decimal
+from ..data_analysis.models.candle_api import CandleApi
 
 
 class OrderInterface:
@@ -29,10 +30,10 @@ class OrderInterface:
 
 
 class Order(OrderInterface):
-    def __init__(self, price: Decimal, symbol: str):
+    def __init__(self, price: Decimal, symbol: str, last_candle: CandleApi):
         self.price: Decimal = price
         self.symbol: str = symbol
-        self.open_time: datetime = datetime.now()
+        self.open_time: datetime = last_candle.close_time
 
         self._order_id: Optional[str] = None
 
