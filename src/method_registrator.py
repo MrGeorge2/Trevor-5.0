@@ -14,7 +14,7 @@ import logging
 Scrape all symbols from config with result
 """
 def full_fetch(*args):
-    # Scraper.scrape_all()
+    Scraper.scrape_all()
     Results.count_results()
     Results.divide_train_test()
     Indicators.count_indicators()

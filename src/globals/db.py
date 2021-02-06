@@ -25,7 +25,7 @@ class DB:
 
         cls.SESSION = sess()
 
-        # cls.execute_sql("view_joined_with_res.sql")
+        cls.execute_sql("view_joined_with_res.sql")
 
     @classmethod
     def execute_sql(cls, script_name: str):
