@@ -52,6 +52,11 @@ class TradingInterface:
         return last_candle
 
     def _update_trading_time(self, last_candle: CandleApi):
+        """
+        Pro volání ve smyčce v backtestu/live_tradingu - počítá dobu tradování podle délky svíček
+        :param last_candle:
+        :return: None
+        """
         delta: timedelta = last_candle.close_time - last_candle.open_time
         self.trading_time += timedelta(seconds=round(float(delta.seconds)))
 
