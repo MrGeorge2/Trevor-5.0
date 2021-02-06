@@ -2,6 +2,7 @@ from src.globals.config import Config
 from ..base.trading_base import TradingInterface
 from ...api_handler.api_handler import ApiHandler
 import logging
+from datetime import datetime, timedelta
 
 
 class BackTest(TradingInterface):
@@ -33,8 +34,11 @@ class BackTest(TradingInterface):
             predikce, jistota = self._predict_result(preprocessed)
             logging.info(f"Jistota={jistota} Predikce={predikce} Delta={self.delta}")
 
+            pocet_otevrenych_obchodu = len(self.manager.opened_orders)
             if self.delta >= Config.MINIMAL_DELTA:
                 self._create_order(prediction=predikce, last_candle=last_candle)
+                if len(self.manager.opened_orders) > pocet_otevrenych_obchodu:
+                    self.manager.opened_orders[-1].init_order.open_time = datetime.now() - timedelta(minutes=((len(backtesting_data) - Config.TIMESTEPS + (500 - Config.TIMESTEPS)) - i))
 
         logging.info(f"Backtestesting DONE,\t"
                      f"number of trades: {self.manager.closed_orders},\t"
