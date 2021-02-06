@@ -45,12 +45,21 @@ class Config:
         "DASHUSDT",
         "BNBUSDT",
         "ZECUSDT",
-
     ]
+
     SYMBOL_GROUPS_1H = [
-        [
-            "BTCUSDT",
-        ]
+        "BTCUSDT",
+        "ETHUSDT",
+        "LTCUSDT",
+        "XMRUSDT",
+        "LINKUSDT",
+        "YFIUSDT",
+        "MKRUSDT",
+        "AAVEUSDT",
+        "COMPUSDT",
+        "DASHUSDT",
+        "BNBUSDT",
+        "ZECUSDT",
     ]
 
     """
@@ -81,8 +90,8 @@ class Config:
     """
     RANDOM_SYMBOLS_FOR_SAMPLE = 5
     NUMBER_OF_SAMPLE_COLUMNS = 92
-    FINAL_SAMPLE_COLUMNS = 5
-    NUMBER_FUTURE_CANDLE_PREDICT = 12
+    FINAL_SAMPLE_COLUMNS = 8
+    NUMBER_FUTURE_CANDLE_PREDICT = 4
 
     """
     #### MODEL ####

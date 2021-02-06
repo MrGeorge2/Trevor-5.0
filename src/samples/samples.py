@@ -155,9 +155,9 @@ class Samples:
         return samples.create_samples_for_symbol(shuffle)
 
     @staticmethod
-    def create_samples_for_symbols(symbols, start_date, end_date):
-        print(f"Creating samples for symbol group {symbols} start={start_date} end_date={end_date}")
-        train_candles = ViewWithtRes.get_train_candles(symbols, start_date, end_date)
+    def create_samples_for_symbols(symbols):
+        print(f"Creating samples for symbol group {symbols}")
+        train_candles = ViewWithtRes.get_train_candles(symbols)
         if len(train_candles) == 0:
             return []
 
@@ -166,9 +166,9 @@ class Samples:
         return train_samples
 
     @staticmethod
-    def create_test_samples_for_symbols(symbols, start_date, end_date):
-        print(f"Creating test samples for symbol group {symbols} start_date={start_date} end_date={end_date}")
-        test_candles = ViewWithtRes.get_test_candles_for_symbols(symbols, start_date, end_date)
+    def create_test_samples_for_symbols(symbols):
+        print(f"Creating test samples for symbol group {symbols}")
+        test_candles = ViewWithtRes.get_test_candles_for_symbols(symbols)
         if len(test_candles) == 0:
             return []
         test_candles = Samples.create_samples(test_candles)

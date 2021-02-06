@@ -14,7 +14,11 @@ class ViewTypeWithoutRes:
     low_price = None
     close_price = None
     volume = None
-
+    close_time = None
+    quote_asset_volume = None
+    number_of_trades = None
+    taker_buy_base_asset_volume = None
+    taker_buy_quote_asset_volume = None
 
 class ViewTypeWithRes(ViewTypeWithoutRes):
     up = None
@@ -43,11 +47,14 @@ class ViewTypeWithRes(ViewTypeWithoutRes):
 
     def get_as_dict(self):
         return {
-            "open_price": np.float64(self.open_price),
-            "high_price": np.float64(self.high_price),
-            "low_price": np.float64(self.low_price),
-            "close_price": np.float64(self.close_price),
-            "volume": np.float64(self.volume),
+            'open_price': float(self.open_price),
+            'high_price': float(self.high_price),
+            'low_price': float(self.low_price),
+            'close_price': float(self.close_price),
+            'volume': float(self.volume),
+            'quote_asset_volume': float(self.quote_asset_volume),
+            'taker_buy_base_asset_volume': float(self.taker_buy_base_asset_volume),
+            'taker_buy_quote_asset_volume': float(self.taker_buy_quote_asset_volume),
             "target": np.float64(self.up),
         }
 
@@ -76,12 +83,11 @@ class ViewWithtRes(ViewTypeWithRes, db.DECLARATIVE_BASE):
         return test_candles
 
     @classmethod
-    def get_test_candles_for_symbols(cls, symbols, start_date, end_date) -> List[ViewTypeWithRes]:
+    def get_test_candles_for_symbols(cls, symbols) -> List[ViewTypeWithRes]:
         train_expression = getattr(cls, "train") == False
         dbb = DB.get_globals()
         return dbb.SESSION.query(ViewWithtRes).filter(
-            and_(train_expression, ViewWithtRes.symbol.in_(symbols), ViewWithtRes.open_time >= start_date,
-                 ViewWithtRes.open_time <= end_date)).order_by(asc(ViewWithtRes.open_time)).all()
+            and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(asc(ViewWithtRes.open_time)).all()
 
     @staticmethod
     def get_train_candles_for_symbol(symbol) -> List[ViewTypeWithRes]:
@@ -92,12 +98,11 @@ class ViewWithtRes(ViewTypeWithRes, db.DECLARATIVE_BASE):
         return train_candles
 
     @classmethod
-    def get_train_candles(cls, symbols: List[str], start_date, end_date):
+    def get_train_candles(cls, symbols: List[str]):
         dbb = DB.get_globals()
         train_expression = getattr(cls, "train") == True
         return dbb.SESSION.query(ViewWithtRes).filter(
-            and_(train_expression, ViewWithtRes.symbol.in_(symbols), ViewWithtRes.open_time >= start_date,
-                 ViewWithtRes.open_time <= end_date)).order_by(asc(ViewWithtRes.open_time)).all()
+            and_(train_expression, ViewWithtRes.symbol.in_(symbols))).order_by(asc(ViewWithtRes.open_time)).all()
 
     def __repr__(self):
         return f"symbol={self.symbol} open_time={self.open_time} up={self.up} down={self.down}"
