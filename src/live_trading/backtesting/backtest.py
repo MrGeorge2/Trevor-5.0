@@ -18,14 +18,16 @@ class BackTest(TradingInterface):
 
         backtesting_data, last_candle = self._scrape_candles(scraper_func=scraper_func)
 
-        for i in range(len(backtesting_data) - Config.TIMESTEPS + (500 - Config.TIMESTEPS)):
+        for i in range(len(backtesting_data) - 2 * Config.TIMESTEPS - 1): # + (500 - Config.TIMESTEPS)):
+            self._update_trading_time(last_candle=last_candle)
 
             logging.info(f"Backtest: {i}/{len(backtesting_data)},\t"
                          f"number of trades: {self.manager.closed_orders},\t"
-                         f"total net profit: {self.total_net_profit},\t"
-                         f"net profit per trade: {self.net_profit_per_trade}")
+                         f"total net profit: {self.total_net_profit} %,\t"
+                         f"net profit per trade: {self.net_profit_per_trade} %,\t"
+                         f"trading time: {str(self.trading_time)}")
 
-            actual_sample = backtesting_data[i: i + Config.TIMESTEPS + (500 - Config.TIMESTEPS)]
+            actual_sample = backtesting_data[i: i + 2 * Config.TIMESTEPS - 1]
             last_candle = actual_sample[-1]
             self._check_orders(last_candle, checktime=last_candle.close_time)
             self._print_profit()
@@ -40,8 +42,9 @@ class BackTest(TradingInterface):
 
         logging.info(f"Backtestesting DONE,\t"
                      f"number of trades: {self.manager.closed_orders},\t"
-                     f"total net profit: {self.total_net_profit},\t"
-                     f"net profit per trade: {self.net_profit_per_trade}")
+                     f"total net profit: {self.total_net_profit} %,\t"
+                     f"net profit per trade: {self.net_profit_per_trade} %,\t"
+                     f"trading time: {str(self.trading_time)} ")
 
 
 def backtest():

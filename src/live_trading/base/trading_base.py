@@ -18,6 +18,7 @@ class TradingInterface:
         self.symbol = symbol
         self.manager = OrderManager(symbol=self.symbol)
         self.delta = 0
+        self.trading_time: timedelta = timedelta(minutes=0)
 
     @staticmethod
     def _get_delta(candles: List[CandleApi]) -> float:
@@ -40,10 +41,6 @@ class TradingInterface:
         res = self.total_net_profit / self.manager.closed_orders if self.manager.closed_orders > 0 else 0
         return round(float(res), 2)
 
-    @property
-    def trading_time(self) -> timedelta:
-        return timedelta(minutes=self.manager.closed_orders)
-
     @staticmethod
     def _get_last_candle(timesteps_to_process):
         last_candle: CandleApi = timesteps_to_process[-1]
@@ -53,6 +50,15 @@ class TradingInterface:
         last_candle.close_price = Decimal(last_candle.close_price)
 
         return last_candle
+
+    def _update_trading_time(self, last_candle: CandleApi):
+        """
+        Pro volání ve smyčce v backtestu/live_tradingu - počítá dobu tradování podle délky svíček
+        :param last_candle:
+        :return: None
+        """
+        delta: timedelta = last_candle.close_time - last_candle.open_time
+        self.trading_time += timedelta(seconds=round(float(delta.seconds)))
 
     def _scrape_candles(self, scraper_func, limit=500):
         scraped = scraper_func()
