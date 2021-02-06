@@ -49,7 +49,7 @@ class TrainNN:
                 test_thread.start()
 
                 model.train()
-
+                model.eval(symbols, "")
             # TrainNN.eval(model)
 
     @classmethod

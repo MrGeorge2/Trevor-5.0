@@ -98,7 +98,7 @@ class Config:
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
     EPOCHS = 10
-    EPOCHS_ITERATION = 10
+    EPOCHS_ITERATION = 30
 
     """
     #### TRAIN TWO SAMPLES ####
