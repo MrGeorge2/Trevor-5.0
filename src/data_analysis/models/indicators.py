@@ -107,52 +107,47 @@ class Indicators(DB.DECLARATIVE_BASE):
         db = DB.get_globals()
 
         for symbol in Config.SYMBOLS_TO_SCRAPE:
-            day_counter = DayCounter()
-            while not day_counter.done:
-                start_date, end_date = day_counter.next_date_datetime
-                print(f"Counting indicators for {symbol} start date={start_date} end date={end_date}")
-                candles: List[CandleApi] = db.SESSION.query(CandleApi).filter(
-                    and_(CandleApi.symbol == symbol, between(CandleApi.open_time, start_date, end_date))).order_by(
-                    asc(CandleApi.open_time)).all()
+            print(f"Counting indicators")
+            candles: List[CandleApi] = db.SESSION.query(CandleApi).filter(and_(CandleApi.symbol == symbol)).order_by(asc(CandleApi.open_time)).all()
 
-                if len(candles) == 0:
-                    continue
+            if len(candles) == 0:
+                continue
 
-                df = pd.DataFrame([candle.prices_as_dict() for candle in candles])
-                df = add_all_ta_features(
-                    df,
-                    open="open_time",
-                    high="high_price",
-                    low="low_price",
-                    close="close_price",
-                    volume="volume",
-                )
+            df = pd.DataFrame([candle.prices_as_dict() for candle in candles])
+            df = add_all_ta_features(
+                df,
+                open="open_time",
+                high="high_price",
+                low="low_price",
+                close="close_price",
+                volume="volume",
+            )
 
-                # remove cols that are not in TIndicators
-                df = df.drop(
-                    [
-                        'open_price',
-                        'high_price',
-                        'low_price',
-                        'close_price',
-                        'volume',
-                    ],
-                    axis='columns')
+            # remove cols that are not in TIndicators
+            df = df.drop(
+                [
+                    'open_price',
+                    'high_price',
+                    'low_price',
+                    'close_price',
+                    'volume',
+                ],
+                axis='columns')
 
-                df['trend_psar_up'] = df['trend_psar_up'].fillna(0)
-                df['trend_psar_down'] = df['trend_psar_down'].fillna(0)
+            df['trend_psar_up'] = df['trend_psar_up'].fillna(0)
+            df['trend_psar_down'] = df['trend_psar_down'].fillna(0)
 
-                for i, data in df.iterrows():
-                    if Config.CHECK_ROW_IN_DB:
+            for i, data in df.iterrows():
+                if Config.CHECK_ROW_IN_DB:
 
-                        if not db.SESSION.query(db.SESSION.query(Indicators).filter(
-                                and_(Indicators.symbol == symbol,
-                                     Indicators.open_time == data["open_time"])).exists()).scalar():
-                            ind = Indicators(**data)
-                            db.SESSION.add(ind)
-                    else:
+                    if not db.SESSION.query(db.SESSION.query(Indicators).filter(
+                            and_(Indicators.symbol == symbol,
+                                 Indicators.open_time == data["open_time"])).exists()).scalar():
                         ind = Indicators(**data)
-                        ind.symbol = symbol
                         db.SESSION.add(ind)
-                db.SESSION.commit()
-                print(f"Done")
+                else:
+                    ind = Indicators(**data)
+                    ind.symbol = symbol
+                    db.SESSION.add(ind)
+            db.SESSION.commit()
+            print(f"Done")

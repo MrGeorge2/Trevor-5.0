@@ -23,35 +23,22 @@ class Results(DB.DECLARATIVE_BASE):
     def count_results(*args):
         db = DB.get_globals()
         for symbol in Config.SYMBOLS_TO_SCRAPE:
-            day_counter = DayCounter()
-            while not day_counter.done:
-                start_date, end_date = day_counter.next_date_datetime
+            print(f"Counting results for symbol={symbol}")
+            candles: List[CandleApi] = db.SESSION.query(CandleApi).filter(and_(CandleApi.symbol == symbol)).order_by(asc(CandleApi.open_time)).all()
 
-                print(f"Counting results for symbol={symbol}, start_date={start_date}, end_date={end_date}")
-                candles: List[CandleApi] = db.SESSION.query(CandleApi).filter(and_(CandleApi.symbol == symbol, CandleApi.open_time>=start_date, CandleApi.open_time<=end_date)).order_by(asc(CandleApi.open_time)).all()
+            for i, candle in enumerate(candles):
+                close_actual = candle.close_price
+                if i + Config.NUMBER_FUTURE_CANDLE_PREDICT < len(candles):
+                    close_next = candles[i + Config.NUMBER_FUTURE_CANDLE_PREDICT].close_price
+                else:
+                    break
 
-                for i, candle in enumerate(candles):
-                    close_actual = candle.close_price
-                    if i + Config.NUMBER_FUTURE_CANDLE_PREDICT < len(candles):
-                        close_next = candles[i + Config.NUMBER_FUTURE_CANDLE_PREDICT].close_price
-                    else:
-                        break
+                if Config.CHECK_ROW_IN_DB:
 
-                    if Config.CHECK_ROW_IN_DB:
+                    if not db.SESSION.query(db.SESSION.query(Results).filter(
+                            and_(Results.symbol == candle.symbol,
+                                 Results.open_time == candle.open_time)).exists()).scalar():
 
-                        if not db.SESSION.query(db.SESSION.query(Results).filter(
-                                and_(Results.symbol == candle.symbol,
-                                     Results.open_time == candle.open_time)).exists()).scalar():
-
-                            if close_actual > close_next:
-                                res = Results(up=False, down=True, open_time=candle.open_time, symbol=candle.symbol)
-
-                            elif close_actual < close_next:
-                                res = Results(up=True, down=False, open_time=candle.open_time, symbol=candle.symbol)
-                            else:
-                                res = Results(up=False, down=False, open_time=candle.open_time, symbol=candle.symbol)
-                            db.SESSION.add(res)
-                    else:
                         if close_actual > close_next:
                             res = Results(up=False, down=True, open_time=candle.open_time, symbol=candle.symbol)
 
@@ -60,20 +47,24 @@ class Results(DB.DECLARATIVE_BASE):
                         else:
                             res = Results(up=False, down=False, open_time=candle.open_time, symbol=candle.symbol)
                         db.SESSION.add(res)
+                else:
+                    if close_actual > close_next:
+                        res = Results(up=False, down=True, open_time=candle.open_time, symbol=candle.symbol)
 
-                print("Done")
-                db.SESSION.commit()
+                    elif close_actual < close_next:
+                        res = Results(up=True, down=False, open_time=candle.open_time, symbol=candle.symbol)
+                    else:
+                        res = Results(up=False, down=False, open_time=candle.open_time, symbol=candle.symbol)
+                    db.SESSION.add(res)
+
+            print("Done")
+            db.SESSION.commit()
 
     @staticmethod
     def divide_train_test(*args):
         db = DB.get_globals()
         for symbol in Config.SYMBOLS_TO_SCRAPE:
-            day_counter = DayCounter()
-            while not day_counter.done:
-                start_date, end_date = day_counter.next_date_datetime
-
-                results: List[Results] = db.SESSION.query(Results).filter(
-                    and_(Results.symbol == symbol, between(Results.open_time, start_date, end_date))).all()
+                results: List[Results] = db.SESSION.query(Results).filter(and_(Results.symbol == symbol)).all()
                 print(f"Dividing train test for {symbol}")
 
                 test_samples = results[int(len(results) * 0.85): ]

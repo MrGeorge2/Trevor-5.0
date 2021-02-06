@@ -51,6 +51,14 @@ class DayCounter:
         ddt = DateDataParser(languages=['en'])
         return ddt.get_date_data(start_date).date_obj, ddt.get_date_data(end_date).date_obj
 
+    def next_date_datetime_num_months(self, months: int):
+        start_date, _ = self.next_date_datetime
+        for _ in range(months - 1):
+            self.next_date_datetime
+        _, end_date = self.next_date_datetime
+        return start_date, end_date
+
+
     @property
     def done(self):
         return self.month == self.max_month and self.year == self.max_year
