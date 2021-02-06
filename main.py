@@ -7,7 +7,7 @@ import sys
 # První parametr pro metodu
 DEBUG_SYS_ARGV: List[str] = [
     " ",                
-    "backtest",
+    "full_fetch",
 ]
 
 DEBUG: bool = True
