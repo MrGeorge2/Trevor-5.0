@@ -18,6 +18,7 @@ class TradingInterface:
         self.symbol = symbol
         self.manager = OrderManager(symbol=self.symbol)
         self.delta = 0
+        self.trading_time: timedelta = timedelta(minutes=0)
 
     @staticmethod
     def _get_delta(candles: List[CandleApi]) -> float:
@@ -40,10 +41,6 @@ class TradingInterface:
         res = self.total_net_profit / self.manager.closed_orders if self.manager.closed_orders > 0 else 0
         return round(float(res), 2)
 
-    @property
-    def trading_time(self) -> timedelta:
-        return timedelta(minutes=self.manager.closed_orders)
-
     @staticmethod
     def _get_last_candle(timesteps_to_process):
         last_candle: CandleApi = timesteps_to_process[-1]
@@ -53,6 +50,10 @@ class TradingInterface:
         last_candle.close_price = Decimal(last_candle.close_price)
 
         return last_candle
+
+    def _update_trading_time(self, last_candle: CandleApi):
+        delta: timedelta = last_candle.close_time - last_candle.open_time
+        self.trading_time += timedelta(seconds=round(float(delta.seconds)))
 
     def _scrape_candles(self, scraper_func, limit=500):
         scraped = scraper_func()
@@ -88,17 +89,17 @@ class TradingInterface:
 
         if prediction == 1 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
             # tp: Decimal = last_candle.close_price * Decimal((1 + 0.212 / 100))
-            tp: Decimal = last_candle.close_price * Decimal((1 + 0.35 / 100))
+            tp: Decimal = last_candle.close_price * Decimal((1 + 0.25 / 100))
             # sl: Decimal = last_candle.close_price * Decimal((1 - 0.05 / 100))
-            sl: Decimal = last_candle.close_price * Decimal((1 - 0.5 / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 - 0.15 / 100))
             self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl, last_candle=last_candle)
             return True
 
         elif prediction == 0 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
             # tp: Decimal = last_candle.close_price * Decimal((1 - 0.25 / 100))
-            tp: Decimal = last_candle.close_price * Decimal((1 - 0.35 / 100))
+            tp: Decimal = last_candle.close_price * Decimal((1 - 0.25 / 100))
             # sl: Decimal = last_candle.close_price * Decimal((1 + 0.05 / 100))
-            sl: Decimal = last_candle.close_price * Decimal((1 + 0.5 / 100))
+            sl: Decimal = last_candle.close_price * Decimal((1 + 0.15 / 100))
             self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl, last_candle=last_candle)
             return True
 
