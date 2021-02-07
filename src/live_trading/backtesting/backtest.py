@@ -84,6 +84,6 @@ class BackTest(TradingInterface):
 
 
 def backtest():
-    backtester = BackTest("BTCUSDT")
+    backtester = BackTest("MKRUSDT")
     backtester.analyze_avg_percent_changes_sl_tp()
     backtester.run()

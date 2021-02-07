@@ -97,13 +97,13 @@ class TradingInterface:
     def _create_order(self, prediction, last_candle: CandleApi):
 
         if prediction == 1 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
-            tp: Decimal = last_candle.close_price * Decimal((1 + 0.5 / 100))
+            tp: Decimal = last_candle.close_price * Decimal((1 + 0.69 / 100))
             sl: Decimal = last_candle.close_price * Decimal((1 - 0.001 / 100))
             self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl, last_candle=last_candle)
             return True
 
         elif prediction == 0 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
-            tp: Decimal = last_candle.close_price * Decimal((1 - 0.5 / 100))
+            tp: Decimal = last_candle.close_price * Decimal((1 - 0.69 / 100))
             sl: Decimal = last_candle.close_price * Decimal((1 + 0.001 / 100))
             self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl, last_candle=last_candle)
             return True
