@@ -39,8 +39,10 @@ class BackTest(TradingInterface):
             predikce, jistota = self._predict_result(preprocessed)
             logging.info(f"Jistota={jistota} Predikce={predikce} Delta={self.delta}")
 
-            if self.delta >= Config.MINIMAL_DELTA and jistota >= 0.6:
+            if self.delta >= Config.MINIMAL_DELTA and predikce==0:
                 self._create_order(prediction=predikce, last_candle=last_candle)
+
+            logging.info(" ")  # Prazdny loger je tu spravne
 
         logging.info(f"Backtestesting DONE,\t"
                      f"number of trades: {self.manager.closed_orders},\t"
