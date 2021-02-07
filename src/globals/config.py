@@ -11,7 +11,7 @@ class Config:
     PLOTING = False
     BACKTESTING_DATA = False
     STORE_BACK_TEST_DATA = False
-    MINIMAL_DELTA = 2
+    MINIMAL_DELTA = 0
     """
     LIVE TRADING
     """
@@ -34,11 +34,32 @@ class Config:
     SYMBOLS_TO_SCRAPE = [
         #  --- USDT ---
         "BTCUSDT",
+        "ETHUSDT",
+        "LTCUSDT",
+        "XMRUSDT",
+        "LINKUSDT",
+        "YFIUSDT",
+        "MKRUSDT",
+        "AAVEUSDT",
+        "COMPUSDT",
+        "DASHUSDT",
+        "BNBUSDT",
+        "ZECUSDT",
     ]
+
     SYMBOL_GROUPS_1H = [
-        [
-            "BTCUSDT",
-        ]
+        "BTCUSDT",
+        "ETHUSDT",
+        "LTCUSDT",
+        "XMRUSDT",
+        "LINKUSDT",
+        "YFIUSDT",
+        "MKRUSDT",
+        "AAVEUSDT",
+        "COMPUSDT",
+        "DASHUSDT",
+        "BNBUSDT",
+        "ZECUSDT",
     ]
 
     """
@@ -69,15 +90,15 @@ class Config:
     """
     RANDOM_SYMBOLS_FOR_SAMPLE = 5
     NUMBER_OF_SAMPLE_COLUMNS = 92
-    FINAL_SAMPLE_COLUMNS = 5
-    NUMBER_FUTURE_CANDLE_PREDICT = 12
+    FINAL_SAMPLE_COLUMNS = 9
+    NUMBER_FUTURE_CANDLE_PREDICT = 4
 
     """
     #### MODEL ####
     """
     PATH_MODEL = "./src/nn_model/data/model.h5"
     EPOCHS = 10
-    ITERATIONS_CANLED_GROUP = 10
+    EPOCHS_ITERATION = 30
 
     """
     #### TRAIN TWO SAMPLES ####

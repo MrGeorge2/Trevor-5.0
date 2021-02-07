@@ -24,7 +24,7 @@ class LiveTrading(TradingInterface):
         while True:
             now = datetime.now()
             # if now - time_compare > timedelta(minutes=Config.CANDLE_MINUTES_INTERVAL):
-            if 2 < now.second < 5:      # zacatek kazde minuty s rezervou 2s
+            if 2 < now.second < 5 and now.minute % 15 == 0:      # zacatek kazde minuty s rezervou 2s
                 check_new_candle = True
 
             if check_new_candle:
@@ -35,21 +35,23 @@ class LiveTrading(TradingInterface):
                     logging.critical(e)
                     continue
 
+                self._check_orders(last_candle, last_candle.close_time) # TODO: NEMELO BY TO BYT AZ PO NACTENI DALSICH SVICEK?
+                self._print_profit()
+
                 preprocessed = self._preprocess_candles(scraped_candles=scraped_candles)
 
                 predikce, jistota = self._predict_result(preprocessed)
                 logging.info(f"Jistota={jistota} Predikce={predikce} Delta={self.delta}")
 
-                if self.delta >= Config.MINIMAL_DELTA:
+                if self.delta >= Config.MINIMAL_DELTA and jistota >= 6:
                     self._create_order(prediction=predikce, last_candle=last_candle)
 
-                self._check_orders(last_candle) # TODO: NEMELO BY TO BYT AZ PO NACTENI DALSICH SVICEK?
-                self._print_profit()
+                logging.info(" ")  # Prazdny loger je tu spravne
 
                 check_new_candle = False
-                time.sleep(50)
+                time.sleep(890)
 
     @staticmethod
     def trade():
-        live_trader = LiveTrading(symbol="ETHUSDT")
+        live_trader = LiveTrading(symbol="MKRUSDT")
         live_trader.run()

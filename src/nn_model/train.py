@@ -13,50 +13,44 @@ class TrainNN:
         model.load()
 
         first = True
-        for i in range(Config.ITERATIONS_CANLED_GROUP):
+        for _ in range(Config.EPOCHS_ITERATION):
             for symbol_index, symbols in enumerate(Config.SYMBOL_GROUPS_1H):
-                day_counter = DayCounter()
-                while not day_counter.done:
-                    # Load samples before training only first time
-                    if first:
-
-                        start_date, end_date = day_counter.next_date_datetime
-
-                        sample_thread = ReturningThread(target=Samples.create_samples_for_symbols,
-                                                        args=(Config.SYMBOL_GROUPS_1H[0], start_date, end_date))
-                        sample_thread.start()
-
-                        test_thread = ReturningThread(target=Samples.create_test_samples_for_symbols,
-                                                        args=(Config.SYMBOL_GROUPS_1H[0], start_date, end_date))
-                        test_thread.start()
-                        first = False
-                    try:
-                        train_samples = sample_thread.join()
-                        test_samples = test_thread.join()
-
-                        if len(test_samples) == 0 or len(train_samples) == 0:
-                            first = True
-                            continue
-
-                        model.set_train_samples(train_samples)
-                        model.set_test_samples(test_samples)
-                        # model.show_real_output()
-                    except Exception as e:
-                        print(e)
-                        continue
-
-                    start_date, end_date = day_counter.next_date_datetime
+                # Load samples before training only first time
+                if first:
                     sample_thread = ReturningThread(target=Samples.create_samples_for_symbols,
-                                                    args=(Config.SYMBOL_GROUPS_1H[symbols], start_date, end_date))
+                                                    args=([Config.SYMBOL_GROUPS_1H[0]],))
                     sample_thread.start()
 
                     test_thread = ReturningThread(target=Samples.create_test_samples_for_symbols,
-                                                  args=(Config.SYMBOL_GROUPS_1H[symbols], start_date, end_date))
+                                                  args=([Config.SYMBOL_GROUPS_1H[0]],))
                     test_thread.start()
+                    first = False
+                try:
+                    train_samples = sample_thread.join()
+                    test_samples = test_thread.join()
 
-                    model.train()
+                    if len(test_samples) == 0 or len(train_samples) == 0:
+                        first = True
+                        continue
 
-            TrainNN.eval(model)
+                    model.set_train_samples(train_samples)
+                    model.set_test_samples(test_samples)
+                    # model.show_real_output()
+                except Exception as e:
+                    print(e)
+                    continue
+
+                sample_thread = ReturningThread(target=Samples.create_samples_for_symbols,
+                                                args=([symbols], ))
+                sample_thread.start()
+
+                test_thread = ReturningThread(target=Samples.create_test_samples_for_symbols,
+                                              args=([symbols], ))
+                test_thread.start()
+
+                model.train()
+                model.eval(symbols, str(symbols))
+            # TrainNN.eval(model)
 
     @classmethod
     def train_on_few_samples(cls):
