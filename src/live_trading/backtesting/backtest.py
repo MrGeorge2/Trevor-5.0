@@ -15,7 +15,8 @@ class BackTest(TradingInterface):
         api_handler = ApiHandler.get_new_ApiHandler()
 
         def scraper_func():
-            return api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "7 day ago UTC")
+            #return api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "7 day ago UTC")
+            return api_handler.futures_klines(symbol=self.symbol, interval=Config.CANDLE_INTERVAL)
 
         backtesting_data, last_candle = self._scrape_candles(scraper_func=scraper_func)
 
@@ -38,7 +39,7 @@ class BackTest(TradingInterface):
             predikce, jistota = self._predict_result(preprocessed)
             logging.info(f"Jistota={jistota} Predikce={predikce} Delta={self.delta}")
 
-            if self.delta >= Config.MINIMAL_DELTA:
+            if self.delta >= Config.MINIMAL_DELTA and jistota >= 0.813:
                 self._create_order(prediction=predikce, last_candle=last_candle)
 
         logging.info(f"Backtestesting DONE,\t"
