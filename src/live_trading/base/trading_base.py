@@ -64,7 +64,11 @@ class TradingInterface:
             high_price=Decimal(candle[2]),
             low_price=Decimal(candle[3]),
             close_price=Decimal(candle[4]),
-            volume=Decimal(candle[5]))
+            volume=Decimal(candle[5]),
+            quote_asset_volume=Decimal(candle[7]),
+            number_of_trades=Decimal(candle[8]),
+            taker_buy_base_asset_volume=Decimal(candle[9]),
+            taker_buy_quote_asset_volume=Decimal(candle[10]))
             for candle in scraped
         ]
 
