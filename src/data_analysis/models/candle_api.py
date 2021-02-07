@@ -44,5 +44,9 @@ class CandleApi(DB.DECLARATIVE_BASE):
             "low_price": np.float64(self.low_price),
             "close_price": np.float64(self.close_price),
             "volume": np.float64(self.volume),
+            'number_of_trades': float(self.number_of_trades),
+            'quote_asset_volume': float(self.quote_asset_volume),
+            'taker_buy_base_asset_volume': float(self.taker_buy_base_asset_volume),
+            'taker_buy_quote_asset_volume': float(self.taker_buy_quote_asset_volume),
             "target": 0,
         }
