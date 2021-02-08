@@ -29,7 +29,7 @@ class Config:
     """
     CANDLE_INTERVAL = Client.KLINE_INTERVAL_15MINUTE
     CANDLE_MINUTES_INTERVAL = 12
-    CHECK_ROW_IN_DB = False
+    CHECK_ROW_IN_DB = True
 
     SYMBOLS_TO_SCRAPE = [
         #  --- USDT ---

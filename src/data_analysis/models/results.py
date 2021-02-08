@@ -1,7 +1,7 @@
 from ...globals.db import DB
 from .candle_api import CandleApi
 from ...globals.config import Config
-from sqlalchemy import Column, Boolean, DATETIME, Integer, String, ForeignKey, and_, between, asc
+from sqlalchemy import Column, Boolean, DATETIME, Integer, String, ForeignKey, DECIMAL, and_, between, asc
 from typing import List
 from decimal import Decimal
 from ...utils.day_counter import DayCounter
@@ -11,8 +11,8 @@ from dateparser.date import DateDataParser
 class Results(DB.DECLARATIVE_BASE):
     __tablename__ = "TResults"
     id = Column(Integer, primary_key=True)
-    up = Column(Decimal)
-    down = Column(Decimal)
+    up = Column(DECIMAL)
+    down = Column(DECIMAL)
     open_time = Column(DATETIME, ForeignKey(CandleApi.open_time))
     symbol = Column(String, ForeignKey(CandleApi.symbol))
     train = Column(Boolean)
@@ -28,7 +28,6 @@ class Results(DB.DECLARATIVE_BASE):
             candles: List[CandleApi] = db.SESSION.query(CandleApi).filter(and_(CandleApi.symbol == symbol)).order_by(asc(CandleApi.open_time)).all()
 
             for i, candle in enumerate(candles):
-                close_actual = candle.close_price
                 if i + Config.NUMBER_FUTURE_CANDLE_PREDICT < len(candles):
                     next_candles = candles[i: i + Config.NUMBER_FUTURE_CANDLE_PREDICT]
                 else:
@@ -40,8 +39,8 @@ class Results(DB.DECLARATIVE_BASE):
                             and_(Results.symbol == candle.symbol,
                                  Results.open_time == candle.open_time)).exists()).scalar():
 
-                        up = Decimal((max([candle.high_price for candle in next_candles]) - close_actual) / close_actual * 100)
-                        down = Decimal((close_actual - max([candle.low_price for candle in next_candles])) / close_actual * 100)
+                        up = Decimal((max([candle.high_price for candle in next_candles]) - candle.close_price) / candle.close_price * 100)
+                        down = Decimal((candle.close_price - max([candle.low_price for candle in next_candles])) / candle.close_price * 100)
 
                         res = Results(up=up, down=down, open_time=candle.open_time, symbol=candle.symbol)
                         db.SESSION.add(res)
