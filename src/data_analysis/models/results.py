@@ -3,6 +3,7 @@ from .candle_api import CandleApi
 from ...globals.config import Config
 from sqlalchemy import Column, Boolean, DATETIME, Integer, String, ForeignKey, and_, between, asc
 from typing import List
+from decimal import Decimal
 from ...utils.day_counter import DayCounter
 from dateparser.date import DateDataParser
 
@@ -10,8 +11,8 @@ from dateparser.date import DateDataParser
 class Results(DB.DECLARATIVE_BASE):
     __tablename__ = "TResults"
     id = Column(Integer, primary_key=True)
-    up = Column(Boolean)
-    down = Column(Boolean)
+    up = Column(Decimal)
+    down = Column(Decimal)
     open_time = Column(DATETIME, ForeignKey(CandleApi.open_time))
     symbol = Column(String, ForeignKey(CandleApi.symbol))
     train = Column(Boolean)
@@ -29,7 +30,7 @@ class Results(DB.DECLARATIVE_BASE):
             for i, candle in enumerate(candles):
                 close_actual = candle.close_price
                 if i + Config.NUMBER_FUTURE_CANDLE_PREDICT < len(candles):
-                    close_next = candles[i + Config.NUMBER_FUTURE_CANDLE_PREDICT].close_price
+                    next_candles = candles[i: i + Config.NUMBER_FUTURE_CANDLE_PREDICT]
                 else:
                     break
 
@@ -39,23 +40,11 @@ class Results(DB.DECLARATIVE_BASE):
                             and_(Results.symbol == candle.symbol,
                                  Results.open_time == candle.open_time)).exists()).scalar():
 
-                        if close_actual > close_next:
-                            res = Results(up=False, down=True, open_time=candle.open_time, symbol=candle.symbol)
+                        up = Decimal((max([candle.high_price for candle in next_candles]) - close_actual) / close_actual * 100)
+                        down = Decimal((close_actual - max([candle.low_price for candle in next_candles])) / close_actual * 100)
 
-                        elif close_actual < close_next:
-                            res = Results(up=True, down=False, open_time=candle.open_time, symbol=candle.symbol)
-                        else:
-                            res = Results(up=False, down=False, open_time=candle.open_time, symbol=candle.symbol)
+                        res = Results(up=up, down=down, open_time=candle.open_time, symbol=candle.symbol)
                         db.SESSION.add(res)
-                else:
-                    if close_actual > close_next:
-                        res = Results(up=False, down=True, open_time=candle.open_time, symbol=candle.symbol)
-
-                    elif close_actual < close_next:
-                        res = Results(up=True, down=False, open_time=candle.open_time, symbol=candle.symbol)
-                    else:
-                        res = Results(up=False, down=False, open_time=candle.open_time, symbol=candle.symbol)
-                    db.SESSION.add(res)
 
             print("Done")
             db.SESSION.commit()
