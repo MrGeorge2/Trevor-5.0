@@ -64,9 +64,9 @@ class ModelNN:
         model.add(Dense(32, activation='relu'))
         model.add(Dropout(0.2))
 
-        model.add(Dense(units=2, activation='softmax'))
+        model.add(Dense(units=2, activation='relu'))
         opt = Adam(learning_rate=0.001, decay=1e-6)
-        model.compile(optimizer=opt, loss='sparse_categorical_crossentropy', metrics=['categorical_accuracy'])
+        model.compile(optimizer=opt, loss='mean_squared_error', metrics=['accuracy'])
         self.model = model
         print("Model created.")
         self.model.build(input_shape=(None, Config.TIMESTEPS, Config.FINAL_SAMPLE_COLUMNS))
