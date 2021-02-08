@@ -7,7 +7,7 @@ import sys
 # První parametr pro metodu
 DEBUG_SYS_ARGV: List[str] = [
     " ",                
-    "divide_train_test",
+    "train",
 ]
 
 DEBUG: bool = True

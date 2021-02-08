@@ -56,7 +56,8 @@ class ViewTypeWithRes(ViewTypeWithoutRes):
             'quote_asset_volume': float(self.quote_asset_volume),
             'taker_buy_base_asset_volume': float(self.taker_buy_base_asset_volume),
             'taker_buy_quote_asset_volume': float(self.taker_buy_quote_asset_volume),
-            "target": np.float64(self.up),
+            "up": np.float64(self.up),
+            "down": np.float64(self.down),
         }
 
     @staticmethod

@@ -11,7 +11,7 @@ from sklearn import preprocessing
 
 def preprocess_df(df, shuffle=True):
     for col in df.columns:  # go through all of the columns
-        if col != "target":  # normalize all ... except for the target itself!
+        if col != "up" and col != "down":  # normalize all ... except for the target itself!
             df[col] = df[col].pct_change()  # pct change "normalizes" the different currencies (each crypto coin has vastly diff values, we're really more interested in the other coin's movements)
             df.replace([np.inf, -np.inf], np.nan, inplace=True)
             df.dropna(inplace=True)  # remove the nas created by pct_change
@@ -25,7 +25,7 @@ def preprocess_df(df, shuffle=True):
     for i in df.values:  # iterate over the values
         prev_days.append([n for n in i[:-1]])  # store all but the target
         if len(prev_days) == Config.TIMESTEPS:  # make sure we have 60 sequences!
-            sequential_data.append([np.array(prev_days), i[-1]])  # append those bad boys!
+            sequential_data.append([np.array(prev_days), i[-2]])  # append those bad boys!
 
     if shuffle:
         random.shuffle(sequential_data)  # shuffle for good measure.
@@ -33,21 +33,6 @@ def preprocess_df(df, shuffle=True):
         buys = []  # list that will store our buy sequences and targets
         sells = []  # list that will store our sell sequences and targets
 
-        for seq, target in sequential_data:  # iterate over the sequential data
-            if target == 0:  # if it's a "not buy"
-                sells.append([seq, target])  # append to sells list
-            elif target == 1:  # otherwise if the target is a 1...
-                buys.append([seq, target])  # it's a buy!
-
-        random.shuffle(buys)  # shuffle the buys
-        random.shuffle(sells)  # shuffle the sells!
-
-        lower = min(len(buys), len(sells))  # what's the shorter length?
-
-        buys = buys[:lower]  # make sure both lists are only up to the shortest length.
-        sells = sells[:lower]  # make sure both lists are only up to the shortest length.
-
-        sequential_data = buys+sells  # add them together
         random.shuffle(sequential_data)  # another shuffle, so the model doesn't get confused with all 1 class then the other.
 
     X = []
