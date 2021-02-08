@@ -40,7 +40,7 @@ class Results(DB.DECLARATIVE_BASE):
                                  Results.open_time == candle.open_time)).exists()).scalar():
 
                         up = Decimal((max([candle.high_price for candle in next_candles]) - candle.close_price) / candle.close_price * 100)
-                        down = Decimal((candle.close_price - max([candle.low_price for candle in next_candles])) / candle.close_price * 100)
+                        down = Decimal((candle.close_price - min([candle.low_price for candle in next_candles])) / candle.close_price * 100)
 
                         res = Results(up=up, down=down, open_time=candle.open_time, symbol=candle.symbol)
                         db.SESSION.add(res)
