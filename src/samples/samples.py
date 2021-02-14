@@ -23,9 +23,9 @@ def preprocess_df(df, shuffle=True):
     prev_days = deque(maxlen=Config.TIMESTEPS)  # These will be our actual sequences. They are made with deque, which keeps the maximum length by popping out older values as new ones come in
 
     for i in df.values:  # iterate over the values
-        prev_days.append([n for n in i[:-1]])  # store all but the target
+        prev_days.append([n for n in i[:-2]])  # store all but the target
         if len(prev_days) == Config.TIMESTEPS:  # make sure we have 60 sequences!
-            sequential_data.append([np.array(prev_days), i[-2]])  # append those bad boys!
+            sequential_data.append([np.array(prev_days), i[-2:]])  # append those bad boys!
 
     if shuffle:
         random.shuffle(sequential_data)  # shuffle for good measure.
@@ -42,7 +42,7 @@ def preprocess_df(df, shuffle=True):
         X.append(seq)  # X is the sequences
         y.append(target)  # y is the targets/labels (buys vs sell/notbuy)
 
-    return np.array(X), np.array(y)  # return X and y...and make X a numpy array!
+    return np.array(X), np.array(y).reshape((len(y), 2))  # return X and y...and make X a numpy array!
 
 
 class Samples:

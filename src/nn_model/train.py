@@ -4,7 +4,7 @@ from ..samples.samples import Samples
 from ..data_analysis.models.views import ViewWithtRes
 from ..utils.day_counter import  DayCounter
 from ..utils.tread import ReturningThread
-
+import time
 
 class TrainNN:
     @classmethod
@@ -17,17 +17,19 @@ class TrainNN:
             for symbol_index, symbols in enumerate(Config.SYMBOL_GROUPS_1H):
                 # Load samples before training only first time
                 if first:
-                    sample_thread = ReturningThread(target=Samples.create_samples_for_symbols,
-                                                    args=([Config.SYMBOL_GROUPS_1H[0]],))
-                    sample_thread.start()
+                    # sample_thread = ReturningThread(target=Samples.create_samples_for_symbols, args=([Config.SYMBOL_GROUPS_1H[0]],))
+                    # sample_thread.start()
+                    sample_thread = Samples.create_samples_for_symbols([Config.SYMBOL_GROUPS_1H[0]],)
 
-                    test_thread = ReturningThread(target=Samples.create_test_samples_for_symbols,
-                                                  args=([Config.SYMBOL_GROUPS_1H[0]],))
-                    test_thread.start()
+
+                    # test_thread = ReturningThread(target=Samples.create_test_samples_for_symbols, args=([Config.SYMBOL_GROUPS_1H[0]],))
+                    # test_thread.start()
+                    test_thread = Samples.create_test_samples_for_symbols([Config.SYMBOL_GROUPS_1H[0]],)
+
                     first = False
                 try:
-                    train_samples = sample_thread.join()
-                    test_samples = test_thread.join()
+                    train_samples = sample_thread   #.join()
+                    test_samples = test_thread      #.join()
 
                     if len(test_samples) == 0 or len(train_samples) == 0:
                         first = True
@@ -40,14 +42,15 @@ class TrainNN:
                     print(e)
                     continue
 
-                sample_thread = ReturningThread(target=Samples.create_samples_for_symbols,
-                                                args=([symbols], ))
-                sample_thread.start()
+                # sample_thread = ReturningThread(target=Samples.create_samples_for_symbols, args=([symbols], ))
+                # sample_thread.start()
+                sample_thread = Samples.create_samples_for_symbols([symbols],)
 
-                test_thread = ReturningThread(target=Samples.create_test_samples_for_symbols,
-                                              args=([symbols], ))
-                test_thread.start()
+                # test_thread = ReturningThread(target=Samples.create_test_samples_for_symbols, args=([symbols], ))
+                #test_thread.start()
+                test_thread = Samples.create_test_samples_for_symbols([symbols],)
 
+                # time.sleep(10)
                 model.train()
                 model.eval(symbols, str(symbols))
             # TrainNN.eval(model)
