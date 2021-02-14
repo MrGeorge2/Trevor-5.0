@@ -15,8 +15,8 @@ class BackTest(TradingInterface):
         api_handler = ApiHandler.get_new_ApiHandler()
 
         def scraper_func():
-            # return api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "7 day ago UTC")
-            return api_handler.futures_klines(symbol=self.symbol, interval=Config.CANDLE_INTERVAL)
+            return api_handler.get_historical_klines(self.symbol, Config.CANDLE_INTERVAL, "7 day ago UTC")
+            # return api_handler.futures_klines(symbol=self.symbol, interval=Config.CANDLE_INTERVAL)
 
         backtesting_data, last_candle = self._scrape_candles(scraper_func=scraper_func)
 
@@ -36,11 +36,12 @@ class BackTest(TradingInterface):
 
             preprocessed = self._preprocess_candles(scraped_candles=actual_sample)
 
-            predikce, jistota = self._predict_result(preprocessed)
-            logging.info(f"Jistota={jistota} Predikce={predikce} Delta={self.delta}")
 
-            if self.delta >= Config.MINIMAL_DELTA and predikce==0:
-                self._create_order(prediction=predikce, last_candle=last_candle)
+            up, down = self._predict_result(preprocessed)
+            logging.info(f"tp={up} Predikce={down} Delta={self.delta}")
+
+            if self.delta >= Config.MINIMAL_DELTA:
+                self._create_order(last_candle=last_candle, up=up, down=down)
 
             logging.info(" ")  # Prazdny loger je tu spravne
 

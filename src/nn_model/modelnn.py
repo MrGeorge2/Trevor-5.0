@@ -86,7 +86,7 @@ class ModelNN:
 
     def predict(self, input_data):
         predicted = self.model.predict(input_data)
-        return np.argmax(predicted), max(predicted[0])
+        return predicted[0], predicted[1]
 
     def eval(self, symbol, note):
         score = self.model.evaluate(self.x_test, self.y_test, verbose=1)
