@@ -48,7 +48,8 @@ class Config:
     ]
 
     SYMBOL_GROUPS_1H = [
-        "BTCUSDT",
+        "BTCUSDT",]
+    """
         "ETHUSDT",
         "LTCUSDT",
         "XMRUSDT",
@@ -61,7 +62,7 @@ class Config:
         "BNBUSDT",
         "ZECUSDT",
     ]
-
+    """
     """
     #### ORDERS ####
     """
