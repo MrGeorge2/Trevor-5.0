@@ -62,4 +62,7 @@ class CandleApi(DB.DECLARATIVE_BASE):
             'quote_asset_volume': float(self.quote_asset_volume),
             'taker_buy_base_asset_volume': float(self.taker_buy_base_asset_volume),
             'taker_buy_quote_asset_volume': float(self.taker_buy_quote_asset_volume),
+            "up": np.float64(0),
+            "down": np.float64(0),
+
         }

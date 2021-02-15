@@ -77,7 +77,7 @@ class ModelNN:
             self.x_train,
             self.y_train,
             epochs=Config.EPOCHS,
-            batch_size=64,
+            batch_size=128,
             validation_data=(self.x_test, self.y_test),
             verbose=1,
             shuffle=True,
@@ -86,7 +86,7 @@ class ModelNN:
 
     def predict(self, input_data):
         predicted = self.model.predict(input_data)
-        return predicted[0], predicted[1]
+        return predicted[0, 0], predicted[0, 1]
 
     def eval(self, symbol, note):
         score = self.model.evaluate(self.x_test, self.y_test, verbose=1)
