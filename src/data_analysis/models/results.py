@@ -39,8 +39,8 @@ class Results(DB.DECLARATIVE_BASE):
                      #       and_(Results.symbol == candle.symbol,
                      #            Results.open_time == candle.open_time)).exists()).scalar():
 
-                up = Decimal((max([candle.high_price for candle in next_candles]) - candle.close_price) / candle.close_price * 100)
-                down = Decimal((candle.close_price - min([candle.low_price for candle in next_candles])) / candle.close_price * 100)
+                up = Decimal(round((max([candle.high_price for candle in next_candles]) - candle.close_price) / candle.close_price * 100), 3)
+                down = Decimal(round((candle.close_price - min([candle.low_price for candle in next_candles])) / candle.close_price * 100), 3)
 
                 res = Results(up=up, down=down, open_time=candle.open_time, symbol=candle.symbol)
                 db.SESSION.add(res)

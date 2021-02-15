@@ -100,14 +100,14 @@ class TradingInterface:
             prediction = 1 if up > down else 0
 
             if prediction == 1 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
-                tp: Decimal = last_candle.close_price * Decimal((1 + (up/100) / 100))
-                sl: Decimal = last_candle.close_price * Decimal((1 - (down/100) / 100))
+                tp: Decimal = last_candle.close_price * Decimal((1 + (up-0.2/100) / 100))
+                sl: Decimal = last_candle.close_price * Decimal((1 - (down+0.2/100) / 100))
                 self.manager.open_long(price=last_candle.close_price, take_profit=tp, stop_loss=sl, last_candle=last_candle)
                 return True
 
             elif prediction == 0 and not self.manager.is_order_already_opened(last_candle=last_candle, prediction=prediction):
-                tp: Decimal = last_candle.close_price * Decimal((1 - (up/100) / 100))
-                sl: Decimal = last_candle.close_price * Decimal((1 + (down/100) / 100))
+                tp: Decimal = last_candle.close_price * Decimal((1 - (up-0.2/100) / 100))
+                sl: Decimal = last_candle.close_price * Decimal((1 + (down+0.2/100) / 100))
                 self.manager.open_short(price=last_candle.close_price, take_profit=tp, stop_loss=sl, last_candle=last_candle)
                 return True
 
