@@ -29,11 +29,12 @@ class Config:
     """
     CANDLE_INTERVAL = Client.KLINE_INTERVAL_15MINUTE
     CANDLE_MINUTES_INTERVAL = 12
-    CHECK_ROW_IN_DB = True
+    CHECK_ROW_IN_DB = False
 
     SYMBOLS_TO_SCRAPE = [
         #  --- USDT ---
         "BTCUSDT",
+    
         "ETHUSDT",
         "LTCUSDT",
         "XMRUSDT",
