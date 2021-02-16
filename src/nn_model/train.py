@@ -47,11 +47,11 @@ class TrainNN:
                 sample_thread = Samples.create_samples_for_symbols([symbols],)
 
                 # test_thread = ReturningThread(target=Samples.create_test_samples_for_symbols, args=([symbols], ))
-                #test_thread.start()
+                # test_thread.start()
                 test_thread = Samples.create_test_samples_for_symbols([symbols],)
 
                 # time.sleep(10)
-                # model.train()
+                model.train()
                 model.show_real_output()
                 model.eval(symbols, str(symbols))
             # TrainNN.eval(model)
