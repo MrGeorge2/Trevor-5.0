@@ -52,6 +52,7 @@ class TrainNN:
 
                 # time.sleep(10)
                 model.train()
+                model.show_real_output()
                 model.eval(symbols, str(symbols))
             # TrainNN.eval(model)
 
