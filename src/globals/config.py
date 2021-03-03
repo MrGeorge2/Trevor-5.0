@@ -5,6 +5,7 @@ from binance.client import Client
 class Config:
     TIMESTEPS = 60
 
+    SYMBOL = "BTC/USDT"
     DEBUGING = True
     MARGIN_TRADING = False
     EMULATION = True
@@ -27,7 +28,7 @@ class Config:
     """
     SCRAPER
     """
-    CANDLE_INTERVAL = Client.KLINE_INTERVAL_15MINUTE
+    CANDLE_INTERVAL = 900   # v sekundach 900 s = 15 minut
     CANDLE_MINUTES_INTERVAL = 12
     CHECK_ROW_IN_DB = False
 
@@ -81,8 +82,8 @@ class Config:
     """
     #### API HANDLER ####
     """
-    API_KEY = "4ccjv0lPKB4CTJf4p4EGbs3N1zvbNpFs2f6GNHHxv4DggoJ2eF4lO4Ee6E6xmOxI"
-    S_KEY = "RjV0u0Psrk5SPefQtWAEIcVUeXkoVWcpY5CgZEtyENRfMjPajK37t1Evq4fDwTd0"
+    API_KEY = "LXru2T0wR2zilayCA3vKBDkYmh12b2NgHfM583Zd"
+    S_KEY = "3yv71kxXuvtXlXJVdYFEGPCewSayVq3lT-AESWuy"
     TIMEOUT = 20
 
     """

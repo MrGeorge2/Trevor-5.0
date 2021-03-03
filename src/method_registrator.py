@@ -7,6 +7,7 @@ from .nn_model.train import TrainNN
 from .nn_model.test_gpu import test_tf_gpu
 from src.live_trading.backtesting.backtest import backtest
 from.live_trading.live_trading import LiveTrading
+from .api_handler.api_handler import ApiTest
 import logging
 
 
@@ -54,7 +55,9 @@ class MethodRegistrator:
         TrainNN.train_on_few_samples.__name__: TrainNN.train_on_few_samples,
         test_tf_gpu.__name__: test_tf_gpu,
         backtest.__name__: backtest,
-        LiveTrading.trade.__name__ : LiveTrading.trade,
+        LiveTrading.trade.__name__: LiveTrading.trade,
+        ApiTest.test_ftx_api.__name__: ApiTest.test_ftx_api,
+
 
     }
     APPEND_EXT_TEXT: str = "\n For getting all registred methods please use python3 main.py help"
