@@ -8,7 +8,7 @@ import sys
 DEBUG_SYS_ARGV: List[str] = [
     " ",                
     # "test_ftx_api",
-    "test_ftx_api",
+    "full_fetch",
 ]
 
 DEBUG: bool = True

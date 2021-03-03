@@ -9,31 +9,29 @@ class ApiHandler(FtxClient):
         self._config: Config = Config()
         super().__init__(api_key=self._config.API_KEY, api_secret=self._config.S_KEY)
 
-    def get_candles(self, start_time: datetime, end_time: datetime, symbol: str = Config.SYMBOL):
+    def get_candles(self, start_time: datetime, end_time: datetime, symbol: str = Config.SYMBOL) -> dict:
         # TODO: JE TAM POSUN O HODINU.... max 5000 svicek najednou
         limit = math.floor((end_time.timestamp() - start_time.timestamp()) / self._config.CANDLE_INTERVAL)
-        candles = self.get_historical_data(market_name=symbol, resolution=self._config.CANDLE_INTERVAL, limit=limit, start_time=start_time.timestamp(), end_time=end_time.timestamp())
+        candles: dict = self.get_historical_data(market_name=symbol, resolution=self._config.CANDLE_INTERVAL, limit=limit,
+                                           start_time=start_time.timestamp(), end_time=end_time.timestamp())
         return candles
 
-    def get_all_candles(self, symbol):
-        start_date = datetime(year=2020, month=1, day=1, hour=0)
-        end_date = datetime.now()
-        number_of_candles = math.floor(end_date.timestamp() - start_date.timestamp()) / self._config.CANDLE_INTERVAL
-        max_candles = 5000  # tolik jde najednou stahnout z ftx
+    def get_all_candles(self, symbol) -> list:
+        start_date: datetime = datetime(year=2020, month=1, day=1, hour=0)
+        end_date: datetime = datetime.now()
+        number_of_candles: int = math.floor(end_date.timestamp() - start_date.timestamp()) / self._config.CANDLE_INTERVAL
+        max_candles: int = 5000  # tolik jde najednou stahnout z ftx
 
-        tmp_date = start_date
-        list_of_lists = []
-        all_candles = []
+        tmp_date: datetime = start_date
+        list_of_lists: list = []
+        all_candles: list = []
 
-        rozsah = math.floor(number_of_candles/max_candles) + 1 if (number_of_candles/max_candles) > math.floor(number_of_candles/max_candles) else number_of_candles/max_candles
+        rozsah = math.floor(number_of_candles / max_candles) + 1 if (number_of_candles / max_candles) > math.floor(
+            number_of_candles / max_candles) else number_of_candles / max_candles
         for interval in range(rozsah):
-            nasobek = 5000
-            if interval == rozsah - 1:
-                if number_of_candles/max_candles > math.floor(number_of_candles/max_candles):
-                    nasobek = number_of_candles/max_candles - math.floor(number_of_candles/max_candles) * 5000
-
-            list_of_lists.append(self.get_candles(start_time=tmp_date, end_time=tmp_date + timedelta(minutes=nasobek * (self._config.CANDLE_INTERVAL / 60))))
-            tmp_date += timedelta(minutes=max_candles*(self._config.CANDLE_INTERVAL/60))
+            list_of_lists.append(self.get_candles(start_time=tmp_date, end_time=tmp_date + timedelta(
+                minutes=max_candles * (self._config.CANDLE_INTERVAL / 60))))
+            tmp_date += timedelta(minutes=max_candles * (self._config.CANDLE_INTERVAL / 60))
 
         for seznam in list_of_lists:
             for svicka in seznam:

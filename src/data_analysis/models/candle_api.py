@@ -14,9 +14,8 @@ class CandleApi(DB.DECLARATIVE_BASE):
     close_price = Column(DECIMAL)
     volume = Column(DECIMAL)
 
-
     def __repr__(self):
-        return f"open_time={self.open_time} close_time={self.close_time} open={self.open_price} " \
+        return f"open_time={self.open_time} open={self.open_price} " \
                f"high={self.high_price} low={self.low_price} close={self.close_price}"
 
     def prices_as_dict(self):
