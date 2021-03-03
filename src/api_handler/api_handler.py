@@ -9,11 +9,26 @@ class ApiHandler(FtxClient):
         self._config: Config = Config()
         super().__init__(api_key=self._config.API_KEY, api_secret=self._config.S_KEY)
 
-    def get_candles(self, start_time: datetime, end_time: datetime):
+    def get_candles(self, start_time: datetime, end_time: datetime, symbol: str = Config.SYMBOL):
         # TODO: JE TAM POSUN O HODINU.... max 5000 svicek najednou
         limit = math.floor((end_time.timestamp() - start_time.timestamp()) / self._config.CANDLE_INTERVAL)
-        candles = self.get_historical_data(market_name=Config.SYMBOL, resolution=self._config.CANDLE_INTERVAL, limit=limit, start_time=start_time.timestamp(), end_time=end_time.timestamp())
+        candles = self.get_historical_data(market_name=symbol, resolution=self._config.CANDLE_INTERVAL, limit=limit, start_time=start_time.timestamp(), end_time=end_time.timestamp())
         return candles
+
+    def get_all_candles(self, symbol):
+        start_date = datetime(year=2017, month=1, day=1, hour=0)
+        end_date = datetime.now()
+        number_of_candles = math.floor(end_date.timestamp() - start_date.timestamp()) / self._config.CANDLE_INTERVAL
+        max_candles = 5000  # tolik jde najednou stahnout z ftx
+
+        tmp_date = start_date
+        all_candles = []
+
+        for interval in range(number_of_candles/max_candles):
+            all_candles.append(self.get_candles(start_time=tmp_date, end_time=tmp_date+timedelta(minutes=max_candles*(self._config.CANDLE_INTERVAL/60))))
+            tmp_date += timedelta(minutes=max_candles*(self._config.CANDLE_INTERVAL/60))
+
+        return all_candles
 
     def __get_delta_for_symbol(self, symbol: str) -> float:
         candles = self.get_market(market=Config.SYMBOL)
@@ -30,6 +45,10 @@ class ApiHandler(FtxClient):
 
         delta = (last_high - last_low) / last_high
         return delta * 100
+
+    @classmethod
+    def get_new_ApiHandler(cls):
+        return cls()
 
 
 class ApiTest:

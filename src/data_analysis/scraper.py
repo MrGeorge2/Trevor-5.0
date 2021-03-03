@@ -17,7 +17,7 @@ class Scraper:
 
         api_handler: ApiHandler = ApiHandler.get_new_ApiHandler()
 
-        scraped = api_handler.get_historical_klines(symbol=symbol, interval=Config.CANDLE_INTERVAL, start_str="1 Dec, 2017")
+        scraped = api_handler.get_all_candles(symbol=symbol)
 
         for candle in scraped:
             m_candle: CandleApi = CandleApi(
