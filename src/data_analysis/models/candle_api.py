@@ -13,11 +13,7 @@ class CandleApi(DB.DECLARATIVE_BASE):
     low_price = Column(DECIMAL)
     close_price = Column(DECIMAL)
     volume = Column(DECIMAL)
-    close_time = Column(DATETIME)
-    quote_asset_volume = Column(DECIMAL)
-    number_of_trades = Column(DECIMAL)
-    taker_buy_base_asset_volume = Column(DECIMAL)
-    taker_buy_quote_asset_volume = Column(DECIMAL)
+
 
     def __repr__(self):
         return f"open_time={self.open_time} close_time={self.close_time} open={self.open_price} " \

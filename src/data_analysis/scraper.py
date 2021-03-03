@@ -5,6 +5,7 @@ from ..utils.day_counter import DayCounter
 from .models.candle_api import CandleApi
 from typing import List
 from datetime import datetime
+import pandas as pd
 from sqlalchemy import and_
 
 
@@ -22,17 +23,12 @@ class Scraper:
         for candle in scraped:
             m_candle: CandleApi = CandleApi(
                 symbol=symbol,
-                open_time=datetime.fromtimestamp(int(candle[0])/1000),
-                open_price=candle[1],
-                high_price=candle[2],
-                low_price=candle[3],
-                close_price=candle[4],
-                volume=candle[5],
-                close_time=datetime.fromtimestamp(int(candle[6])/1000),
-                quote_asset_volume=candle[7],
-                number_of_trades=candle[8],
-                taker_buy_base_asset_volume=candle[9],
-                taker_buy_quote_asset_volume=candle[10],
+                open_time=pd.to_datetime(int(candle[5]), "ms"),
+                open_price=candle[3],
+                high_price=candle[1],
+                low_price=candle[2],
+                close_price=candle[0],
+                volume=candle[6],
             )
 
             if Config.CHECK_ROW_IN_DB:
