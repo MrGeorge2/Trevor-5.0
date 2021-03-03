@@ -16,18 +16,28 @@ class ApiHandler(FtxClient):
         return candles
 
     def get_all_candles(self, symbol):
-        start_date = datetime(year=2017, month=1, day=1, hour=0)
+        start_date = datetime(year=2020, month=1, day=1, hour=0)
         end_date = datetime.now()
         number_of_candles = math.floor(end_date.timestamp() - start_date.timestamp()) / self._config.CANDLE_INTERVAL
         max_candles = 5000  # tolik jde najednou stahnout z ftx
 
         tmp_date = start_date
+        list_of_lists = []
         all_candles = []
 
-        for interval in range(number_of_candles/max_candles):
-            all_candles.append(self.get_candles(start_time=tmp_date, end_time=tmp_date+timedelta(minutes=max_candles*(self._config.CANDLE_INTERVAL/60))))
+        rozsah = math.floor(number_of_candles/max_candles) + 1 if (number_of_candles/max_candles) > math.floor(number_of_candles/max_candles) else number_of_candles/max_candles
+        for interval in range(rozsah):
+            nasobek = 5000
+            if interval == rozsah - 1:
+                if number_of_candles/max_candles > math.floor(number_of_candles/max_candles):
+                    nasobek = number_of_candles/max_candles - math.floor(number_of_candles/max_candles) * 5000
+
+            list_of_lists.append(self.get_candles(start_time=tmp_date, end_time=tmp_date + timedelta(minutes=nasobek * (self._config.CANDLE_INTERVAL / 60))))
             tmp_date += timedelta(minutes=max_candles*(self._config.CANDLE_INTERVAL/60))
 
+        for seznam in list_of_lists:
+            for svicka in seznam:
+                all_candles.append(svicka)
         return all_candles
 
     def __get_delta_for_symbol(self, symbol: str) -> float:
@@ -56,7 +66,8 @@ class ApiTest:
     def test_ftx_api():
         api_handler = ApiHandler()
         candles = api_handler.get_candles(start_time=datetime(year=2021, month=1, day=10, hour=18), end_time=datetime.now())
-        print(f"prvni: {candles[0]}, posledni: {candles[-1]}")
+        all_candles = api_handler.get_all_candles(symbol=Config.SYMBOL)
+        print(f"prvni: {all_candles[0]}, posledni: {all_candles[-1]}, delka listu: {len(all_candles)}")
         return 0
 
 """

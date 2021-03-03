@@ -35,6 +35,7 @@ class Config:
     SYMBOLS_TO_SCRAPE = [
         #  --- USDT ---
         "BTCUSDT",
+        """
         "ETHUSDT",
         "LTCUSDT",
         "XMRUSDT",
@@ -46,10 +47,12 @@ class Config:
         "DASHUSDT",
         "BNBUSDT",
         "ZECUSDT",
+        """
     ]
 
     SYMBOL_GROUPS_1H = [
         "BTCUSDT",
+        """
         "ETHUSDT",
         "LTCUSDT",
         "XMRUSDT",
@@ -61,6 +64,7 @@ class Config:
         "DASHUSDT",
         "BNBUSDT",
         "ZECUSDT",
+        """
     ]
 
     """
