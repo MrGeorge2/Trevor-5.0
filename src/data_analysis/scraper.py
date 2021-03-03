@@ -21,6 +21,7 @@ class Scraper:
         scraped = api_handler.get_all_candles(symbol=symbol)
 
         for candle in scraped:
+            candle = list(candle.values())
             m_candle: CandleApi = CandleApi(
                 symbol=symbol,
                 open_time=pd.to_datetime(int(candle[5]), "ms"),

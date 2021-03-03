@@ -7,12 +7,6 @@ SELECT
 	TCandleApi.high_price,
 	TCandleApi.low_price,
 	TCandleApi.close_price,
-	TCandleApi.close_time,
-	TCandleApi.volume,
-	TCandleApi.quote_asset_volume,
-	TCandleApi.number_of_trades,
-	TCandleApi.taker_buy_base_asset_volume,
-	TCandleApi.taker_buy_quote_asset_volume,
 	TResults.up,
 	TResults.down,
 	TResults.train

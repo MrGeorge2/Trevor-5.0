@@ -18,7 +18,7 @@ class Config:
     """
     SIMULATION = True
     SYMBOL_LIVE_TRADING = [
-            "BTCUSDT",
+            "BTC/USDT",
     ]
     SL: Decimal = Decimal(0.17)  # %
     TP: Decimal = Decimal(0.17)  # %
